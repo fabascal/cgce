@@ -2,5 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/NovaRet" vcs="Git" />
   </component>
 </project>
