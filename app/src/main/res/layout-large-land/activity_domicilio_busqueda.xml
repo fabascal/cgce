@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_domicilio_busqueda"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondorepsolgris"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="cg.ce.app.chris.com.cgce.DomicilioBusqueda">
+
+
+    <TextView
+        android:text="@string/label_cliente"
+        android:id="@+id/label_cliente"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:textStyle="normal|bold"
+        android:textSize="20sp"
+        android:typeface="sans"
+        style="@style/repsoldatacliente"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#000"
+        android:layout_below="@id/label_cliente"/>
+    <TextView
+        android:id="@+id/tv_cliente_cfdi"
+        android:layout_below="@+id/label_cliente"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        style="@style/repsoldatacliente"/>
+    <TextView
+        android:id="@+id/tv_rfc_cfdi"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/tv_cliente_cfdi"
+        style="@style/repsoldatacliente"/>
+    <TextView
+        android:id="@+id/tv_correo_cfdi"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/tv_rfc_cfdi"
+        android:textStyle="normal|bold|italic"
+        style="@style/repsoldatacliente"/>
+
+
+    <TextView
+        android:paddingTop="10dp"
+        android:text="@string/label_domicilio"
+        android:id="@+id/label_domicilio"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_correo_cfdi"
+        android:textStyle="normal|bold"
+        android:textSize="20sp"
+        android:typeface="sans"
+        style="@style/repsoldatacliente"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#000"
+        android:layout_below="@id/label_domicilio"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cliente_domicilio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/label_domicilio"
+        android:paddingTop="10dp"
+        android:background="#ffffff"
+        android:layout_weight="1" />
+
+
+</RelativeLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="360dp"
+    android:layout_height="120dp">
+    <ImageView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/img_tpv"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/tpvs"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:text="banamex"
+            android:textAlignment="center"
+            android:textSize="45sp"
+            android:id="@+id/tv_tpv"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:layout_marginTop="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="45dp" />
+        <TextView
+            android:text="se factura"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:id="@+id/tv_tpv_detalle"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:layout_marginTop="25dp"
+            android:layout_width="250dp"
+            android:layout_height="30dp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

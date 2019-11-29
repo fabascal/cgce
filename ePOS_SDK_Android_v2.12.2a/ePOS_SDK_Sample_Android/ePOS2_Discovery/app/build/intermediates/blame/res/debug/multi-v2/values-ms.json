@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Discovery/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ms/values-ms.xml",
+            "map": [
+                {
+                    "source": "/home/chris/.gradle/caches/transforms-2/files-2.1/66f12a7200af14e0f85c231d9d9cbd07/appcompat-v7-27.1.1/res/values-ms/values-ms.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,216,321,429,516,620,731,809,888,968,1080,1189,1286,1395,1498,1605,1764,1865",
+                        "endColumns": "110,104,107,86,103,110,77,78,79,111,108,96,108,102,106,158,100,79",
+                        "endOffsets": "211,316,424,511,615,726,804,883,963,1075,1184,1281,1390,1493,1600,1759,1860,1940"
+                    }
+                },
+                {
+                    "source": "/home/chris/.gradle/caches/transforms-2/files-2.1/6931bc3fe5868b0ab5606c1192ce8d93/support-compat-27.1.1/res/values-ms/values-ms.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "20",
+                        "startColumns": "4",
+                        "startOffsets": "1945",
+                        "endColumns": "100",
+                        "endOffsets": "2041"
+                    }
+                }
+            ]
+        }
+    ]
+}

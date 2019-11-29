@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardview"
+        android:layout_width="@dimen/cardview_width"
+        android:layout_height="@dimen/cardview_height"
+        card_view:cardCornerRadius="@dimen/cardCornerRadius"
+        card_view:cardElevation="@dimen/cardElevation"
+        android:layout_marginTop="@dimen/cardview_marginTop"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#E6E6E6"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="11">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="@dimen/ImageView_width"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@color/TRANSPARENT"
+                android:src="@drawable/banamex" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="25dp"
+                android:layout_weight="8"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/nombre"
+                    style="@style/titulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="banamex"
+                    android:textStyle="normal|bold"
+                    android:textSize="25sp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_below="@+id/nombre"
+                    android:background="#424242" />
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:layout_below="@id/divider"
+                    android:id="@+id/image_sefactura"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/cfdi"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/creditometodo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="cg.ce.app.chris.com.cgce.CreditoMetodo"
+    android:background="@drawable/fondogris">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/CardViewRFID"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="90dp"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="8dp"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="#E6E6E6"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:id="@+id/imageviewTag"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:src="@drawable/rfid"/>
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/cv_textTag"
+            android:text="@string/nfc"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:textStyle="normal|bold"
+            android:textSize="20sp" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:visibility="gone"
+        android:id="@+id/CardViewQR"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewRFID"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="90dp"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="8dp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="#E6E6E6"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_below="@+id/CardViewRFID"
+        android:layout_alignLeft="@+id/CardViewRFID"
+        android:layout_alignStart="@+id/CardViewRFID">
+
+        <ImageView
+            android:id="@+id/imageviewQR"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:src="@drawable/qr_code"/>
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/cv_textQR"
+            android:text="@string/qr"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:textStyle="normal|bold"
+            android:textSize="20sp" />
+
+    </android.support.v7.widget.CardView>
+
+
+</android.support.constraint.ConstraintLayout>

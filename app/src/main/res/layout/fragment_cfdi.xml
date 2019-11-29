@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#10185c"
+    android:clickable="true">
+
+    <Button
+        android:id="@+id/btn_imprimir_cfdi"
+        android:text="@string/btn_imprimir_cfdi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/tv_cliente"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/tv_monto"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:id="@+id/tv_nrotrn"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/tv_producto"
+        android:layout_alignStart="@+id/tv_producto" />
+    <TextView
+        android:id="@+id/tv_producto"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_below="@+id/tv_nrotrn"
+        android:layout_alignLeft="@+id/tv_monto"
+        android:layout_alignStart="@+id/tv_monto"
+        android:layout_marginTop="12dp" />
+    <TextView
+        android:id="@+id/tv_cantidad"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_below="@+id/tv_producto"
+        android:layout_alignLeft="@+id/tv_monto"
+        android:layout_alignStart="@+id/tv_monto"
+        android:layout_marginTop="12dp" />
+    <TextView
+        android:id="@+id/tv_precio"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/tv_cantidad"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/tv_monto"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/tv_precio"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/tv_rfc"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/tv_cliente"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:id="@+id/tv_domicilio"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/tv_rfc"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/tv_nrotrn_label"
+        android:text="@string/tv_nrotrn_label"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginLeft="2dp"
+        android:layout_alignTop="@+id/tv_nrotrn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_producto_label"
+        android:text="@string/tv_producto_label"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_nrotrn_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_cantidad_label"
+        android:text="@string/tv_cantidad_label"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_producto_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_monto_label"
+        android:text="@string/tv_monto_label"
+        android:layout_width="170dp"
+        android:textColor="#ffffff"
+        android:layout_height="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_precio_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_precio_label"
+        android:text="@string/tv_precio_label"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_cantidad_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_cliente_label"
+        android:text="Cliente:"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_monto_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_rfc_label"
+        android:text="RFC:"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_cliente_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/tv_domicilio_label"
+        android:text="Domicilio:"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/tv_rfc_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondorepsolgris"
+    android:clickable="true">
+
+
+    <!--<Button
+        android:id="@+id/btn_imprimir_ticket"
+        android:text="@string/btn_imprimir_ticket"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />-->
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_marginLeft="4dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_nrotrn_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_nrotrn_label"
+                style="@style/repsoltexto" />
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_producto_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/tv_producto_label"
+                style="@style/repsoltexto" />
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_cantidad_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/tv_cantidad_label"
+                style="@style/repsoltexto" />
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_precio_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/tv_precio_label"
+                style="@style/repsoltexto"/>
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_monto_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/tv_monto_label"
+                style="@style/repsoltexto" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_nrotrn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/repsoltexto" />
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_producto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/repsoltexto" />
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_cantidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/repsoltexto" />
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_precio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/repsoltexto" />
+
+            <TextView
+                android:textSize="@dimen/TextFragment_Ticket"
+                android:id="@+id/tv_monto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/repsoltexto" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_imprimir_ticket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="142dp"
+        android:background="#00000000"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:src="@drawable/ticketrepsol"
+        android:text="@string/btn_imprimir_ticket"
+        android:visibility="visible" />
+
+
+</RelativeLayout>

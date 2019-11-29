@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ePOS2 Discovery</string>
+
+    <string name="app_title">ePOS2 Discovery</string>
+    <string name="txt_start">Start</string>
+    <string name="txt_stop">Stop</string>
+    <string name="title_porttype">Port Type</string>
+    <string name="title_broadcast">Broadcast</string>
+    <string name="title_devicemodel">Device Model</string>
+    <string name="title_epsonfilter">Epson Filter</string>
+    <string name="title_devicetype">Device Type</string>
+    <string name="txt_broadcast">255.255.255.255</string>
+    <string name="title_err_code">Error Code</string>
+    <string name="title_err_method">Method</string>
+    <string name="action_settings">Settings</string>
+</resources>

@@ -1,0 +1,166 @@
+[
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_action_bar_title_item.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_action_bar_title_item.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_action_mode_bar.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_action_mode_bar.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_screen_simple_overlay_action_mode.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_screen_simple_overlay_action_mode.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/activity_discovery.xml",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/layout/activity_discovery.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_screen_simple.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_screen_simple.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_screen_toolbar.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_title_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_alert_dialog_title_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/support_simple_spinner_dropdown_item.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/support_simple_spinner_dropdown_item.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/notification_template_custom_big.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_action_bar_up_container.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_action_bar_up_container.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_action_menu_layout.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/notification_template_part_time.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_popup_menu_item_layout.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_popup_menu_item_layout.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_button_bar_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_alert_dialog_button_bar_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/activity_setting.xml",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/layout/activity_setting.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_expanded_menu_layout.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_expanded_menu_layout.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_alert_dialog_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_radio.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_list_menu_item_radio.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/notification_template_part_chronometer.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_activity_chooser_view_list_item.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_activity_chooser_view_list_item.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_popup_menu_header_item_layout.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_popup_menu_header_item_layout.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_screen_content_include.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_screen_content_include.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/notification_action.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout/notification_action.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_dialog_title_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_dialog_title_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_action_menu_item_layout.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_action_menu_item_layout.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_search_dropdown_item_icons_2line.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_search_dropdown_item_icons_2line.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_layout.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_list_menu_item_layout.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/select_dialog_multichoice_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/select_dialog_multichoice_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/select_dialog_singlechoice_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/select_dialog_singlechoice_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_tooltip.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_tooltip.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_checkbox.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_list_menu_item_checkbox.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_select_dialog_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_select_dialog_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/notification_template_icon_group.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_icon.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_list_menu_item_icon.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/notification_action_tombstone.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_action_mode_close_item_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_action_mode_close_item_material.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/list_at.xml",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/layout/list_at.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_activity_chooser_view.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_activity_chooser_view.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/abc_search_view.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout/select_dialog_item_material.xml",
+        "source": "/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/res/layout/select_dialog_item_material.xml"
+    }
+]

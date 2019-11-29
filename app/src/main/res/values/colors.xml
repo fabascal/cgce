@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorspinnerpress">#BDBDBD</color>
+    <color name="TRANSPARENT">#00000000</color>
+    <color name="colorGreyMedium">#848484</color>
+    <color name="colorGreyDark">#585858</color>
+    <color name="colorGreyLight">#E6E6E6</color>
+    <color name="colorBlack">#2E2E2E</color>
+    <color name="md_indigo_500">#3f51b5</color>
+    <color name="md_indigo_600">#3949ab</color>
+    <color name="md_indigo_700">#303f9f</color>
+    <color name="RespsolAzul">#0a1743</color>
+    <color name="RepsolNaranja">#ff8a03</color>
+    <color name="RepsolRojo">#ff1927</color>
+    <color name="RepsolNaranjaDark">#ff7103</color>
+    <color name="EnerPrimary">#02d1b7</color>
+    <color name="EnerPrimaryDark">#1a9bdc</color>
+
+    
+</resources>
+
+
+

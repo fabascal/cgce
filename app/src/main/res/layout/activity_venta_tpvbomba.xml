@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_venta_tpvbomba"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cg.ce.app.chris.com.cgce.VentaTPVBomba"
+    android:background="@drawable/fondorepsolgris">
+    <TextView
+        android:id="@+id/tpv_nombre"
+        android:text="banamex"
+        style="@style/titulotpv"
+        android:textColor="@color/RespsolAzul"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        tools:layout_editor_absoluteY="4dp"
+        tools:layout_editor_absoluteX="312dp"
+        android:gravity="center_horizontal"/>
+    <View
+        android:id="@+id/vtitle"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="#000"
+        android:layout_below="@id/tpv_nombre"/>
+
+    <LinearLayout
+        android:id="@+id/ll_bomba"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/tpv_nombre"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/imageView4"
+            android:src="@drawable/dispensariorespol"/>
+
+        <Spinner
+            android:id="@+id/spn_dispensario"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginLeft="25dp"
+            android:background="@drawable/spinner_back"
+            android:fadingEdge="horizontal|vertical"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_below="@+id/ll_bomba"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imbtn_ticket"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ticketrepsol"
+        android:background="#00000000"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:onClick="onClick"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imbtn_cfdi"
+        android:layout_below="@+id/imbtn_ticket"
+        android:layout_alignLeft="@+id/imbtn_ticket"
+        android:layout_alignStart="@+id/imbtn_ticket"
+        android:background="#00000000"
+        android:src="@drawable/cfdirepsol"
+        android:clickable="true"
+        android:onClick="onClick"/>
+
+</RelativeLayout>

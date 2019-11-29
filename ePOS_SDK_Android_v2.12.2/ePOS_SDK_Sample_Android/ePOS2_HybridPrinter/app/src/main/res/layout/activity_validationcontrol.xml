@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#FFFFFF">
+
+    <Button
+        android:id="@+id/btnPrintValidation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/btn_printvalidation" />
+    <TextView
+        android:id="@+id/lblWorning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_warnings"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:textColor="@android:color/black" />
+    <requestFocus/>
+
+    <EditText
+        android:id="@+id/edtWarnings"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+</LinearLayout>

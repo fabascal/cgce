@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Discovery/app/libs/ePOS2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="3e309226418e94131dd1be39d4cb9f65a9c9b2f5">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Discovery/app/build/intermediates/pre-dexed/debug/ePOS2_ec2c12a26988fa86d148be10b9389e45d5fbf73d.jar" />
+    </item>
+
+</items>

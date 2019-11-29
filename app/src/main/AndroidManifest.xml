@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cg.ce.app.chris.com.cgce">
+    <!-- NFC -->
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
+    <uses-feature
+        android:name="android.bluetooth"
+        android:required="true" />
+    <!-- RED -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- DATOS -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- BLUETOOTH -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
+    <compatible-screens>
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="large" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="xlarge" />
+    </compatible-screens>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/inicio"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ActivityTicket"
+            android:theme="@style/ContentMain"></activity>
+        <activity android:name=".BarcodeScanner" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="3cca6623efb24bcd139b264dc8806afc3424e7eb" />
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".ClienteBusqueda" />
+
+        <activity
+            android:name=".Splashscreen"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VentaActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoginSistemasActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".MainConfiguracionActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".ConfiguracionesActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".MacActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".ContadoActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".DiscoveryPrinterActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".ClienteBusqueda"
+            android:configChanges="screenSize|orientation"
+            android:launchMode="singleTop"
+            android:theme="@style/ContentMain">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".DomicilioBusqueda"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".MetodoPagoBusqueda"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".EmisionCfdi"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".Login_Despachador"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".Datos_corte"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".Razon_Social"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".CreditoActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".CreditoMetodo"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".RfidCredito"
+            android:theme="@style/ContentMain">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" />
+        </activity>
+        <activity
+            android:name=".AceiteActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".AceiteVenta"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".AceiteCreditoMetodo"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".ActivityCreditoDual"
+            android:theme="@style/ContentMain">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" />
+        </activity>
+        <activity
+            android:name=".AceiteCreditoMetodoNFC"
+            android:theme="@style/ContentMain">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" />
+        </activity>
+        <activity
+            android:name=".ActivityPrePagos"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".ActivityPrePagoVale"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".AutoUpdate"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".VentasTPV"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".VentaTPVBomba"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".MarcaActivity"
+            android:theme="@style/ContentMain" />
+        <activity
+            android:name=".MarcaUpdateActivity"
+            android:theme="@style/ContentMain" />
+        <activity android:name=".ServiciosActivity" />
+    </application>
+
+</manifest>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+    >
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/action_settings2">
+        <item
+            android:id="@+id/nav_printer"
+            android:title="Agregar Impresora"
+            android:icon="@drawable/printer_icon" />
+        <!--<item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/etiqueta_nfc"
+            android:title="Clientes" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Slideshow" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Tools" />-->
+    </group>
+
+    <item android:title="Resumen">
+        <menu>
+            <item
+                android:id="@+id/nav_sesion"
+                android:icon="@drawable/login"
+                android:title="Sesion" />
+            <item
+                android:id="@+id/nav_finalizar"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Finalizar Corte" />
+            <item
+                android:id="@+id/nav_salir"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Salir" />
+        </menu>
+    </item>
+    <item android:title="Acerca de">
+        <menu>
+            <item
+                android:id="@+id/version"
+                android:icon="@android:drawable/ic_menu_help"
+                android:title="Version" />
+        </menu>
+    </item>
+</menu>

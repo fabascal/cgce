@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout-v21/notification_action.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout-v21/notification_action_tombstone.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout-v21/notification_template_custom_big.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/layout-v21/notification_template_icon_group.xml",
+        "source": "/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/res/layout-v21/notification_template_icon_group.xml"
+    }
+]

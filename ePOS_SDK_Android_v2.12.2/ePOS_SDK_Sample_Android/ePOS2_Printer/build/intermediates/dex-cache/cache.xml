@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/a2e4279c13966c347b40b3c1f2669083410134ea/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="d968b9bd0011800e0d333d1571b8d34bcb8a0b6e">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_927defa6dde65ea95a636886aa6fd80df8070561.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/b6e53f9be6d965855aff5b01ada825491510973a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="8a9fd7c97f1d13f97f3b52f9d2e54cd857d5acf9">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_9999954a563cfcc0796aad8c8501383b8441506e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/f57d9e211ecbf2bd444f2ca4faff633dfa5b1c43/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="c9a721adcd7dbae7a197b0ef81102336539f63ff">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_09c38f99bac88335e5b7fb007f40d3058924c061.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/a3793040756a9e97b3a5fe268cc60297de4ec9ff/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="ec657bb192b20229696216bf233779b16bf75a54">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_6acce54185d300bacdaa02fb5f2cc88edd3ae3d5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/5266b5d64872d0e4dc1579ed620ed74250e46171/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="71d380aeac037e63bab7bda2ba211777e16a2f42">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_e9911a41b01b2e99fab1396f0c32ffa64ac670b8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/94025346f099f1eb30c2b5da7065a0d906e10e64/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="874f1143c11f5d38533efe512bf913e3e847e7df">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_0ed68112be188d801bdbc33ff1aa289990ecbd95.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.1.0/edf3f7bfb84a7521d0599efa3b0113a0ee90f85/common-1.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="0edf3f7bfb84a7521d0599efa3b0113a0ee90f85">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/common-1.1.0_5cdee5ea14db5f102d1b7292fd36fd076315ee1d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/4db33ea9ce74c41e2ac45b7364c7890726775b79/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="23dcb4803d3103bde3f3f5db978a726338fe49ae">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_db720f77feb69bb912e39f7a2eb490b5b511eaf7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/27.1.1/39ded76b5e1ce1c5b2688e1d25cdc20ecee32007/support-annotations-27.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="39ded76b5e1ce1c5b2688e1d25cdc20ecee32007">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/support-annotations-27.1.1_14a2abb2e3b198f5b04cb95afe75a7bc8525a5d6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/b9b2ba6e0f7219d97357cf8e77834e6116b05a93/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="2feadd535770271ca57b7b431f42151aa4af324a">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_2fd224326a087751cb5945bc573008bd7980fc24.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/110c2d9372a90f95c84d06000b5056173ad6f586/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="1fd3ceac7f415975323d52c6c6057db409a907f6">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_526569e8aaae1c5498e439212bf4207cb40faacd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/249e3b1be1dd82081748263d06fdae6f0c9bbcb2/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="3304d33470ff64cf83bce9189ff3648a42eb2aa7">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_362fef9622e4335479be6033a8c8b7a8d52f6d1c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/libs/ePOS2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="3e309226418e94131dd1be39d4cb9f65a9c9b2f5">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/ePOS2_d79508684e18fda603e9e9040de67d8fa49663c5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.android/build-cache/1301fbc0ada258679a2b5bab6d272f1c0699b0fe/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="e2bbe48deed35056023eed2cdc0cc92e5c7d3617">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/classes_53baf1162773770ee6d029fe6c102cd23d4f1737.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/android.arch.core/common/1.1.0/8007981f7d7540d89cd18471b8e5dcd2b4f99167/common-1.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="8007981f7d7540d89cd18471b8e5dcd2b4f99167">
+        <dex dex="/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/pre-dexed/debug/common-1.1.0_4b1445b1e24e6259bf3260069d4aadd98165d09f.jar" />
+    </item>
+
+</items>

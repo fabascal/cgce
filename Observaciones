@@ -1,0 +1,55 @@
+1.-Credito
+1.1.-floating action button cuando selecionas ambas posiciones con credito e intentas imprimir el contado del otro lado sin tener posiciones disponibles marca error.
+at cg.ce.app.chris.com.cgce.dialogos.fab_contado.onClick(fab_contado.java:84)
+2.-Papel
+11-07 13:11:03.465 9075-9393/cg.ce.app.chris.com.cgce E/AndroidRuntime: FATAL EXCEPTION: AsyncTask #2
+    Process: cg.ce.app.chris.com.cgce, PID: 9075
+    java.lang.RuntimeException: An error occurred while executing doInBackground()
+        at android.os.AsyncTask$3.done(AsyncTask.java:309)
+        at java.util.concurrent.FutureTask.finishCompletion(FutureTask.java:354)
+        at java.util.concurrent.FutureTask.setException(FutureTask.java:223)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:242)
+        at android.os.AsyncTask$SerialExecutor$1.run(AsyncTask.java:234)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1113)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:588)
+        at java.lang.Thread.run(Thread.java:818)
+     Caused by: java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
+        at android.os.Handler.<init>(Handler.java:200)
+        at android.os.Handler.<init>(Handler.java:114)
+        at android.app.Dialog.<init>(Dialog.java:120)
+        at android.app.AlertDialog.<init>(AlertDialog.java:214)
+        at android.app.AlertDialog$Builder.create(AlertDialog.java:1161)
+        at cg.ce.app.chris.com.cgce.ShowMsg.show(ShowMsg.java:61)
+        at cg.ce.app.chris.com.cgce.ShowMsg.showMsg(ShowMsg.java:50)
+        at cg.ce.app.chris.com.cgce.ClassImpresionTicket.printData(ClassImpresionTicket.java:343)
+        at cg.ce.app.chris.com.cgce.ClassImpresionTicket.runPrintReceiptSequence(ClassImpresionTicket.java:143)
+        at cg.ce.app.chris.com.cgce.ClassImpresionTicket.doInBackground(ClassImpresionTicket.java:104)
+        at cg.ce.app.chris.com.cgce.ClassImpresionTicket.doInBackground(ClassImpresionTicket.java:37)
+        at android.os.AsyncTask$2.call(AsyncTask.java:295)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:237)
+        at android.os.AsyncTask$SerialExecutor$1.run(AsyncTask.java:234) 
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1113) 
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:588) 
+        at java.lang.Thread.run(Thread.java:818) 
+11-07 13:11:03.467 9075-9098/cg.ce.app.chris.com.cgce D/libc: getaddrinfo called from pid =9075
+11-07 13:11:03.467 9075-9098/cg.ce.app.chris.com.cgce D/libc: getaddrinfo called from pid =9075
+11-07 13:11:03.815 9075-9075/cg.ce.app.chris.com.cgce I/Timeline: Timeline: Activity_idle id: android.os.BinderProxy@e4c2687 time:15082841
+11-07 13:11:04.043 9075-9075/cg.ce.app.chris.com.cgce E/WindowManager: android.view.WindowLeaked: Activity cg.ce.app.chris.com.cgce.ActivityCreditoDual has leaked window com.android.internal.policy.PhoneWindow$DecorView{7cf161d V.E...... R......D 0,0-684,322} that was originally added here
+        at android.view.ViewRootImpl.<init>(ViewRootImpl.java:377)
+        at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:299)
+        at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:86)
+        at android.app.Dialog.show(Dialog.java:338)
+        at cg.ce.app.chris.com.cgce.ClassImpresionTicket.onPreExecute(ClassImpresionTicket.java:98)
+        at android.os.AsyncTask.executeOnExecutor(AsyncTask.java:604)
+        at android.os.AsyncTask.execute(AsyncTask.java:551)
+        at cg.ce.app.chris.com.cgce.ActivityCreditoDual.onClick(ActivityCreditoDual.java:1592)
+        at android.view.View.performClick(View.java:5217)
+        at android.view.View$PerformClick.run(View.java:21349)
+        at android.os.Handler.handleCallback(Handler.java:739)
+        at android.os.Handler.dispatchMessage(Handler.java:95)
+        at android.os.Looper.loop(Looper.java:148)
+        at android.app.ActivityThread.main(ActivityThread.java:5585)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:730)
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:620)
+

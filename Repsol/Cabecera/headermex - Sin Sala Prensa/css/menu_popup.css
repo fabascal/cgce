@@ -1,0 +1,441 @@
+@charset "UTF-8";
+
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
+
+/**************************************************************************/
+
+/*
+ -- INICIO MENU POPUP ---      
+*/
+
+/*************************************************************************/
+
+/* ELIMINAR A PARTIR DE AQUÍ */
+
+@font-face {
+  font-family: "repsol-font-4";
+  src: url("../fonts/repsol-font-4.eot");
+  src: url("../fonts/repsol-font-4.eot?#iefix") format("embedded-opentype"), url("../fonts/repsol-font-4.ttf") format("truetype"), url("../fonts/repsol-font-4.svg#repsol-font-4") format("svg"), url("../fonts/repsol-font-4.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;
+}
+
+header .menu .customDropdown .secondLevel {
+  color: #a8a299 !important;
+}
+
+[data-icon]:before {
+  font-family: "repsol-font-4";
+  content: attr(data-icon);
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none !important;
+  speak: none;
+  display: inline-block;
+  text-decoration: none;
+  width: 1em;
+  line-height: 1em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.thirdLevel {
+  display: block !important;
+}
+
+header .menu .customDropdown .secondLevel .secondLevelElement,
+header .menu .customDropdown .thirdLevel .thirdLevelElement {
+  display: inline-block;
+  padding: 12px 10px 0 !important;
+  font-size: 15px;
+  color: #a8a299 !important;
+  text-decoration: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+header .menu .nav-pills .customDropdown .withoutMargin > a {
+  font-size: 13px;
+}
+
+header .secondLevel.clearfix {
+  top: 25px !important;
+}
+
+header .menu > .inner > div.activoMenu {
+  left: 70px;
+  width: auto;
+  top: -1px;
+}
+
+header .menu .customDropdown {
+  position: static;
+  font-size: 13px;
+  font-size: 1.071rem;
+  color: #a8a299 !important;
+}
+
+header .menu .customDropdown .secondLevel,
+header .menu .customDropdown ul.thirdLevel {
+  top: 20px;
+}
+
+header .menu .customDropdown .secondLevel {
+  padding-top: 35px;
+}
+
+header .menu .nav-pills .customDropdown a.elementoMenuActivo {
+  color: #e67600;
+}
+
+.secondLevel .customDropdown + .customDropdown {
+  background: none;
+  background-size: 2px 3px;
+  background-repeat: repeat-y;
+}
+
+header .menu .classChannel > .secondLevel .customDropdown:first-child .withoutMargin > a {
+  background: none;
+  padding: 5px 13px 5px 13px !important;
+}
+
+header .menu .customDropdown .secondLevel .secondLevelElement:hover,
+header .menu .customDropdown .thirdLevel .thirdLevelElement:hover {
+  text-decoration: none;
+  color: #e67600 !important;
+}
+
+header .menu .capaFondoCompletoAlfa {
+  position: absolute;
+  top: 50px;
+  width: 1972px;
+  left: -1292px;
+  z-index: 200;
+}
+
+header .menu .capaFondoCompleto {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  z-index: 101;
+  top: 49px;
+}
+
+header .menu .customDropdown .secondLevel,
+header .menu .customDropdown ul.thirdLevel {
+  -webkit-transform: none;
+}
+
+.menu.container {
+  position: relative;
+}
+
+header .menu .nav-pills > .customDropdown {
+  height: 48px;
+  min-height: 100%;
+}
+
+header .menu .nav-pills .customDropdown a:hover {
+  text-decoration: underline;
+}
+
+header .menu .customDropdown .secondLevel li.nextLevelElement,
+header .menu .customDropdown ul.thirdLevel li.nextLevelElement {
+  padding: 5px 13px 5px 0;
+  width: 250px;
+  border-bottom: 1px #cbc4bc solid;
+}
+
+.classWOChannel .secondLevel [data-icon]:before,
+.classWOChannel .thirdLevel [data-icon]:before,
+.classChannel .secondLevel [data-icon]:before,
+.classChannel .thirdLevel [data-icon]:before {
+  padding-top: 45%;
+}
+
+header .menu .customDropdown ul.thirdLevel {
+  top: 20px;
+  margin-left: 40px;
+  position: absolute;
+  display: block;
+}
+
+.cerramosNivel2 ul.thirdLevel {
+  display: block !important;
+}
+
+/*////////////                  NURIA SÁNCHEZ                /////////*/
+
+/*////////////COPIAR A PARTIR DE AQUÍ - MENU STYLES EN MOBILE/////////*/
+
+/*FIN PARTE A ELIMINAR
+/**************************************************************************/
+
+/*
+ -- FIN MENU POPUP ---      
+*/
+
+/*************************************************************************/
+
+@media screen and (max-width: 1170px) {
+  header .menu .nav-pills > .customDropdown {
+    height: auto;
+  }
+}
+
+@media (max-width: 1170px) {
+  header .menu .customDropdown ul.thirdLevel {
+    position: absolute;
+  }
+
+  header {
+    position: absolute;
+  }
+
+  header .customDropdown .withoutMargin > a {
+    text-transform: none;
+  }
+
+  header .menu .customDropdown .secondLevel .secondLevelElement,
+  header .menu .customDropdown .thirdLevel .thirdLevelElement {
+    display: inline-block;
+    /* padding: 12px 10px 0!important; */
+    font-size: 18px;
+    color: #a8a299 !important;
+    text-decoration: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  header .menu .customDropdown {
+    position: static;
+    font-size: 18px;
+    font-size: 1.071rem;
+    color: #a8a299 !important;
+  }
+
+  header .menu .customDropdown.open > div {
+    padding-top: 0;
+    background: url(../../images/capaSombraFondoCompletoMenuResponsive.png) #f5f4f2 repeat-y;
+    border-left: 3px solid #fffeff;
+    width: 100%;
+  }
+
+  header .menu .customDropdown ul.thirdLevel {
+    top: 20px;
+    margin-left: 0;
+  }
+
+  header .menu > .inner > div.activoMenu {
+    left: 70px;
+    width: auto;
+    top: -1px;
+  }
+
+  header .menu .arrowReturnSecondLevel {
+    padding: 0px 13px 13px 0;
+  }
+
+  header .menu .nav-pills .customDropdown a:hover {
+    text-decoration: none;
+  }
+
+  ul.thirdLevel li.nextLevelElement,
+  header .menu .customDropdown.open > div.thirdLevel li.nextLevelElement {
+    width: 267px;
+    padding-top: 14px !important;
+    padding-bottom: 14px;
+    min-height: 50px;
+  }
+
+  .buscador {
+    display: none;
+  }
+
+  header .menu > .inner > div.activoMenu {
+    left: 70px;
+    width: auto;
+  }
+
+  header .menu > .inner > div {
+    position: absolute;
+    top: -47px;
+    left: -8000px;
+    padding-left: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+    z-index: 10000;
+  }
+
+  header .menu > .inner > div > ul {
+    background: url(../images/capaSombraFondoCompletoMenuResponsive.png) #f5f4f2 repeat-y;
+    border-left: 3px solid #fffeff;
+    padding-left: 20px;
+  }
+
+  header .menu .customDropdown {
+    clear: both;
+    float: none;
+    border-bottom: 1px #cbc4bc solid;
+  }
+
+  .classWOChannel {
+    display: block;
+  }
+
+  .menuppal_mainNav {
+    display: block !important;
+  }
+
+  .menu.container {
+    height: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  header .menu .customDropdown {
+    clear: both;
+    float: none;
+    border-bottom: 1px #cbc4bc solid !important;
+    padding-right: 15px !important;
+    text-align: left;
+    border-left: none !important;
+    padding-bottom: 8px !important;
+    padding-top: 8px !important;
+  }
+
+  header .menu .customDropdown {
+    position: static;
+    color: #a8a299 !important;
+  }
+
+  .customDropdown + .customDropdown .withoutMargin > a {
+    display: inline-block;
+    border-left: none;
+    text-align: center;
+  }
+
+  header .menu .nav-pills .customDropdown .withoutMargin > a,
+  header .menu .classChannel > .customDropdown:first-child .withoutMargin > a {
+    display: inline-block;
+    padding: 13px 10px 14px !important;
+    text-transform: none;
+    color: #a8a299 !important;
+  }
+
+  header .menu .nav-pills .customDropdown .withoutMargin > a {
+    font-size: 18px;
+  }
+
+  header .menu .customDropdown .secondLevel .secondLevelElement {
+    display: inline-block;
+    font-size: 18px;
+    color: #a8a299 !important;
+  }
+
+  header .menu .nav-pills .customDropdown a:hover {
+    background: 0 0;
+    color: #e67600;
+    text-decoration: none;
+  }
+
+  header .menu .elementoMenuActivo {
+    color: #e67600;
+  }
+
+  header .menu .arrowFirstLevel {
+    padding-top: 12px;
+  }
+
+  header .menu .nav-pills > .customDropdown {
+    min-height: 50px;
+    width: 272px;
+  }
+
+  .classWOChannel [data-icon]:before,
+  .classChannel [data-icon]:before {
+    font-family: repsol-font-4;
+    content: attr(data-icon);
+    font-size: 18px !important;
+    padding: 9px 10px 0 !important;
+  }
+
+  .classWOChannel .secondLevel [data-icon]:before,
+  .classChannel .secondLevel [data-icon]:before {
+    font-family: repsol-font-4;
+    content: attr(data-icon);
+    font-size: 18px !important;
+  }
+
+  .customDropdown + .customDropdown {
+    background: none;
+    background-size: 2px 3px;
+    background-repeat: repeat-y;
+  }
+
+  header .menu .classChannel > .customDropdown:first-child .withoutMargin > a {
+    background: none;
+    padding: 0;
+  }
+
+  li.customDropdown_searchItem,
+  li.customDropdown_buscador {
+    display: none;
+    min-height: 0 !important;
+    padding: 0;
+  }
+
+  header .menu .arrowFirstLevel {
+    padding-top: 0;
+  }
+
+  header .menu > .inner > div {
+    background: none;
+  }
+
+  header .menu .classChannel > .customDropdown:first-child .withoutMargin > a {
+    background: none;
+    padding: 8px 13px !important;
+  }
+
+  header .menu .nav-pills .customDropdown a.elementoMenuActivo {
+    color: #e67600 !important;
+  }
+
+  .arrowReturnFirstLevel {
+    padding: 0px 13px 13px 0 !important;
+  }
+
+  .arrowReturnFirstLevel [data-icon]:before {
+    padding: 0 !important;
+  }
+
+  header .secondLevel.clearfix {
+    top: 0 !important;
+  }
+
+  header .menu .customDropdown .secondLevel li.nextLevelElement,
+  header .menu .customDropdown ul.thirdLevel li.nextLevelElement {
+    padding: 8px 13px 8px 13px !important;
+    width: 250px;
+    border-bottom: 1px #cbc4bc solid;
+  }
+
+  ul.thirdLevel {
+    height: auto !important;
+  }
+}
+
+@media screen and (max-width: 1170px) and (max-width: 1170px) {
+  header .menu .customDropdown {
+    padding-bottom: 8px !important;
+    padding-top: 8px !important;
+  }
+}
+
+@media screen and (max-width: 1170px) and (max-width: 1770px) {
+  header .menu .classChannel > .customDropdown:first-child .withoutMargin > a {
+    padding: 0 !important;
+  }
+}

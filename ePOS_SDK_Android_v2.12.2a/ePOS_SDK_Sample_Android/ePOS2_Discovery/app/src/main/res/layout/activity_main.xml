@@ -1,0 +1,144 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:background="#FFFFFF">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_start"
+        android:id="@+id/btnStart"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_stop"
+        android:id="@+id/btnStop"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView4"
+        android:layout_marginLeft="26dp"
+        android:enabled="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/title_porttype"
+        android:id="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_vertical"
+        android:layout_alignBottom="@+id/spnPortType"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_below="@+id/btnStop"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnPortType"
+        android:layout_below="@+id/btnStop"
+        android:layout_alignLeft="@+id/btnStop" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtSubnetMask"
+        android:text="@string/txt_broadcast"
+        android:layout_below="@+id/spnPortType"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:inputType="text"
+        android:layout_alignLeft="@+id/spnDeviceModel"
+        android:layout_marginLeft="3dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/title_broadcast"
+        android:id="@+id/textView3"
+        android:layout_alignTop="@+id/edtSubnetMask"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_vertical"
+        android:layout_alignBottom="@+id/edtSubnetMask"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnDeviceModel"
+        android:layout_below="@+id/edtSubnetMask"
+        android:layout_alignLeft="@+id/btnStop" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/title_devicemodel"
+        android:id="@+id/textView4"
+        android:layout_below="@+id/edtSubnetMask"
+        android:gravity="center_vertical"
+        android:layout_above="@+id/textView5"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnEpsonFilter"
+        android:layout_below="@+id/spnDeviceModel"
+        android:layout_alignLeft="@+id/spnDeviceModel" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/title_epsonfilter"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/spnDeviceModel"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_vertical"
+        android:layout_alignBottom="@+id/spnEpsonFilter"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnDeviceType"
+        android:layout_below="@+id/spnEpsonFilter"
+        android:layout_alignLeft="@+id/spnEpsonFilter" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/title_devicetype"
+        android:id="@+id/textView6"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/textView5"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBottom="@+id/spnDeviceType"
+        android:textColor="#000000"
+        android:textSize="15dp"
+        android:layout_toLeftOf="@+id/spnEpsonFilter" />
+
+    <ListView
+        android:id="@+id/lstReceiveData"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView6">
+    </ListView>
+
+</RelativeLayout>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_rfid_credito"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="cg.ce.app.chris.com.cgce.RfidCredito"
+    android:background="@drawable/fondogris">
+    <TextView
+        android:paddingTop="20dp"
+        android:id="@+id/tvrfid"
+        android:text="@string/rfid"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <View
+        android:id="@+id/vtitle"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="#000"
+        android:layout_below="@id/tvrfid"/>
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/ll1"
+        android:layout_below="@id/tvrfid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/ll11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tvcreditolabel"
+                android:text="@string/credito"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_width="100dp"
+                android:layout_height="30dp" />
+            <TextView
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tvcreditomsj"
+                android:text="ODOO"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="11dp"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tvfleetlabel"
+                android:text="@string/flotillero"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_width="100dp"
+                android:layout_height="30dp" />
+            <TextView
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tvfleetmsj"
+                android:text="FLEET"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="11dp"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tvproductolabel"
+                android:text="@string/producto"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_width="100dp"
+                android:layout_height="30dp" />
+            <TextView
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tvproductomsj"
+                android:text="FLEET"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="11dp"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/imagen"
+            android:visibility="gone"
+            android:src="@drawable/ok"
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
+    </LinearLayout>
+    <EditText
+        android:id="@+id/et_odm"
+        android:layout_below="@+id/ll1"
+        android:visibility="gone"
+        android:inputType="number"
+        android:hint="@string/odometro"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_width="100dp"
+        android:layout_height="40dp" />
+
+    <ImageButton
+        android:id="@+id/btn_creditoticket"
+        android:text="@string/btn_imprimir_ticket"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/ticket"
+        android:background="#00000000"
+        android:clickable="true"
+        android:onClick="onClick"/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/tvcg"
+        android:textStyle="bold" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_ticket_ladob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/contado"
+        android:layout_margin="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="@color/colorPrimaryDark" />
+
+
+</RelativeLayout>

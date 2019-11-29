@@ -1,0 +1,4 @@
+#Tue Nov 26 15:40:55 CST 2019
+base.0=/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Discovery/app/build/intermediates/dex/debug/mergeDexDebug/out/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

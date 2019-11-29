@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_login_sistemas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="cg.ce.app.chris.com.cgce.LoginSistemasActivity"
+    android:background="@drawable/fondorepsolgris">
+
+
+    <ImageView
+        android:layout_width="115dp"
+        android:layout_height="116dp"
+        android:id="@+id/imageView3"
+        android:src="@drawable/login"
+        android:layout_weight="0.09" />
+
+    <EditText
+        android:id="@+id/et_user_sistemas"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:hint="@string/et_userbd"
+        android:textAlignment="center"
+        android:singleLine="true"
+        android:layout_gravity="right"
+        android:layout_alignTop="@+id/imageView3"
+        android:layout_alignRight="@+id/btn_login"
+        android:layout_alignEnd="@+id/btn_login"
+        android:layout_alignLeft="@+id/et_pass_sistemas"
+        android:layout_alignStart="@+id/et_pass_sistemas" />
+
+    <EditText
+        android:id="@+id/et_pass_sistemas"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionUnspecified"
+        android:inputType="textPassword"
+        android:hint="@string/et_passbd"
+        android:textAlignment="center"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:layout_gravity="right"
+        android:layout_below="@+id/et_user_sistemas"
+        android:layout_alignRight="@+id/btn_login"
+        android:layout_alignEnd="@+id/btn_login" />
+
+    <ImageButton
+        android:id="@+id/btn_login"
+        android:text="@string/btn_login"
+        android:src="@drawable/botoningresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:layout_below="@+id/imageView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="54dp" />
+
+</RelativeLayout>

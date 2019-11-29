@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/drawable-nodpi/wmark.png",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/drawable-nodpi/wmark.png"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/drawable-nodpi/store.png",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/drawable-nodpi/store.png"
+    },
+    {
+        "merged": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Printer/app/build/intermediates/res/merged/debug/drawable-nodpi/coffee.png",
+        "source": "/home/chris/Documentos/AndroidStudioProjects/cgce/ePOS_SDK_Android_v2.12.2a/ePOS_SDK_Sample_Android/ePOS2_Printer/app/src/main/res/drawable-nodpi/coffee.png"
+    }
+]

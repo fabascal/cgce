@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView1"
+    style="@style/spinnerItemStyle"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:gravity="center_vertical|center_horizontal|center"
+    android:padding="13dp"
+    android:textAlignment="center"
+    android:textColor="@color/RespsolAzul"
+    android:textSize="60sp" />

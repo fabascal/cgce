@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/padding_between"
+        android:layout_marginTop="@dimen/padding_between"
+        android:background="#C8C9CB" />
+
+    <EditText
+
+        android:id="@+id/contrasena_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/padding_between"
+        android:layout_marginTop="@dimen/normal_padding"
+        android:background="@drawable/edit_text_border"
+        android:ems="10"
+        android:hint="NIP Facturacion WEB"
+        android:inputType="numberPassword"
+        android:padding="@dimen/edit_text_padding"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+
+</RelativeLayout>
