@@ -1,6 +1,8 @@
 package cg.ce.app.chris.com.cgce;
 
 
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -11,9 +13,12 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +27,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.SQLException;
+
+import cg.ce.app.chris.com.cgce.Fragments.JarreoFullScreenFragment;
 import cg.ce.app.chris.com.cgce.dialogos.Fragment1;
 
 
@@ -37,6 +45,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     public static final String MSJ="msj";
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +206,49 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     public void quit() {
         int p = android.os.Process.myPid();
         android.os.Process.killProcess(p);
+    }
+
+    public void CallJarreo(MenuItem menuItem){
+        /*esta accion muestra un dialogo para corroborar datos*/
+        final EditText nipManager = new EditText(this);
+        nipManager.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        new AlertDialog.Builder(VentaActivity.this)
+                .setTitle(R.string.jarreo)
+                .setMessage(R.string.jarreo_msj)
+                .setView(nipManager)
+                .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cgticket ticket = new cgticket();
+                        String bdnipmanager = null;
+                        /*obtenemos y comparamos el nip del gerente almacenado previamente en la base de datos cecg_app*/
+                        try {
+                            bdnipmanager = ticket.getNipManager(getApplicationContext());
+                            Log.w("nip",bdnipmanager);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        if(bdnipmanager != null) {
+                            if (nipManager.getText().toString().equals(bdnipmanager)){
+                                JarreoFullScreenFragment dialogFragment = new JarreoFullScreenFragment();
+                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                dialogFragment.show(transaction, String.valueOf(R.string.jarreo));
+                            }else {
+                                nipManager.setFocusable(true);
+                                Toast.makeText(getApplicationContext(),R.string.nipWrong,Toast.LENGTH_LONG).show();
+                            }
+
+                        }else{
+                            Toast.makeText(getApplicationContext(),R.string.nonipmanager,Toast.LENGTH_LONG).show();
+                        }
+
+
+
+
+                    }
+                })
+                .setNegativeButton(R.string.cancelar,null).show();
+
     }
 
 

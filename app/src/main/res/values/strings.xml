@@ -137,4 +137,13 @@
     <string name="qty">Piezas</string>
     <string name="piezasdefault">0</string>
     <string name="qtydefault">0</string>
+    <string name="jarreo">Jarreo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="jarreo_msj">Favor de introducir el nip del gerente de estacion.</string>
+    <string name="btn_ok">Aceptar</string>
+    <string name="nipWrong">El nip introducido es erroneo, favor de validarlo.</string>
+    <string name="nonipmanager">La estacion aun no cuenta con la configuracion para realizar jarreos, falta nip de gerente.</string>
+    <string name="qtyvales">Vales</string>
 </resources>

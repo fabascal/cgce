@@ -28,6 +28,7 @@ public class ContadoActivity extends AppCompatActivity {
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -183,10 +183,6 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         if (scanningResult != null && resultCode==RESULT_OK) {
             String scanContent = scanningResult.getContents();
             String scanFormat = scanningResult.getFormatName();
-            String a ="FORMAT: " + scanFormat;
-            String b="CONTENT: " + scanContent;
-            Log.w("Scan",scanContent);
-            Log.w("Scan",scanFormat);
             try {
                 res= cg.busca_producto(this,scanContent);
                 aceiteLists = new ArrayList<>();

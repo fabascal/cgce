@@ -24,4 +24,5 @@
     <dimen name="ImageView_width">100dp</dimen>
     <dimen name="TextView_venta">35sp</dimen>
     <dimen name="TextFragment_Ticket">20sp</dimen>
+    <dimen name="common_default_padding">16dp</dimen>
 </resources>

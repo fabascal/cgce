@@ -89,6 +89,7 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
     }
 
     //Ticket Repsol
+    //prueba
 
     public boolean createReceiptData() {
         String method = "";

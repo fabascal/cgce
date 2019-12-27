@@ -1,6 +1,7 @@
 package cg.ce.app.chris.com.cgce;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -189,6 +190,23 @@ public class cgticket {
         }
 
     }
+    public String getNipManager(Context context) throws SQLException {
+        String nip = null;
+        DataBaseManager manager = new DataBaseManager(context);
+        cursor = manager.cargarcursorodbc2();
+        DataBaseCG dbcg = new DataBaseCG();
+        Connection conn = dbcg.odbc_cecg_app(context);
+        Statement stmt = conn.createStatement();
+        String query = "select pass as pass from despachadores where gerente = 1 ";
+        r = stmt.executeQuery(query);
+        while (r.next()){
+            nip = r.getString("pass");
+        }
+        conn.close();
+        stmt.close();
+        return nip;
+    }
+
     public JSONObject corte_cinepolis(Context context){
         JSONObject resultado = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
@@ -471,6 +489,30 @@ public class cgticket {
             conn.close();
             Log.w("combu","true");
             guardarnrotrn2(con,ticket,venta);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.w("combu","false");
+            return false;
+        }
+    }
+    public boolean setTipTrn (Context con,String tiptrn, String nrotrn) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+        DataBaseManager manager = new DataBaseManager(con);
+        cursor = manager.cargarcursorodbc2();
+
+        String base = null;
+        try {
+            base = cursor.getString("db_cg");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        DataBaseCG dbcg = new DataBaseCG();
+        Connection conn = dbcg.odbc_cg(con);
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set tiptrn="+tiptrn+" where nrotrn = "+nrotrn+"");
+            stmt.close();
+            conn.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
