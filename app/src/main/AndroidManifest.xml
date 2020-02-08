@@ -10,18 +10,15 @@
         android:required="false" />
     <uses-feature
         android:name="android.bluetooth"
-        android:required="true" />
-    <!-- RED -->
+        android:required="true" /> <!-- RED -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- DATOS -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- DATOS -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- BLUETOOTH -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- BLUETOOTH -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -57,8 +54,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ActivityTicket"
-            android:theme="@style/ContentMain"></activity>
+        <activity android:name=".Credito2Activity"
+            android:theme="@style/ContentMain">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" /></activity>
+        <activity
+            android:name=".ActivityTicket"
+            android:theme="@style/ContentMain" />
         <activity android:name=".BarcodeScanner" />
 
         <meta-data

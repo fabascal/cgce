@@ -132,7 +132,7 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                             servicio = ticket.consulta_servicio(RfidCredito.this, bomba);
                             ticket_otra_bomba = ticket.consulta_servicio(getApplicationContext(), String.valueOf(bomba_libre));
                             ticket_otra_bomba.put("impreso", impreso = cant_impreso(getApplicationContext(), servicio.getString("nrotrn")));
-                            ticket.guardarnrotrn(getApplicationContext(), ticket_otra_bomba.getString("nrotrn"), 1);
+                            ticket.guardarnrotrn(getApplicationContext(), ticket_otra_bomba, 1);
                             new ClassImpresionTicket(RfidCredito.this,getApplicationContext(),fab,ticket_otra_bomba).execute();
                             //new ClassImpresionTicket(RfidCredito.this,getApplicationContext(),btn_creditoticket,ticket_otra_bomba).disconnectPrinter();
                             //updateButtonState(false);
@@ -301,7 +301,7 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                         Log.w("cant_imp", String.valueOf(impreso));
                         if (impreso.equals(0)) {
                             try {
-                                cgticket_obj.guardarnrotrn(getApplicationContext(), servicio.getString("nrotrn"),2);
+                                cgticket_obj.guardarnrotrn(getApplicationContext(), servicio,2);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

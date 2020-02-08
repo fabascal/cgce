@@ -74,7 +74,7 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    //"where desp.nrotrn='58342810' order by desp.nrotrn desc");
+                    //"where desp.nrotrn='39535300' order by desp.nrotrn desc");
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {
@@ -468,7 +468,42 @@ public class cgticket {
         }
 
     }
-    public boolean guardarnrotrn (Context con,String ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public boolean guardarnrotrn (Context con,JSONObject ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
+        DataBaseManager manager = new DataBaseManager(con);
+        cursor = manager.cargarcursorodbc2();
+
+        String base = null;
+        try {
+            base = cursor.getString("db_cg");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ResultSet r = null;
+        JSONObject st=new JSONObject();
+        ValidarDispositivo vd = new ValidarDispositivo();
+        MacActivity mac_add = new MacActivity();
+        String mac = mac_add.getMacAddress();
+        Log.w("Mac", "Mac: " + mac);
+        DataBaseCG dbcg = new DataBaseCG();
+        Connection conn = dbcg.odbc_cg(con);
+        Statement stmt = conn.createStatement();
+        try {
+            String ticket2=String.valueOf(ticket.getString("nrotrn"))+"0";
+            Log.w("combu",String.valueOf(ticket)+"//"+String.valueOf(ticket2));
+            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut="+ticket.getString("rut")+", tiptrn= "+ticket.getString("tiptrn")+" where nrotrn = "+ticket.getString("nrotrn")+"");
+            stmt.close();
+            conn.close();
+            Log.w("combu","true");
+            guardarnrotrn2(con,ticket.getString("nrotrn"),venta);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.w("combu","false");
+            stmt.close();
+            conn.close();
+            return false;
+        }
+    }public boolean guardarnrotrn_old (Context con,String ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 

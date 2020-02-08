@@ -27,8 +27,8 @@ android {
         applicationId "cg.ce.app.chris.com.cgce"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 3315
-        versionName "3.3.1.5"
+        versionCode 3317
+        versionName "3.3.1.7"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi", "x86"

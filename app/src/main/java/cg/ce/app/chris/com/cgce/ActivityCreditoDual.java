@@ -1562,7 +1562,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             try {
                                 //realizamos el update para asignar el ticket al cliente de credito
                                 ticket.update_codcli(ActivityCreditoDual.this, nrotrn, codcli.getString("cliente"), codcli.getString("vehiculo"), odm,codcli.getString("tar"));
-                                cgticket_obj.guardarnrotrn(getApplicationContext(), servicio.getString("nrotrn"), 2);
+                                cgticket_obj.guardarnrotrn(getApplicationContext(), servicio, 2);
                             } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
                                 e.printStackTrace();
                             }

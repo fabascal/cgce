@@ -33,8 +33,13 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class ActivityPrePagoVale extends AppCompatActivity  {
+import cg.ce.app.chris.com.cgce.listeners.ValesListener;
+import cg.ce.app.chris.com.cgce.webservice.AceiteInsertaWS;
+import cg.ce.app.chris.com.cgce.webservice.ValesWS;
+
+public class ActivityPrePagoVale extends AppCompatActivity implements ValesListener {
     ImageButton imgbtnscan,btn_imprimir;
     cgticket cg = new cgticket();
     ValidateTablet tablet = new ValidateTablet();
@@ -158,6 +163,15 @@ public class ActivityPrePagoVale extends AppCompatActivity  {
             toast.show();
         }
     }
+
+    //Funcion que execute web service de envio de data
+    public void SendDataWebService(JSONObject js) throws JSONException, ExecutionException, InterruptedException {
+        Log.w("Json",js.toString());
+        ValesWS valesWS = new ValesWS(js,this);
+        valesWS.delegate=this;
+        valesWS.execute();
+    }
+
     public void total() throws JSONException {
         Double grantotal =0.0;
         int cantidad = 0;
@@ -174,5 +188,10 @@ public class ActivityPrePagoVale extends AppCompatActivity  {
         total.setText(String.valueOf(decimalFormat.format(grantotal)));
         qty.setText( String.valueOf(cantidad));
 
+    }
+
+    @Override
+    public void processFinish(String output) {
+        Log.w("Respuesta Vales",output);
     }
 }

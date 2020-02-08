@@ -241,24 +241,48 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
                     Printer.HALFTONE_DITHER,
                     Printer.PARAM_DEFAULT,
                     Printer.COMPRESS_AUTO);
-            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
-
-            //method = "addFeedLine";
-            //mPrinter.addFeedLine(1);
-            Log.w("hora",ticket.getString("hora"));
-            textData.append("" + titulo + "\n");
-            textData.append(venta+"\n");
-            textData.append("FECHA: " + ticket.getString("fecha") + "  HORA: "+ticket.getString("hora")+"\n");
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append("\n");
+            //textData.append("REPSOL"+"\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+            textData.append("\n");
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append(ticket.getString("cveest")+"\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+            textData.append(datos_domicilio.getString("estacion")+"\n");
+            textData.append(datos_domicilio.getString("calle")+" "+datos_domicilio.getString("exterior")+" "+datos_domicilio.getString("interior")+"\n");
+            textData.append("COL."+datos_domicilio.getString("colonia")+" C.P. "+datos_domicilio.getString("cp")+"\n");
+            textData.append(datos_domicilio.getString("localidad")+", "+datos_domicilio.getString("municipio")+"\n");
+            textData.append(datos_domicilio.getString("rfc")+"\n");
+            //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
+            textData.append("\n");
+            textData.append("Regimen Fiscal"+"\n");
             textData.append(datos_domicilio.getString("regimen")+"\n");
             textData.append("\n");
-            textData.append("LUGAR DE EXPEDICION:\n");
-            textData.append("ESTACION: "+datos_domicilio.getString("estacion")+" "+ticket.getString("cveest")+"\n");
-            textData.append(datos_domicilio.getString("calle")+" "+datos_domicilio.getString("exterior")+" "+datos_domicilio.getString("interior")+", "+datos_domicilio.getString("colonia")+", "+datos_domicilio.getString("cp")+"\n");
-            textData.append(datos_domicilio.getString("localidad")+", "+datos_domicilio.getString("municipio")+", "+datos_domicilio.getString("estado")+", "+datos_domicilio.getString("pais")+"\n");
-            textData.append("RFC "+datos_domicilio.getString("rfc")+" TEL."+datos_domicilio.getString("telefono")+"\n");
+            textData.append("Lugar de Expedicion"+"\n");
+            textData.append(datos_domicilio.getString("municipio")+" "+datos_domicilio.getString("estado")+"\n");
+            textData.append("\n");
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append("***** "+titulo+" *****"+"\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+            textData.append("\n");
             //textData.append("------------------------------\n");
             textData.append(cliente+"\n");
             //textData.append("\n");
+            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             if(ticket.has("codcli")) {
                 if (vehiculo.has("rsp")) {
                     textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
@@ -279,6 +303,7 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
             textData.delete(0, textData.length());
 
             textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + String.valueOf(ticket.getInt("bomba")) + "\n");
+            textData.append("FECHA: " + ticket.getString("fecha") + "  HORA: "+ticket.getString("hora")+"\n");
             textData.append("VENDEDOR  : " + String.valueOf(ticket.getString("despachador")).toUpperCase() + "\n");
             textData.append("PRECIO    : $ " + String.valueOf(formateador2.format(ticket.getDouble("precio"))) + "\n");
             textData.append("VOLUMEN   : " + String.valueOf(formateador4.format(ticket.getDouble("cantidad"))) + " LITROS " + String.valueOf(ticket.getString("producto")).toUpperCase() + "\n");
@@ -349,9 +374,9 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
 
                     mPrinter.addTextAlign(Printer.ALIGN_LEFT);
                     textData.append("             ESTACION   :   " + datos_domicilio.getString("estacion")+"\n");
-                    textData.append("                FOLIO   :   " + ticket.getString("nrotrn")+"\n");
+                    textData.append("                FOLIO   :   " + folio_impreso +"\n");
                     textData.append("                FECHA   :   " + ticket.getString("fecha") +"\n");
-                    textData.append("                MONTO   :   " + String.valueOf(Double.valueOf(formateador2.format(ticket.getDouble("total")))) +"\n");
+                    textData.append("                MONTO   :   " + String.valueOf(formateador2.format(ticket.getDouble("total"))) +"\n");
                     textData.append("             PRODUCTO   :   " + ticket.getString("producto") +"\n");
                     mPrinter.addText(textData.toString());
                     textData.delete(0, textData.length());
@@ -370,7 +395,7 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
                     //QR
 
                     Bitmap qrcfdi=null;
-                    String qr_cadena="URL: https://ganaconcombu.com?es="+ ticket.getString("cveest")+"&fo="+ String.valueOf(folio_impreso)+"&fe="+ ticket.getString("fecha")+"&mo="+ String.valueOf(Double.valueOf(formateador2.format(ticket.getDouble("total"))))+"&pr="+ ticket.getString("codprd");
+                    String qr_cadena="URL: https://ganaconcombu.com?es="+ ticket.getString("cveest")+"&fo="+ String.valueOf(folio_impreso)+"&fe="+ ticket.getString("fecha")+"&mo="+ String.valueOf(formateador2.format(ticket.getDouble("total")))+"&pr="+ ticket.getString("codprd");
                     QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qr_cadena,
                             null,
                             Contents.Type.TEXT,

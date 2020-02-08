@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import cg.ce.app.chris.com.cgce.ClassImpresionTicket;
 import cg.ce.app.chris.com.cgce.LogCE;
+import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
 import cg.ce.app.chris.com.cgce.R;
 import cg.ce.app.chris.com.cgce.cgticket;
 
@@ -89,11 +90,12 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
                     Log.w("impreso",impreso.toString());
                     servicio.put("impreso",impreso);
                     servicio.put("tipo_venta",1);
+                    TicketPrint print = null;
                     if (impreso == 10){
                         /*
                         * guardamos el ticket en la base cecg_app para poder iniciar el proceso de impresion
                          */
-                        ticket.guardarnrotrn(getActivity().getApplicationContext(), servicio.getString("nrotrn"),servicio.getInt("tipo_venta"));
+                        ticket.guardarnrotrn(getActivity().getApplicationContext(), servicio,servicio.getInt("tipo_venta"));
                         /*
                         * iniciamos la comunicacion con impresora y la impresion del despacho
                          */

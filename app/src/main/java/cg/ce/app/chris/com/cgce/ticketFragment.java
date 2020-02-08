@@ -149,7 +149,7 @@ public class ticketFragment extends Fragment implements SorteoListener {
                     }
 
                     if (impreso==10) {
-                        cgticket_obj.guardarnrotrn(activity.getApplicationContext(), ticket.getString("nrotrn"),ticket.getInt("tipo_venta"));
+                        cgticket_obj.guardarnrotrn(activity.getApplicationContext(), ticket,ticket.getInt("tipo_venta"));
                         if (ticket.getInt("tipo_venta")==3){
                             cgticket_obj.put_tpv(activity.getApplicationContext(),ticket.getString("nrotrn"),ticket.getJSONObject("tpv").getInt("id"));
                         }

@@ -260,6 +260,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                 intent = new Intent(this,ContadoActivity.class);
                 break;
             case R.id.CardViewCredito:
+                /*intent = new Intent(this,ActivityCreditoDual.class);*/
                 intent = new Intent(this,ActivityCreditoDual.class);
                 break;
             case R.id.CardViewServicios:

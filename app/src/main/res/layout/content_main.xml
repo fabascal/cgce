@@ -119,7 +119,7 @@
 
 
         <android.support.v7.widget.CardView
-            android:visibility="visible"
+            android:visibility="gone"
             android:id="@+id/CardViewTPV"
             android:layout_gravity="center_horizontal"
             android:layout_width="260dp"

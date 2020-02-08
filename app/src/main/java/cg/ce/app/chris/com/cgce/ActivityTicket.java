@@ -10,7 +10,9 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +43,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     cgticket cg = new cgticket();
     DecimalFormat formateador2 = new DecimalFormat("###,###.##");
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
-    String event_ticket,evento_sorteo;
+    String event_ticket,evento_sorteo, tur, tiptrn;
+    Spinner spn_metodo;
 
 
 
@@ -63,6 +66,15 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         precio = findViewById(R.id.precio);
         monto = findViewById(R.id.monto);
         print = findViewById(R.id.print_ticket);
+        spn_metodo = findViewById(R.id.spn_metedo);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.mPagos_array, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+// Apply the adapter to the spinner
+        spn_metodo.setAdapter(adapter);
+
         print.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
         if(bundle.getString("bomba")!= null)
@@ -102,10 +114,28 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
 
                 print.setEnabled(false);
 
+                if (spn_metodo.getSelectedItem()=="Efectivo"){
+                    tur="1|Efectivo";
+                    tiptrn="49";
+                }else if(spn_metodo.getSelectedItem()=="T. Credito"){
+                    tur="2|T. Credito";
+                    tiptrn="51";
+                }else if(spn_metodo.getSelectedItem()=="T. Debito"){
+                    tur="3|T. Debito";
+                    tiptrn="51";
+                }else if(spn_metodo.getSelectedItem()=="Anticipos"){
+                    tur="4|Anticipos";
+                    tiptrn="50";
+                }else if(spn_metodo.getSelectedItem()=="Combu-Vale"){
+                    tur="5|Combu-Vale";
+                    tiptrn="50";
+                }
                 try {
+                    ticket.put("rut",tur);
+                    ticket.put("tiptrn",tiptrn);
                     int impreso = cg.cant_impreso(getApplicationContext(),ticket.getString("nrotrn"));
                     if (impreso == 10) {
-                        cg.guardarnrotrn(getApplicationContext(), ticket.getString("nrotrn"), 1);
+                        cg.guardarnrotrn(getApplicationContext(), ticket, 1);
                     }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
