@@ -73,8 +73,8 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Responsables] as resp on resp.cod=desp.codres \n" +
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
-                    "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    //"where desp.nrotrn='39535300' order by desp.nrotrn desc");
+                    //"where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
+                    "where desp.nrotrn='3618350' order by desp.nrotrn desc");
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {
@@ -471,7 +471,7 @@ public class cgticket {
     public boolean guardarnrotrn (Context con,JSONObject ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
-
+        String query;
         String base = null;
         try {
             base = cursor.getString("db_cg");
@@ -490,7 +490,13 @@ public class cgticket {
         try {
             String ticket2=String.valueOf(ticket.getString("nrotrn"))+"0";
             Log.w("combu",String.valueOf(ticket)+"//"+String.valueOf(ticket2));
-            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut="+ticket.getString("rut")+", tiptrn= "+ticket.getString("tiptrn")+" where nrotrn = "+ticket.getString("nrotrn")+"");
+            if (ticket.has("rut")){
+                Log.w("query tiptrn","update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut="+ ticket.getString("rut") +", tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+            }else{
+                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+" where nrotrn = "+ticket.getString("nrotrn")+"");
+            }
+
             stmt.close();
             conn.close();
             Log.w("combu","true");

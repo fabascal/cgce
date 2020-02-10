@@ -43,7 +43,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     cgticket cg = new cgticket();
     DecimalFormat formateador2 = new DecimalFormat("###,###.##");
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
-    String event_ticket,evento_sorteo, tur, tiptrn;
+    String event_ticket,evento_sorteo, tur;
+    int tiptrn;
     Spinner spn_metodo;
 
 
@@ -113,28 +114,31 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             case R.id.print_ticket:
 
                 print.setEnabled(false);
-
-                if (spn_metodo.getSelectedItem()=="Efectivo"){
+                Log.w("metodo spn", spn_metodo.getSelectedItem().toString());
+                Log.w("metodo spn length", String.valueOf(spn_metodo.getSelectedItem().toString().length()));
+                Log.w("metodo spn equals", String.valueOf(spn_metodo.getSelectedItem().toString().equals("T. Credito")));
+                if (spn_metodo.getSelectedItem().toString().equals("Efectivo")){
                     tur="1|Efectivo";
-                    tiptrn="49";
-                }else if(spn_metodo.getSelectedItem()=="T. Credito"){
+                    tiptrn=49;
+                }else if(spn_metodo.getSelectedItem().toString().equals("T. Credito")){
                     tur="2|T. Credito";
-                    tiptrn="51";
-                }else if(spn_metodo.getSelectedItem()=="T. Debito"){
+                    tiptrn=51;
+                }else if(spn_metodo.getSelectedItem().toString().equals("T. Debito")){
                     tur="3|T. Debito";
-                    tiptrn="51";
-                }else if(spn_metodo.getSelectedItem()=="Anticipos"){
+                    tiptrn=51;
+                }else if(spn_metodo.getSelectedItem().toString().equals("Anticipos")){
                     tur="4|Anticipos";
-                    tiptrn="50";
-                }else if(spn_metodo.getSelectedItem()=="Combu-Vale"){
+                    tiptrn=50;
+                }else if(spn_metodo.getSelectedItem().toString().equals("Combu-Vale")){
                     tur="5|Combu-Vale";
-                    tiptrn="50";
+                    tiptrn=50;
                 }
                 try {
                     ticket.put("rut",tur);
                     ticket.put("tiptrn",tiptrn);
                     int impreso = cg.cant_impreso(getApplicationContext(),ticket.getString("nrotrn"));
                     if (impreso == 10) {
+                        Log.w("ticket con tiptrn",ticket.toString());
                         cg.guardarnrotrn(getApplicationContext(), ticket, 1);
                     }
                 } catch (ClassNotFoundException e) {
