@@ -27,8 +27,8 @@ android {
         applicationId "cg.ce.app.chris.com.cgce"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 3317
-        versionName "3.3.1.7"
+        versionCode 3318
+        versionName "3.3.1.8"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi", "x86"
@@ -74,7 +74,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation files('libs/ePOS2.jar')
     implementation files('libs/jtds-1.2.7.jar')
     implementation files('libs/mysql-connector-java-5.1.24-bin.jar')
     implementation files('libs/mail.jar')
@@ -96,9 +95,9 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
     }
-    implementation files('libs/ePOS2.jar')
-    implementation files('libs/ePOSEasySelect.jar')
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
+    implementation files('libs\\ePOS2.jar')
+    implementation files('libs\\ePOSEasySelect.jar')
 }
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->

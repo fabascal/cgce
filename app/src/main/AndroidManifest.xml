@@ -163,7 +163,8 @@
         </activity>
         <activity
             android:name=".AceiteActivity"
-            android:theme="@style/ContentMain" />
+            android:theme="@style/ContentMain"
+            android:configChanges="screenLayout|orientation|screenSize"/>
         <activity
             android:name=".AceiteVenta"
             android:theme="@style/ContentMain" />

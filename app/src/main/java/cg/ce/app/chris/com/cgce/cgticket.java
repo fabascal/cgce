@@ -73,8 +73,8 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Responsables] as resp on resp.cod=desp.codres \n" +
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
-                    //"where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    "where desp.nrotrn='3618350' order by desp.nrotrn desc");
+                    "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
+                    //"where desp.nrotrn='201249040' order by desp.nrotrn desc");
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {
@@ -492,8 +492,9 @@ public class cgticket {
             Log.w("combu",String.valueOf(ticket)+"//"+String.valueOf(ticket2));
             if (ticket.has("rut")){
                 Log.w("query tiptrn","update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut="+ ticket.getString("rut") +", tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
-                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+",codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
             }else{
+                System.out.println("identificacion es credito");
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+" where nrotrn = "+ticket.getString("nrotrn")+"");
             }
 
@@ -641,6 +642,7 @@ public class cgticket {
             return false;
         }
     }
+
     public String nip_desp (Context con){
         String res="";
         DataBaseCG cg = new DataBaseCG();
@@ -660,6 +662,47 @@ public class cgticket {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return res;
+    }
+
+    public String get_rut (Context con, JSONObject jsonObject) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
+        String res="";
+        DataBaseCG cg = new DataBaseCG();
+        Connection conn = cg.odbc_cg(con);
+        String query = "select rut as rut from Despachos where nrotrn ='"+jsonObject.getString("nrotrn")+"'";
+        try {
+            Statement stmt = conn.createStatement();
+            r=stmt.executeQuery(query);
+            if (r.next()) {
+                res = r.getString("rut");
+            }
+            conn.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //Log.w("rut", res);
+        return res;
+    }
+    public String getCodDespCG (Context con) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
+        String res="";
+        DataBaseCG cg = new DataBaseCG();
+        Connection conn = cg.odbc_cg(con);
+        String query = "select cod as cod from Responsables where tag = '"+nip_desp(con)+"'";
+        try {
+            Statement stmt = conn.createStatement();
+            r=stmt.executeQuery(query);
+            if (r.next()) {
+                res = r.getString("cod");
+            }
+            conn.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Log.w("rut", res);
         return res;
     }
     ///funcion para obtener el rfc del cliente en la base de cg mediante identificcion de nip

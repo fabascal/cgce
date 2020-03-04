@@ -201,16 +201,20 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
         try {
             JSONObject datos_domicilio = tf.estacion_domicilio(context);
             JSONObject vehiculo= new JSONObject();
-            String titulo="",folio_impreso="",cliente="",venta="",tpv="";
+            String titulo="",folio_impreso="",cliente="",venta="",tpv="",metodoPago="";
 
             Log.w("ticket",ticket.getString("nrotrn"));
             impreso1=tf.cant_impreso(context,ticket.getString("nrotrn"));
             if (impreso_calculado == 0) {
                 titulo = "O R I G I N A L";
                 folio_impreso = ticket.getString("nrotrn")+"0";
+                if (ticket.has("rut")) {
+                    metodoPago = ticket.getString("rut");
+                }
             } else if(impreso_calculado==1){
                 titulo = "C O P I A";
                 folio_impreso = "C O P I A";
+                metodoPago=tf.get_rut(context,ticket);
             }
             Log.w("ticket",ticket.toString());
             if (ticket.getInt("codcli")!=0 ){
@@ -281,6 +285,7 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
             textData.append("\n");
             //textData.append("------------------------------\n");
             textData.append(cliente+"\n");
+            textData.append(metodoPago+"\n");
             //textData.append("\n");
             mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             if(ticket.has("codcli")) {

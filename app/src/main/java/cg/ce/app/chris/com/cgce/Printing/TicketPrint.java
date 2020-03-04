@@ -117,12 +117,15 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
             String titulo="",folio_impreso="",cliente="",venta="",tpv="";
 
             Log.w("ticket",ticket.getString("nrotrn"));
+            String metodoPago="";
             if (ticket.getInt("impreso") == 0 || ticket.getInt("impreso")==10) {
                 titulo = "O R I G I N A L";
+                metodoPago = ticket.getString("rut");
                 folio_impreso = ticket.getString("nrotrn")+"0";
             } else if(ticket.getInt("impreso")==1){
                 titulo = "C O P I A";
                 folio_impreso = "C O P I A";
+                metodoPago = tf.get_rut(context,ticket);
             }
             Log.w("ticket",ticket.toString());
             if (ticket.getInt("codcli")!=0 ){
@@ -193,6 +196,7 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
             textData.append("\n");
             mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             textData.append(cliente+"\n");
+            textData.append(metodoPago+"\n");
             //textData.append("\n");
             if(ticket.has("codcli")) {
                 if (vehiculo.has("rsp")) {

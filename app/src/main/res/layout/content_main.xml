@@ -9,7 +9,7 @@
     tools:context="cg.ce.app.chris.com.cgce.VentaActivity"
     tools:showIn="@layout/activity_venta"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/fondogris">
+    android:background="@drawable/fondorepsolgris">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -41,7 +41,8 @@
                 android:layout_height="80dp"
                 android:layout_marginLeft="5dp"
                 android:layout_gravity="start"
-                android:src="@drawable/contado"
+                android:src="@drawable/contadorepsol2"
+                android:padding="5dp"
                 android:contentDescription="TODO" />
 
             <TextView
@@ -80,7 +81,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/credito"/>
+                android:padding="5dp"
+                android:src="@drawable/creditorepsol2"/>
 
         </android.support.v7.widget.CardView>
 
@@ -113,7 +115,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/aceites"/>
+                android:padding="5dp"
+                android:src="@drawable/aceitesrepsol2"/>
         </android.support.v7.widget.CardView>
 
 
@@ -147,7 +150,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/tpvs"/>
+                android:padding="5dp"
+                android:src="@drawable/tpvsrepsol2"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -179,7 +183,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/servicios" />
+                android:padding="5dp"
+                android:src="@drawable/serviciosrepsol2" />
         </android.support.v7.widget.CardView>
 
     <LinearLayout

@@ -17,15 +17,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:textSize="23sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/metodoPago"/>
         <Spinner
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
             android:id="@+id/spn_metedo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/padding_between"
+            android:layout_marginTop="@dimen/padding_between"
+            android:background="#424242" />
 
         <LinearLayout
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

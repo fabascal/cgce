@@ -37,6 +37,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
     private static ArrayList<String>bombas;
     LinearLayout root;
     JSONObject servicio = null;
+    String tur;
+    int tiptrn;
+    Spinner spn_metodo;
 
     public static fab_contado newInstance(String title, ArrayList<String> data){
         fab_contado fragment = new fab_contado();
@@ -53,6 +56,14 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         root = (LinearLayout) inflater.inflate(R.layout.dialog_fab_contado, null);
+        spn_metodo = root.findViewById(R.id.spn_metedo);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(root.getContext(),
+                R.array.mPagos_array, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+// Apply the adapter to the spinner
+        spn_metodo.setAdapter(adapter);
         mSpinner=(Spinner)root.findViewById(R.id.spn_fab_contado);
         ArrayAdapter NoCoreAdapter = new ArrayAdapter(root.getContext(),
                 R.layout.spinner_bombas_dialog, bombas);
@@ -91,6 +102,25 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
                     servicio.put("impreso",impreso);
                     servicio.put("tipo_venta",1);
                     TicketPrint print = null;
+                    //se valida el metodo de pago
+                    if (spn_metodo.getSelectedItem().toString().equals("")){
+                        tur="1|Efectivo";
+                        tiptrn=49;
+                    }else if(spn_metodo.getSelectedItem().toString().equals("T. Credito")){
+                        tur="2|T. Credito";
+                        tiptrn=51;
+                    }else if(spn_metodo.getSelectedItem().toString().equals("T. Debito")){
+                        tur="3|T. Debito";
+                        tiptrn=51;
+                    }else if(spn_metodo.getSelectedItem().toString().equals("Anticipos")){
+                        tur="4|Anticipos";
+                        tiptrn=50;
+                    }else if(spn_metodo.getSelectedItem().toString().equals("Combu-Vale")){
+                        tur="5|Combu-Vale";
+                        tiptrn=50;
+                    }
+                    servicio.put("rut",tur);
+                    servicio.put("tiptrn",tiptrn);
                     if (impreso == 10){
                         /*
                         * guardamos el ticket en la base cecg_app para poder iniciar el proceso de impresion

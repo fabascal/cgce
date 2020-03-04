@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@drawable/combuito"
+        android:src="@drawable/isologo_repsol"
         android:layout_weight="1.06" />
 
     <TextView

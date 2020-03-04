@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +40,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import cg.ce.app.chris.com.cgce.socket.SGPMGateway;
 import cg.ce.app.chris.com.cgce.webservice.AceiteInsertaWS;
 
 
@@ -49,7 +52,6 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     ImageView img_aceite;
     private final int DURACION_SPLASH_5 = 5000; // 5 segundos
     cgticket ticket = new cgticket();
-    ValidateTablet tablet = new ValidateTablet();
     boolean IsTable=false;
     JSONObject jsAceiteTicket = new JSONObject();
     JSONObject jsAceitesList;
@@ -62,14 +64,31 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     TextView total,qty;
     DecimalFormatSymbols symbols = new DecimalFormatSymbols();
     DecimalFormat decimalFormat = new DecimalFormat("$ #,###.00",symbols);
-
-
+    final static String VENTASECOS="ventaSecos";
+    JSONObject ticketPrint = new JSONObject();
+    String bomba;
+    boolean IsTablet = false;
+    ValidateTablet tablet = new ValidateTablet();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aceite);
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            Log.w("Tableta","es Tableta");
+            IsTablet=true;
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            IsTablet=false;
+            Log.w("Tableta","no es Tableta");
+        }
+        Bundle bundle = getIntent().getExtras();
+        if(bundle.getString("bomba")!= null)
+        {
+            bomba=bundle.getString("bomba");
+        }
 
         scananim(this);
         recyclerView = (RecyclerView) findViewById(R.id.rvaceite);
@@ -108,7 +127,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         total = findViewById(R.id.total);
         qty = findViewById(R.id.qty);
         btn_imprimir.setOnClickListener(this);
-        Bundle bundle = getIntent().getExtras();
+
         if(bundle.getString("tipo_venta")!= null)
         {
             try {
@@ -147,6 +166,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
                 if (IsTable) {
                     scanIntegrator.addExtra("SCAN_CAMERA_ID", 1);
+                    scanIntegrator.setOrientationLocked(true);
                 }
                 scanIntegrator.initiateScan();
                 return false;
@@ -157,6 +177,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         jsAceitesList = new JSONObject();
         jsAceitesList.put("descripcion",js.getString("descripcion"));
         jsAceitesList.put("precio",js.getDouble("precio"));
+        jsAceitesList.put("codprd", js.getString("codprd"));
         items.put(jsAceitesList);
         jsAceiteTicket.put("items",items);
         Log.w("list", String.valueOf(jsAceitesList));
@@ -216,7 +237,36 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
 
 
             case R.id.btn_imprimir:
+                System.out.println(jsAceiteTicket);
+
+                JSONArray array = null;
                 try {
+                    array = jsAceiteTicket.getJSONArray("items");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject jo = array.getJSONObject(i);
+                        callSGPM(jo,VENTASECOS);
+                        ticketPrint = cg.consulta_servicio(this,bomba);
+                        System.out.println(ticketPrint);
+                        //new ClassImpresionAceite(AceiteActivity.this,getApplicationContext(),this.btn_imprimir,jo).execute();
+                        System.out.println(jo);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                /*try {
                     new ClassImpresionAceite(AceiteActivity.this,getApplicationContext(),this.btn_imprimir,jsAceiteTicket).execute();
                 } catch (JSONException e) {
                     Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
@@ -235,7 +285,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 Intent intent = new Intent(AceiteActivity.this,VentaActivity.class);
                 startActivity(intent);
-                break;
+                break;*/
 
         }
     }
@@ -248,6 +298,16 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    public String callSGPM(JSONObject js, String method) throws JSONException, ExecutionException, InterruptedException {
+        JSONObject cursor = null;
+        String message=method+"|10|1|"+js.getString("codprd")+"|1";
+        DataBaseManager manager = new DataBaseManager(getApplicationContext());
+        cursor = manager.cargarcursorodbc2();
+        cursor.put("port", 9770);
+        cursor.put("message",message);
+        SGPMGateway sgmp = new SGPMGateway(cursor);
+        return sgmp.execute(cursor).get();
+    }
 
 
 

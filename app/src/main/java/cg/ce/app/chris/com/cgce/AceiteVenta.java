@@ -2,14 +2,28 @@ package cg.ce.app.chris.com.cgce;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AceiteVenta extends AppCompatActivity implements View.OnClickListener{
     CardView cardViewContado,cardViewCredito;
     ValidateTablet tablet = new ValidateTablet();
+    Spinner spn_dispensarios;
+    ResultSet rs;
+    Cursor c;
+    Connection connect;
+    PreparedStatement stmt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +34,35 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
         } else {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+        spn_dispensarios = (Spinner) findViewById(R.id.spn_dispensario);
+
+        MacActivity mac = new MacActivity();
+        String query = "select p.numero_logico as logico from posicion as p \n" +
+                "left outer join dispensario as disp on disp.id=p.id_dispensario\n" +
+                "left outer join corte as c on c.id_dispensario=disp.id\n" +
+                "left outer join dispositivos as dispo on dispo.id=c.id_dispositivo\n" +
+                "where c.status =0 and dispo.mac_adr='"+mac.getMacAddress()+"'";
+        try {
+            DataBaseCG gc = new DataBaseCG();
+            connect = gc.control_gas(getApplicationContext());
+            stmt = connect.prepareStatement(query);
+            rs = stmt.executeQuery();
+
+            ArrayList<String> data = new ArrayList<String>();
+            while (rs.next()) {
+                String id = rs.getString("logico");
+                data.add(id);
+            }
+            String[] array = data.toArray(new String[0]);
+            ArrayAdapter NoCoreAdapter = new ArrayAdapter(this,
+                    R.layout.spinner_bombas, data);
+            connect.close();
+            spn_dispensarios.setAdapter(NoCoreAdapter);
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
         cardViewContado = (CardView) findViewById(R.id.CardViewContado);
         cardViewContado.setOnClickListener(this);
         cardViewCredito = (CardView) findViewById(R.id.CardViewCredito);
@@ -41,6 +84,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
                 break;
         }
         if (intent!=null){
+            intent.putExtra("bomba",spn_dispensarios.getSelectedItem().toString());
             intent.putExtra("tipo_venta",tipo_venta);
             startActivity(intent);
         }

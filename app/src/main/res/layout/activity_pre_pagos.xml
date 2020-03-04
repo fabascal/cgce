@@ -8,7 +8,7 @@
     tools:context="cg.ce.app.chris.com.cgce.ActivityPrePagos"
     android:background="@drawable/fondogris">
     <android.support.v7.widget.CardView
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/CardViewVale"
         android:layout_gravity="center_horizontal"
         android:layout_width="260dp"

@@ -146,4 +146,5 @@
     <string name="nipWrong">El nip introducido es erroneo, favor de validarlo.</string>
     <string name="nonipmanager">La estacion aun no cuenta con la configuracion para realizar jarreos, falta nip de gerente.</string>
     <string name="qtyvales">Vales</string>
+    <string name="metodoPago">Metodo de pago</string>
 </resources>
