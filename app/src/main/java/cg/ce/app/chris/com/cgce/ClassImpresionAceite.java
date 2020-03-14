@@ -162,7 +162,7 @@ public class ClassImpresionAceite extends AsyncTask<JSONObject,String,Boolean> i
     }
     public boolean createReceiptData() {
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.logo_impresion);
+        Bitmap logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.isologo_repsol);
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         final int barcodeWidth = 2;

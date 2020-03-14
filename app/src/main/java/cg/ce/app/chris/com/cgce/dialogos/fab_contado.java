@@ -103,7 +103,7 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
                     servicio.put("tipo_venta",1);
                     TicketPrint print = null;
                     //se valida el metodo de pago
-                    if (spn_metodo.getSelectedItem().toString().equals("")){
+                    if (spn_metodo.getSelectedItem().toString().equals("Efectivo")){
                         tur="1|Efectivo";
                         tiptrn=49;
                     }else if(spn_metodo.getSelectedItem().toString().equals("T. Credito")){

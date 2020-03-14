@@ -414,7 +414,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 // add parameter to our above url
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("searchQuery", "1")
-                        .appendQueryParameter("searchBandera","Combu");
+                        .appendQueryParameter("searchBandera","Repsol");
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = conn.getOutputStream();

@@ -114,7 +114,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             case R.id.print_ticket:
 
                 print.setEnabled(false);
-                if (spn_metodo.getSelectedItem().toString().equals("")){
+                if (spn_metodo.getSelectedItem().toString().equals("Efectivo")){
                     tur="1|Efectivo";
                     tiptrn=49;
                 }else if(spn_metodo.getSelectedItem().toString().equals("T. Credito")){

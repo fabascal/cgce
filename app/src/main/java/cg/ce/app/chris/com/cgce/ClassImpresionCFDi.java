@@ -110,7 +110,7 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
         Numero_a_Letra letra = new Numero_a_Letra();
         JSONObject datos_domicilio = new JSONObject();
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_impresion);
+        Bitmap logoData = BitmapFactory.decodeResource(context.getResources(), R.drawable.isologo_repsol);
         StringBuilder textData = new StringBuilder();
         final int barcodeWidth = 2;
         final int barcodeHeight = 100;

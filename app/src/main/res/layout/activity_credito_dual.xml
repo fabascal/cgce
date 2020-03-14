@@ -11,7 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="cg.ce.app.chris.com.cgce.ActivityCreditoDual"
-    android:background="@drawable/fondogris">
+    android:background="@drawable/fondorepsolgris">
     <TextView
         android:textSize="25dp"
         android:textStyle="bold"
@@ -262,7 +262,7 @@
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:id="@+id/imageView_1"
-                android:src="@drawable/dispensario"/>
+                android:src="@drawable/dispensariorespol"/>
             <Spinner
                 android:layout_marginLeft="30dp"
                 android:id="@+id/spn_dispensario_1"
@@ -296,7 +296,7 @@
                     android:layout_width="96dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="left"
-                    android:src="@drawable/rfid"/>
+                    android:src="@drawable/rfidrepsol"/>
 
                 <TextView
                     android:layout_marginTop="0dp"
@@ -331,7 +331,7 @@
                     android:layout_width="96dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="left"
-                    android:src="@drawable/nip"/>
+                    android:src="@drawable/niprepsol"/>
 
                 <TextView
                     android:layout_marginTop="0dp"
@@ -352,7 +352,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imbtn_ticket_1"
             android:layout_marginTop="15dp"
-            android:src="@drawable/ticket"
+            android:src="@drawable/ticketrepsol"
             android:background="#00000000"
             android:layout_centerHorizontal="true"
             android:clickable="true"
@@ -377,7 +377,7 @@
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:id="@+id/imageView_2"
-                android:src="@drawable/dispensario"/>
+                android:src="@drawable/dispensariorespol"/>
             <Spinner
                 android:visibility="gone"
                 android:layout_marginLeft="30dp"
@@ -415,7 +415,7 @@
                         android:layout_width="96dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="left"
-                        android:src="@drawable/rfid" />
+                        android:src="@drawable/rfidrepsol" />
 
                     <TextView
                         android:id="@+id/cv_textTag2"
@@ -451,7 +451,7 @@
                         android:layout_width="96dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="left"
-                        android:src="@drawable/nip" />
+                        android:src="@drawable/niprepsol" />
 
                     <TextView
                         android:id="@+id/cv_textNip2"
@@ -474,7 +474,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imbtn_ticket_2"
             android:layout_marginTop="15dp"
-            android:src="@drawable/ticket"
+            android:src="@drawable/ticketrepsol"
             android:background="#00000000"
             android:layout_centerHorizontal="true"
             android:clickable="true"
@@ -489,7 +489,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
-        android:src="@drawable/ticket"
+        android:src="@drawable/ticketrepsol"
         android:background="#00000000"
         android:clickable="true"
         android:onClick="onClick"/>
@@ -508,7 +508,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/contado"
+        android:src="@drawable/contadorepsol2"
         android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

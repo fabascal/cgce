@@ -25,10 +25,10 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "cg.ce.app.chris.com.cgce"
-        minSdkVersion 24
-        targetSdkVersion 28
-        versionCode 3318
-        versionName "3.3.1.8"
+        minSdkVersion 22
+        targetSdkVersion 22
+        versionCode 3319
+        versionName "3.3.1.9"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi", "x86"

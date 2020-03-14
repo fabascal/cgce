@@ -93,7 +93,7 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
 
     public boolean createReceiptData() {
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion);
+        Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.isologo_repsol);
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         final int barcodeWidth = 2;
