@@ -42,12 +42,12 @@ public class RecyclerAdapterTPVs extends RecyclerView.Adapter<RecyclerAdapterTPV
     @Override
     public void onBindViewHolder(RecyclerAdapterTPVs.ViewHolder holder, final int position) {
         holder.nombre.setText(tpVsList.get(position).nombre);
-        holder.image.setImageResource(tpVsList.get(position).imagen);
+        /*holder.image.setImageResource(tpVsList.get(position).imagen);
         if (tpVsList.get(position).se_factura==0){
             holder.image_sefactura.setImageResource( R.drawable.cancel );
         }else{
             holder.image_sefactura.setImageResource( R.drawable.cfdirepsol );
-        }
+        }*/
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,11 +57,11 @@ public class RecyclerAdapterTPVs extends RecyclerView.Adapter<RecyclerAdapterTPV
                 try {
                     tpv_data.put("id",tpVsList.get(position).id);
                     tpv_data.put("nombre",tpVsList.get(position).nombre);
-                    tpv_data.put("se_factura",tpVsList.get(position).se_factura);
+                    /*tpv_data.put("se_factura",tpVsList.get(position).se_factura);
                     tpv_data.put("activo",tpVsList.get(position).activo);
                     tpv_data.put("copia",tpVsList.get(position).copia);
                     tpv_data.put("bancaria",tpVsList.get(position).bancaria);
-                    tpv_data.put("imagen",tpVsList.get(position).imagen);
+                    tpv_data.put("imagen",tpVsList.get(position).imagen);*/
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

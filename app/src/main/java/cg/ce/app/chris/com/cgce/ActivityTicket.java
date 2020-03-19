@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -31,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
 
@@ -45,17 +47,18 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
     String event_ticket,evento_sorteo, tur;
     int tiptrn;
-    Spinner spn_metodo;
+    Spinner spn_metodo,spn_metodo_den;
+    List tpv ;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sensores.bluetooth();
-        sensores.wifi(this,true);
+        sensores.wifi(this, true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket);
-        if (tablet.esTablet(getApplicationContext())){
+        if (tablet.esTablet(getApplicationContext())) {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -68,6 +71,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         monto = findViewById(R.id.monto);
         print = findViewById(R.id.print_ticket);
         spn_metodo = findViewById(R.id.spn_metedo);
+        spn_metodo_den = findViewById(R.id.spn_metodo_den);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.mPagos_array, android.R.layout.simple_spinner_item);
@@ -78,33 +82,74 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
 
         print.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
-        if(bundle.getString("bomba")!= null)
-        {
+        if (bundle.getString("bomba") != null) {
             try {
-                ticket = cg.consulta_servicio(this,bundle.getString("bomba"));
-                ticket.put("nip",cg.nip_desp(getApplicationContext()));
-                nrotrn.setText(ticket.getString("nrotrn")+"0");
+                ticket = cg.consulta_servicio(this, bundle.getString("bomba"));
+                ticket.put("nip", cg.nip_desp(getApplicationContext()));
+                nrotrn.setText(ticket.getString("nrotrn") + "0");
                 prd.setText(ticket.getString("producto"));
                 cant.setText("LTS " + String.valueOf(formateador4.format(ticket.getDouble("cantidad"))));
-                precio.setText("$ " + String.format("%.2f",Double.valueOf(String.valueOf(formateador2.format(ticket.getDouble("precio"))))));
+                precio.setText("$ " + String.format("%.2f", Double.valueOf(String.valueOf(formateador2.format(ticket.getDouble("precio"))))));
                 monto.setText("$ " + String.valueOf(formateador2.format(ticket.getDouble("total"))));
 
             } catch (SQLException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             } catch (InstantiationException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             } catch (JSONException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
+        }
+
+        spn_metodo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                view_spn_metodo_den();
+                fill_spn_metodo_den();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                return;
+            }
+        });
+
+    }
+
+
+    public void fill_spn_metodo_den(){
+        if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
+                getSelectedItem().toString().equals("T. Credito")){
+            tpv = cg.getTPVs(this, "1");
+            ArrayAdapter MonederoAdapter = new ArrayAdapter(this,
+                    android.R.layout.simple_spinner_item, tpv);
+            MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+            spn_metodo_den.setAdapter(MonederoAdapter);
+        }else if(spn_metodo.getSelectedItem().toString().equals("Monederos")){
+            tpv = cg.getTPVs(this, "0");
+            ArrayAdapter MonederoAdapter = new ArrayAdapter(this,
+                    android.R.layout.simple_spinner_item, tpv);
+            MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+            spn_metodo_den.setAdapter(MonederoAdapter);
+        }
+
+    }
+    public void view_spn_metodo_den(){
+        if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
+                getSelectedItem().toString().equals("T. Debito") || spn_metodo.
+                getSelectedItem().toString().equals("Monederos") ){
+            spn_metodo_den.setVisibility(View.VISIBLE);
+        }else{
+            spn_metodo_den.setVisibility(View.GONE);
         }
     }
 
@@ -118,10 +163,10 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     tur="1|Efectivo";
                     tiptrn=49;
                 }else if(spn_metodo.getSelectedItem().toString().equals("T. Credito")){
-                    tur="2|T. Credito";
+                    tur="2|T. Credito" + spn_metodo_den.getSelectedItem().toString();
                     tiptrn=51;
                 }else if(spn_metodo.getSelectedItem().toString().equals("T. Debito")){
-                    tur="3|T. Debito";
+                    tur="3|T. Debito" + spn_metodo_den.getSelectedItem().toString();
                     tiptrn=51;
                 }else if(spn_metodo.getSelectedItem().toString().equals("Anticipos")){
                     tur="4|Anticipos";
@@ -129,6 +174,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 }else if(spn_metodo.getSelectedItem().toString().equals("Combu-Vale")){
                     tur="5|Combu-Vale";
                     tiptrn=50;
+                }else if(spn_metodo.getSelectedItem().toString().equals("Monederos")){
+                    tur="6|Monederos" + spn_metodo_den.getSelectedItem().toString();
+                    tiptrn=51;
                 }
                 try {
                     ticket.put("rut",tur);

@@ -7,19 +7,9 @@ package cg.ce.app.chris.com.cgce;
 public class TPVs {
     int id;
     String nombre;
-    int se_factura;
-    int activo;
-    int copia;
-    int bancaria;
-    int imagen;
-    TPVs(int id, String nombre, int se_factura, int activo,int copia, int bancaria,int imagen){
+
+    TPVs(int id, String nombre){
         this.id=id;
         this.nombre=nombre;
-        this.se_factura=se_factura;
-        this.activo=activo;
-        this.copia=copia;
-        this.bancaria=bancaria;
-        this.imagen=imagen;
-
     }
 }

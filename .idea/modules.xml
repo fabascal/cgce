@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/StudioProjects-cgce.iml" filepath="$PROJECT_DIR$/StudioProjects-cgce.iml" group="cgce" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/cgce.iml" filepath="$PROJECT_DIR$/cgce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/cgce-app.iml" filepath="$PROJECT_DIR$/app/cgce-app.iml" group="cgce/app" />
     </modules>
   </component>
 </project>

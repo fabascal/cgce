@@ -1318,25 +1318,23 @@ public class cgticket {
         return domicilio;
     }
     //funcion para obtener las tpv de la estacion
-    public List<TPVs> getTPVs(Context context){
+    public ArrayList<String> getTPVs(Context context, String tipo){
         List<TPVs> tpVsList;
+        ArrayList<String> data = new ArrayList<String>();
         tpVsList=new ArrayList<>();
         ResultSet rs;
         JSONObject tpvs = new JSONObject();
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(context);
-        String query = "select id,nombre,se_factura,activo,copia,bancaria,imagen from tpv where activo =1";
+        String query = "select id,nombre from tpv where bancaria = '"+tipo+"' and activo =1";
         try {
             Statement stmt = conn.createStatement();
             rs = stmt.executeQuery(query);
             while (rs.next()){
-                tpVsList.add(new TPVs(rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getInt("se_factura"),
-                        rs.getInt("activo"),
-                        rs.getInt("copia"),
-                        rs.getInt("bancaria"),
-                        context.getResources().getIdentifier(rs.getString("imagen"),"drawable", context.getPackageName())));
+                /*tpVsList.add(new TPVs(rs.getInt("id"),
+                        rs.getString("nombre")));*/
+                String id = rs.getString("nombre");
+                data.add(id);
             }
             conn.close();
             stmt.close();
@@ -1344,6 +1342,6 @@ public class cgticket {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return tpVsList;
+        return data;
     }
 }

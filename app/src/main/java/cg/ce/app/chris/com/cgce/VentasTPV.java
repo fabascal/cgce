@@ -31,7 +31,9 @@ public class VentasTPV extends AppCompatActivity {
     public void initializateData(){
         cgticket cg = new cgticket();
         //se obtienen los datos a partir de esta funcion
-        tpVsList=cg.getTPVs(this);
+/*
+        tpVsList=cg.getTPVs(this,"1");
+*/
 
         /*
         tpVsList.add(new TPVs(1,"Banamex",1,1,1,1,R.drawable.banamex));
