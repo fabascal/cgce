@@ -492,7 +492,12 @@ public class cgticket {
             Log.w("combu",String.valueOf(ticket)+"//"+String.valueOf(ticket2));
             if (ticket.has("rut")){
                 Log.w("query tiptrn","update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut="+ ticket.getString("rut") +", tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
-                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+",codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                if(ticket.getString("rut").substring(0,1).equals("6")){
+                    stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                }else{
+                    stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+",codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                }
+
             }else{
                 System.out.println("identificacion es credito");
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+" where nrotrn = "+ticket.getString("nrotrn")+"");

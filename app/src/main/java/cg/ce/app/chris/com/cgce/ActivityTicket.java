@@ -163,10 +163,10 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     tur="1|Efectivo";
                     tiptrn=49;
                 }else if(spn_metodo.getSelectedItem().toString().equals("T. Credito")){
-                    tur="2|T. Credito" + spn_metodo_den.getSelectedItem().toString();
+                    tur="2|T. Credito" + "|" + spn_metodo_den.getSelectedItem().toString();
                     tiptrn=51;
                 }else if(spn_metodo.getSelectedItem().toString().equals("T. Debito")){
-                    tur="3|T. Debito" + spn_metodo_den.getSelectedItem().toString();
+                    tur="3|T. Debito" + "|" + spn_metodo_den.getSelectedItem().toString();
                     tiptrn=51;
                 }else if(spn_metodo.getSelectedItem().toString().equals("Anticipos")){
                     tur="4|Anticipos";
@@ -175,7 +175,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     tur="5|Combu-Vale";
                     tiptrn=50;
                 }else if(spn_metodo.getSelectedItem().toString().equals("Monederos")){
-                    tur="6|Monederos" + spn_metodo_den.getSelectedItem().toString();
+                    tur="6|Monederos" + "|" + spn_metodo_den.getSelectedItem().toString();
                     tiptrn=51;
                 }
                 try {
