@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-            android:src="@drawable/isologo_repsol"
+            android:src="@drawable/repsol"
             android:layout_width="50dp"
             android:layout_height="50dp" />
         <TextView
@@ -45,6 +45,13 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         android:id="@+id/spn_metedo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Spinner
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:id="@+id/spn_metodo_den"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <View

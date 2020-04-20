@@ -74,7 +74,7 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    //"where desp.nrotrn='201249040' order by desp.nrotrn desc");
+                    //"where desp.nrotrn='39006530' order by desp.nrotrn desc");
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {

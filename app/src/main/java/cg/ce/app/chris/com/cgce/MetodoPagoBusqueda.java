@@ -1,5 +1,6 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -51,6 +52,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -414,7 +416,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 // add parameter to our above url
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("searchQuery", "1")
-                        .appendQueryParameter("searchBandera","Repsol");
+                        .appendQueryParameter("searchBandera","Combu");
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = conn.getOutputStream();

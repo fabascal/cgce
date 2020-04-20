@@ -19,7 +19,7 @@
         android:contentDescription="@string/cine"
         android:src="@drawable/repsolcinepolisticket"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="5:1"
+        app:layout_constraintDimensionRatio="3:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"

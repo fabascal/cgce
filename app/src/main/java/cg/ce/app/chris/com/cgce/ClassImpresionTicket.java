@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 
+import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
 import cg.ce.app.chris.com.cgce.webservice.sorteo;
 
 import static android.content.Context.WINDOW_SERVICE;
@@ -337,6 +338,28 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
             if (impreso_calculado==0) {
+                Bitmap qrrespol=null;
+                QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket,datos_domicilio),
+                        null,
+                        Contents.Type.TEXT,
+                        BarcodeFormat.QR_CODE.toString(),
+                        smallerDimension);
+                try {
+                    qrrespol = qrCodeEncoder1.encodeAsBitmap();
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
+                mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                mPrinter.addImage (qrrespol, 0, 0,
+                        qrrespol.getWidth(),
+                        qrrespol.getHeight(),
+                        Printer.COLOR_1,
+                        Printer.MODE_MONO,
+                        Printer.HALFTONE_DITHER,
+                        Printer.PARAM_DEFAULT,
+                        Printer.COMPRESS_AUTO);
+            }
+            /*if (impreso_calculado==0) {
                 method = "addBarcode";
                 mPrinter.addTextAlign(Printer.ALIGN_CENTER);
                 mPrinter.addBarcode(String.valueOf(folio_impreso),
@@ -346,7 +369,7 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
                         barcodeWidth,
                         barcodeHeight);
                 mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-            }
+            }*/
             /*
             Agregar la funcion de los sorteos
              */
@@ -738,6 +761,36 @@ public class ClassImpresionTicket extends AsyncTask<JSONObject,String,Boolean> i
         sorteo s =new sorteo(context,ticket);
         s.delegate= this;
         s.execute();
+    }
+
+    public String repsolQR (JSONObject jsticket, JSONObject jsdomicilio) throws JSONException {
+        Double ieps = jsticket.getDouble("ieps");
+        Double iva_factor = jsticket.getDouble("iva");
+        Double lts = jsticket.getDouble("cantidad");
+        Double pre = jsticket.getDouble("precio");
+        Double ivaentre = Double.valueOf("1" + iva_factor);
+        Log.w("PRE",String.valueOf(pre));
+        Log.w("ieps",String.valueOf(ieps));
+        Log.w("iva",String.valueOf(ivaentre));
+        Double precioneto = ((Double.valueOf(pre) - ieps) / ivaentre) * 100;
+        Double iva = ((precioneto * lts) * iva_factor) / 100;
+        Double subtotal = (precioneto + ieps) * lts;
+        Log.w("precioneto",String.valueOf(precioneto));
+        Log.w("ieps",String.valueOf(ieps));
+        String precio_total = String.valueOf(precioneto+ieps);
+        Log.w("precio",precio_total);
+        String substr = ".";
+        Log.w("antes",precio_total.substring(0, precio_total.indexOf(substr)));
+        Log.w("despued",precio_total.substring(precio_total.indexOf(substr) , 2));
+
+        String inicio = precio_total.substring(0, precio_total.indexOf(substr));
+        String fin = precio_total.substring(precio_total.indexOf(substr) + substr.length());
+        String precio_impresion = inicio +"."+ fin.substring(0,2);
+        String qr = "COMBUGO|"+jsticket.getString("cveest")+"|"+jsdomicilio.getString("estacion")+"|"+jsticket.getString("fecha")+"|"+jsticket.getString("hora")+"|"+precio_impresion+"|"+formateador2.format(iva)+"|"+jsticket.getString("total")+"|"+jsticket.getString("nrotrn")+"|";
+
+
+        Log.w("QR %s",qr);
+        return qr;
     }
 
 

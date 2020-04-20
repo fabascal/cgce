@@ -248,7 +248,7 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
             method = "addText";
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
-            if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
+            /*if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
                 method = "addBarcode";
                 mPrinter.addTextAlign(Printer.ALIGN_CENTER);
                 mPrinter.addBarcode(String.valueOf(folio_impreso),
@@ -258,6 +258,28 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
                         barcodeWidth,
                         barcodeHeight);
                 mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            }*/
+            if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
+                Bitmap qrrespol=null;
+                QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket,datos_domicilio),
+                        null,
+                        Contents.Type.TEXT,
+                        BarcodeFormat.QR_CODE.toString(),
+                        smallerDimension);
+                try {
+                    qrrespol = qrCodeEncoder1.encodeAsBitmap();
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
+                mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                mPrinter.addImage (qrrespol, 0, 0,
+                        qrrespol.getWidth(),
+                        qrrespol.getHeight(),
+                        Printer.COLOR_1,
+                        Printer.MODE_MONO,
+                        Printer.HALFTONE_DITHER,
+                        Printer.PARAM_DEFAULT,
+                        Printer.COMPRESS_AUTO);
             }
             textData.append("\n");
             /*Bitmap qrrespol=null;

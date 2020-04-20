@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -18,7 +19,9 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import cg.ce.app.chris.com.cgce.ActivityTicket;
 import cg.ce.app.chris.com.cgce.ClassImpresionTicket;
 import cg.ce.app.chris.com.cgce.LogCE;
 import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
@@ -39,7 +42,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
     JSONObject servicio = null;
     String tur;
     int tiptrn;
-    Spinner spn_metodo;
+    cgticket cg = new cgticket();
+    Spinner spn_metodo,spn_metodo_den;
+    List tpv ;
 
     public static fab_contado newInstance(String title, ArrayList<String> data){
         fab_contado fragment = new fab_contado();
@@ -57,6 +62,7 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         root = (LinearLayout) inflater.inflate(R.layout.dialog_fab_contado, null);
         spn_metodo = root.findViewById(R.id.spn_metedo);
+        spn_metodo_den = root.findViewById(R.id.spn_metodo_den);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(root.getContext(),
                 R.array.mPagos_array, android.R.layout.simple_spinner_item);
@@ -72,13 +78,56 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
         imgbtn_cancel.setOnClickListener(this);
         imgbtn_imprimir = (ImageButton) root.findViewById(R.id.imgbtn_imprimir);
         imgbtn_imprimir.setOnClickListener(this);
+
+        spn_metodo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                view_spn_metodo_den();
+                fill_spn_metodo_den();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                return;
+            }
+        });
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return new AlertDialog.Builder(getActivity())
                     .setView(root)
                     .setIcon(R.drawable.combuito)
                     .create();
         }
+
         return null;
+    }
+
+    public void fill_spn_metodo_den(){
+        if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
+                getSelectedItem().toString().equals("T. Credito")){
+            tpv = cg.getTPVs(getActivity(), "1");
+            ArrayAdapter MonederoAdapter = new ArrayAdapter(getActivity(),
+                    android.R.layout.simple_spinner_item, tpv);
+            MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+            spn_metodo_den.setAdapter(MonederoAdapter);
+        }else if(spn_metodo.getSelectedItem().toString().equals("Monederos")){
+            tpv = cg.getTPVs(getActivity(), "0");
+            ArrayAdapter MonederoAdapter = new ArrayAdapter(getActivity(),
+                    android.R.layout.simple_spinner_item, tpv);
+            MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+            spn_metodo_den.setAdapter(MonederoAdapter);
+        }
+
+    }
+
+    public void view_spn_metodo_den(){
+        if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
+                getSelectedItem().toString().equals("T. Debito") || spn_metodo.
+                getSelectedItem().toString().equals("Monederos") ){
+            spn_metodo_den.setVisibility(View.VISIBLE);
+        }else{
+            spn_metodo_den.setVisibility(View.GONE);
+        }
     }
 
     @Override

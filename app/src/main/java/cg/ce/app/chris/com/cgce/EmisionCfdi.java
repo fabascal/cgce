@@ -1,5 +1,6 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
     ValidateTablet tablet = new ValidateTablet();
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

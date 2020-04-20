@@ -124,6 +124,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
     JSONObject js;
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1509,6 +1510,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 Log.w("codigo", codcli.toString());
                             } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
                                 try {
+
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_get_codcli1",e));
                                 }catch (JSONException e1){
                                     e1.printStackTrace();
@@ -1551,10 +1553,15 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }
                             e.printStackTrace();
                         }
-                        //===aqui voy en el log
+
                         try {
                             impreso = cant_impreso(getApplicationContext(), servicio.getString("nrotrn"));
                         } catch (JSONException e) {
+                            try {
+                                logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_cant_impreso",e));
+                            }catch (JSONException e1){
+                                e1.printStackTrace();
+                            }
                             e.printStackTrace();
                         }
                         Log.w("cant_imp", String.valueOf(impreso));
@@ -1564,6 +1571,11 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 ticket.update_codcli(ActivityCreditoDual.this, nrotrn, codcli.getString("cliente"), codcli.getString("vehiculo"), odm,codcli.getString("tar"));
                                 cgticket_obj.guardarnrotrn(getApplicationContext(), servicio, 2);
                             } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                                try {
+                                    logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_guardarnrotrn",e));
+                                }catch (JSONException e1){
+                                    e1.printStackTrace();
+                                }
                                 e.printStackTrace();
                             }
                         }
@@ -1599,9 +1611,13 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }
                         ticket_otra_bomba=new JSONObject();
 
-                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
+                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException  e) {
+                            try {
+                                logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_consulta_impresion",e));
+                            }catch (JSONException e1){
+                                e1.printStackTrace();
+                            }
+
                             e.printStackTrace();
                         }
 
