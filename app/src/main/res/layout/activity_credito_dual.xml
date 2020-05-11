@@ -136,8 +136,8 @@
         android:orientation="vertical"
         android:layout_below="@id/tvrfid1">
         <include
-            android:layout_marginStart="80dp"
-            android:layout_marginEnd="80dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
             android:id="@+id/layout_nombre"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -151,8 +151,8 @@
         android:orientation="vertical"
         android:layout_below="@id/tvrfid1">
         <include
-            android:layout_marginStart="80dp"
-            android:layout_marginEnd="80dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
             android:id="@+id/layout_nombre2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -166,8 +166,8 @@
         android:orientation="vertical"
         android:layout_below="@id/tvrfid1">
         <include
-            android:layout_marginStart="80dp"
-            android:layout_marginEnd="80dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
             android:id="@+id/layout_nombre_vehiculo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -180,8 +180,8 @@
     android:orientation="vertical"
     android:layout_below="@id/tvrfid1">
     <include
-        android:layout_marginStart="80dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
         android:id="@+id/layout_nombre_vehiculo2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

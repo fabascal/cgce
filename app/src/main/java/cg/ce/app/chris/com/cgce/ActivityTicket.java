@@ -157,7 +157,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 getSelectedItem().toString().equals("Monederos") ){
             spn_metodo_den.setVisibility(View.VISIBLE);
         }else{
-            //spn_metodo_den.setVisibility(View.GONE);
+            spn_metodo_den.setVisibility(View.GONE);
         }
     }
 

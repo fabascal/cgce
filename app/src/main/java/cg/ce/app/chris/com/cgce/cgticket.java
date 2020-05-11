@@ -601,7 +601,7 @@ public class cgticket {
             return false;
         }
     }
-    public boolean update_codcli (Context con,String ticket,String cliente,String vehiculo,String odm,String tar) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public boolean update_codcli (Context con,String ticket,String cliente,String vehiculo,String odm,String tar) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         if(odm.equals(null)){
             odm="0";
         }
@@ -609,25 +609,19 @@ public class cgticket {
         cursor = manager.cargarcursorodbc2();
 
         String base = null;
-        try {
-            base = cursor.getString("db_cg");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+        base = cursor.getString("db_cg");
 
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cg(con);
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
-            stmt.close();
-            conn.close();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Log.w("combu","false");
-            return false;
-        }
+
+        Statement stmt = conn.createStatement();
+        Log.i("update_cli","update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
+        stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
+        stmt.close();
+        conn.close();
+        return true;
+
     }
 
     public String nip_desp (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {

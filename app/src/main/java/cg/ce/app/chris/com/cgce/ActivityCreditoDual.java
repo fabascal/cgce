@@ -2009,6 +2009,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         //obtenemos el codigo del cliente
                         if(!tgl_area.isChecked()) {
                             try {
+                                Log.i("validar codcli","inicia");
+                                Log.i("json",String.valueOf(jsonObject_1));
                                 codcli = vf.get_codcli(ActivityCreditoDual.this, jsonObject_1.getString("id_tag"), jsonObject_1.getString("metodo"));
                                 Log.w("codigo", codcli.toString());
                             } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
@@ -2063,10 +2065,13 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
 
                         try {
                             impreso = ticket.cant_impreso(getApplicationContext(), servicio.getString("nrotrn"));
-                            if (impreso.equals(0)) {
+                            if (!impreso.equals(1) ) {
                                 try {
                                     //realizamos el update para asignar el ticket al cliente de credito
-                                    ticket.update_codcli(ActivityCreditoDual.this, nrotrn, codcli.getString("cliente"), codcli.getString("vehiculo"), odm,codcli.getString("tar"));
+
+                                    ticket.update_codcli(ActivityCreditoDual.this, nrotrn,
+                                            codcli.getString("cliente"), codcli.getString("vehiculo"),
+                                            odm,codcli.getString("tar"));
                                     cgticket_obj.guardarnrotrn(getApplicationContext(), servicio, 2);
                                 } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
                                     new AlertDialog.Builder(ActivityCreditoDual.this)

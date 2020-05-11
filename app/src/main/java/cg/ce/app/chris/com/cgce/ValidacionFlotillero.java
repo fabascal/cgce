@@ -544,10 +544,14 @@ public class ValidacionFlotillero {
             query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
                     "left outer join Clientes as c on c.cod=cv.codcli\n" +
                     "where cv.tag='" + tag + "'";
-        }else{
+        }else if (metodo=="nip"){
             query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
                     "left outer join Clientes as c on c.cod=cv.codcli\n" +
                     "where cv.tag='" + tag + "'";
+        }else if (metodo == "nombre"){
+            query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
+                    "left outer join Clientes as c on c.cod=cv.codcli\n" +
+                    "where cv.tar='" + tag + "'";
         }
         r = stmt.executeQuery(query);
         while (r.next()) {
@@ -562,12 +566,7 @@ public class ValidacionFlotillero {
         connection.close();
         r.close();
         stmt.close();
-
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection.close();
         return resultado;
     }
 
