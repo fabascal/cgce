@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -131,9 +132,11 @@ public class ticketFragment extends Fragment implements SorteoListener {
                 }
                 try {
                     ticket.put("nip",cgticket_obj.nip_desp(getContext()));
-
-
-                } catch (JSONException e) {
+                } catch (JSONException | ClassNotFoundException | SQLException | java.lang.InstantiationException | IllegalAccessException e) {
+                    new AlertDialog.Builder(ticketFragment.this.getActivity())
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
                     e.printStackTrace();
                 }
 
@@ -308,7 +311,7 @@ public class ticketFragment extends Fragment implements SorteoListener {
                 }else{
                     impreso_calculado=0;
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | SQLException | IllegalAccessException | java.lang.InstantiationException | ClassNotFoundException e) {
                 try {
                     logCE.EscirbirLog(context,jsonObjectError.put("impresion",e));
                 } catch (JSONException e1) {
@@ -345,7 +348,11 @@ public class ticketFragment extends Fragment implements SorteoListener {
             if (result.equals(true)){
                 try {
                     tf.actualizar_cant_impreso(context,ticket.getString("nrotrn"));
-                } catch (JSONException e) {
+                } catch (JSONException | ClassNotFoundException | java.lang.InstantiationException | IllegalAccessException | SQLException e) {
+                    new AlertDialog.Builder(ticketFragment.this.getActivity())
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
                     try {
                         logCE.EscirbirLog(context,jsonObjectError.put("impresion",e));
                     } catch (JSONException e1) {

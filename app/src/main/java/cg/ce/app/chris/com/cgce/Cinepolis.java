@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 
 
 public class Cinepolis extends AsyncTask<Void, Void, String> {
@@ -86,7 +87,7 @@ public class Cinepolis extends AsyncTask<Void, Void, String> {
             os.close();
             conn.connect();
 
-        } catch (IOException e1) {
+        } catch (IOException | ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
             return null;

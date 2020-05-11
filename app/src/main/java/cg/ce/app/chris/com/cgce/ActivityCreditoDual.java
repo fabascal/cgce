@@ -18,20 +18,29 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Layout;
 import android.text.TextWatcher;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,9 +81,11 @@ import static java.lang.Thread.sleep;
 public class ActivityCreditoDual extends AppCompatActivity implements View.OnClickListener {
     final static String TV_NFC="Presente el TAG en el dispositivo.";
     final static String TV_NIP="Identificacion de credito mediante NIP.";
+    final static String TV_NOMBRE="Buscar cliente.";
+    final static int MIN_SEARCH=3;
     ToggleButton tgl_area;
-    CardView cardView_1, cardView_2,CardViewNIP1,CardViewNIP2;
-    ImageButton imbtn_ticket_1, imbtn_ticket_2, btn_creditoticket,imbtn_clienteodoo,imbtn_clientecg;
+    CardView cardView_1, cardView_2,CardViewNIP1,CardViewNIP2,CardViewTEXT1,CardViewTEXT2;
+    ImageButton imbtn_ticket_1, imbtn_ticket_2, btn_creditoticket,imbtn_clienteodoo,imbtn_clientecg,imbtn_search;
     Spinner spn_dispensarios_1, spn_dispensarios_2;
     ImageView imageView_1, imageView_2;
     ResultSet rs;
@@ -93,8 +104,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
     public static final int READ_TIMEOUT = 25000;
     private final int DURACION_SPLASH = 3000; // 3 segundos
     private final int DURACION_SPLASH_5 = 5000; // 5 segundos
-    TextView tvrfid1,tvcg,tvcreditolabel1,tvcreditomsj1,tvfleetlabel1,tvfleetmsj1,tvproductolabel1,tvproductomsj1,tvbomba;
-    EditText et_odm,et_clientecg;
+    TextView tvrfid1,tvcg,tvcreditolabel1,tvcreditomsj1,tvfleetlabel1,tvfleetmsj1,tvproductolabel1,
+            tvproductomsj1,tvbomba,tvvehiculo_cliente,tvvehiculo_rfc,tvvehiculo_codcli,tvden,tvcodcli,
+            tvrfc,plc,den_vehicle,rsp,tvvehiculo_cliente2,tvvehiculo_rfc2,tvvehiculo_codcli2;
+    EditText et_odm,et_clientecg,etSearchCustomer,etSearchCustomer2;
     String bomba,ult_nrotrn,odm;
     ImageView imagen;
     View vtitle;
@@ -122,6 +135,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
     boolean IsTablet = false;
     ValidateTablet tablet = new ValidateTablet();
     JSONObject js;
+    View layout_nombre,layout_nombre_vehiculo,layout_nombre2,layout_nombre_vehiculo2;
+    private RecyclerView mRVCustomerCG, mRVCustomerVehicleCG,mRVCustomerCG2,mRVCustomerVehicleCG2;
+    private AdapterCustomerCG mAdapter, mAdapter2;
+    private AdapterCustomerVehicleCG mAdapterVehicle,mAdapterVehicle2;
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -144,7 +161,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         sensores.wifi(this, true);
         if (!IsTablet) {
             adapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
-            pendingIntent = PendingIntent.getActivity(ActivityCreditoDual.this, 0, new Intent(ActivityCreditoDual.this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+            pendingIntent = PendingIntent.getActivity(ActivityCreditoDual.this, 0,
+                    new Intent(ActivityCreditoDual.this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
             IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
             tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
             writeTagFilters = new IntentFilter[]{tagDetected};
@@ -159,6 +177,28 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         imbtn_clientecg =( ImageButton ) findViewById(R.id.imbtn_clientecg);
         imbtn_clientecg.setOnClickListener(this);
         et_clientecg = (EditText) findViewById(R.id.et_clientecg);
+        layout_nombre = (View) findViewById(R.id.layout_nombre);
+        layout_nombre2 = (View) findViewById(R.id.layout_nombre2);
+        imbtn_search = (ImageButton) findViewById(R.id.imbtn_search);
+        etSearchCustomer = (EditText) findViewById(R.id.etSearchCustomer);
+        etSearchCustomer.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        etSearchCustomer2 = (EditText) findViewById(R.id.etSearchCustomer2);
+        etSearchCustomer2.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        layout_nombre_vehiculo = (View) findViewById(R.id.layout_nombre_vehiculo);
+        layout_nombre_vehiculo2 = (View) findViewById(R.id.layout_nombre_vehiculo2);
+        tvvehiculo_cliente = (TextView) findViewById(R.id.tvvehiculo_cliente);
+        tvvehiculo_codcli = (TextView) findViewById(R.id.tvvehiculo_codcli);
+        tvvehiculo_rfc = (TextView) findViewById(R.id.tvvehiculo_rfc);
+        tvvehiculo_cliente2 = (TextView) findViewById(R.id.tvvehiculo_cliente2);
+        tvvehiculo_codcli2 = (TextView) findViewById(R.id.tvvehiculo_codcli2);
+        tvvehiculo_rfc2 = (TextView) findViewById(R.id.tvvehiculo_rfc2);
+        tvden = (TextView) findViewById(R.id.tvden);
+        tvcodcli = (TextView) findViewById(R.id.tvcodcli);
+        tvrfc = (TextView) findViewById(R.id.tvrfc);
+        plc = (TextView) findViewById(R.id.plc);
+        den_vehicle = (TextView) findViewById(R.id.den_vehicle);
+        rsp = (TextView) findViewById(R.id.rsp);
+
         mContext=this;
 
         if (DEVELOPER_MODE) {
@@ -182,6 +222,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     tvbomba.setText("Bomba : "+jsonObject_1.getString("bomba"));
                 } catch (JSONException e) {
                     try {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba1",e));
                     }catch (JSONException e1){
                         e1.printStackTrace();
@@ -198,6 +242,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     tvbomba.setText("Bomba : "+jsonObject_2.getString("bomba"));
                 } catch (JSONException e) {
                     try {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba2",e));
                     }catch (JSONException e1){
                         e1.printStackTrace();
@@ -231,6 +279,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             et_odm.setText(jsonObject_1.getString("odm"));
                         } catch (JSONException e) {
                             try {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoOdm1",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
@@ -245,6 +297,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             et_clientecg.setText(jsonObject_1.getString("nip"));
                         } catch (JSONException e) {
                             try {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoNip1",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
@@ -259,6 +315,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             tvfleetmsj1.setText(jsonObject_1.getString("fleet"));
                         }catch (JSONException e) {
                             try {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoFleet1",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
@@ -275,6 +335,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             tvcreditomsj1.setText(jsonObject_1.getString("odoo"));
                         }catch (JSONException e) {
                             try {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoOdoo1",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
@@ -291,6 +355,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             tvrfid1.setText(jsonObject_1.getString("cliente"));
                         }catch (JSONException e) {
                             try {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCliente1",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
@@ -311,6 +379,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }
                         }catch (JSONException e) {
                             try {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoImagen1",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
@@ -323,6 +395,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     Log.w("Area","1");
                     if (!jsonObject_1.has("bomba")) {
                         Log.w("json",jsonObject_1.toString());
+                        layout_nombre.setVisibility(View.GONE);
+                        layout_nombre2.setVisibility(View.GONE);
+                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                        layout_nombre_vehiculo2.setVisibility(View.GONE);
                         tvbomba.setVisibility(View.GONE);
                         imageView_2.setVisibility(View.GONE);
                         imageView_1.setVisibility(View.VISIBLE);
@@ -334,6 +410,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         CardViewNIP2.setVisibility(View.GONE);
                         tvrfid1.setVisibility(View.GONE);
                         cardView_2.setVisibility(View.GONE);
+                        CardViewTEXT1.setVisibility(View.GONE);
+                        CardViewTEXT2.setVisibility(View.GONE);
                         btn_creditoticket.setVisibility(View.GONE);
                         tvcreditolabel1.setVisibility(View.GONE);
                         tvcreditomsj1.setVisibility(View.GONE);
@@ -356,12 +434,20 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba1",e));
                             }catch (JSONException e1){
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 e1.printStackTrace();
                             }
                             e.printStackTrace();
                         }
                         if(!jsonObject_1.has("metodo")) {
                             Log.w("bomba", "1");
+                            layout_nombre.setVisibility(View.GONE);
+                            layout_nombre_vehiculo.setVisibility(View.GONE);
+                            layout_nombre2.setVisibility(View.GONE);
+                            layout_nombre_vehiculo2.setVisibility(View.GONE);
                             tvbomba.setVisibility(View.VISIBLE);
                             imbtn_ticket_1.setVisibility(View.GONE);
                             imbtn_ticket_2.setVisibility(View.GONE);
@@ -375,6 +461,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             cardView_2.setVisibility(View.GONE);
                             CardViewNIP1.setVisibility(View.VISIBLE);
                             CardViewNIP2.setVisibility(View.GONE);
+                            CardViewTEXT1.setVisibility(View.VISIBLE);
+                            CardViewTEXT2.setVisibility(View.GONE);
                             tvrfid1.setVisibility(View.GONE);
                             btn_creditoticket.setVisibility(View.GONE);
                             tvcreditolabel1.setVisibility(View.GONE);
@@ -404,6 +492,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.GONE);
                                         CardViewNIP1.setVisibility(View.GONE);
                                         CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
                                         tvrfid1.setVisibility(View.VISIBLE);
                                         tvrfid1.setText(TV_NFC);
                                         imbtn_ticket_1.setVisibility(View.GONE);
@@ -422,6 +512,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         fab.setVisibility(View.VISIBLE);
                                         ll_clienteodoo.setVisibility(View.GONE);
                                         ll_busqueda_nip.setVisibility(View.GONE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
                                     }
                                     else if (jsonObject_1.getString("metodo").equals("nip")){
                                         tvbomba.setVisibility(View.VISIBLE);
@@ -435,6 +529,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.GONE);
                                         CardViewNIP1.setVisibility(View.GONE);
                                         CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
                                         tvrfid1.setVisibility(View.VISIBLE);
                                         tvrfid1.setText(TV_NIP);
                                         imbtn_ticket_1.setVisibility(View.GONE);
@@ -453,9 +549,58 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         fab.setVisibility(View.VISIBLE);
                                         ll_clienteodoo.setVisibility(View.VISIBLE);
                                         ll_busqueda_nip.setVisibility(View.VISIBLE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                    }else if(jsonObject_1.getString("metodo").equals("nombre")){
+                                        tvbomba.setVisibility(View.VISIBLE);
+                                        imbtn_ticket_1.setVisibility(View.GONE);
+                                        imbtn_ticket_2.setVisibility(View.GONE);
+                                        spn_dispensarios_1.setVisibility(View.GONE);
+                                        spn_dispensarios_2.setVisibility(View.GONE);
+                                        imageView_1.setVisibility(View.GONE);
+                                        imageView_2.setVisibility(View.GONE);
+                                        cardView_1.setVisibility(View.GONE);
+                                        cardView_2.setVisibility(View.GONE);
+                                        CardViewNIP1.setVisibility(View.GONE);
+                                        CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
+                                        tvrfid1.setVisibility(View.VISIBLE);
+                                        tvrfid1.setText(TV_NOMBRE);
+                                        imbtn_ticket_1.setVisibility(View.GONE);
+                                        spn_dispensarios_1.setVisibility(View.GONE);
+                                        imageView_1.setVisibility(View.GONE);
+                                        vtitle.setVisibility(View.GONE);
+                                        btn_creditoticket.setVisibility(View.GONE);
+                                        tvcreditolabel1.setVisibility(View.GONE);
+                                        tvcreditomsj1.setVisibility(View.GONE);
+                                        tvfleetmsj1.setVisibility(View.GONE);
+                                        tvfleetlabel1.setVisibility(View.GONE);
+                                        tvproductomsj1.setVisibility(View.GONE);
+                                        tvproductolabel1.setVisibility(View.GONE);
+                                        imagen.setVisibility(View.GONE);
+                                        et_odm.setVisibility(View.GONE);
+                                        fab.setVisibility(View.VISIBLE);
+                                        ll_clienteodoo.setVisibility(View.GONE);
+                                        ll_busqueda_nip.setVisibility(View.GONE);
+                                        if(jsonObject_1.has("nroveh")){
+                                            layout_nombre.setVisibility(View.GONE);
+                                            layout_nombre_vehiculo.setVisibility(View.VISIBLE);
+                                        }else if(!jsonObject_1.has("nroveh")){
+                                            layout_nombre.setVisibility(View.VISIBLE);
+                                            layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        }
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
                                     }
                                 } catch (JSONException e) {
                                     try {
+                                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                                .setTitle(R.string.error)
+                                                .setMessage(String.valueOf(e))
+                                                .setPositiveButton(R.string.btn_ok,null).show();
                                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoMetodo1",e));
                                     }catch (JSONException e1){
                                         e1.printStackTrace();
@@ -463,7 +608,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                     e.printStackTrace();
                                 }
 
-                            }else if (jsonObject_1.has("rfc")){
+                            }else if (jsonObject_1.has("rfc") ){
                                 tvbomba.setVisibility(View.VISIBLE);
                                 imbtn_ticket_1.setVisibility(View.GONE);
                                 imbtn_ticket_2.setVisibility(View.GONE);
@@ -475,50 +620,95 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 cardView_2.setVisibility(View.GONE);
                                 CardViewNIP1.setVisibility(View.GONE);
                                 CardViewNIP2.setVisibility(View.GONE);
+                                CardViewTEXT1.setVisibility(View.GONE);
+                                CardViewTEXT2.setVisibility(View.GONE);
                                 tvrfid1.setVisibility(View.VISIBLE);
                                 spn_dispensarios_1.setVisibility(View.GONE);
                                 imageView_1.setVisibility(View.GONE);
-                                vtitle.setVisibility(View.VISIBLE);
-                                tvcreditolabel1.setVisibility(View.VISIBLE);
-                                tvcreditomsj1.setVisibility(View.VISIBLE);
                                 fab.setVisibility(View.VISIBLE);
                                 ll_busqueda_nip.setVisibility(View.GONE);
                                 try {
-                                    if (jsonObject_1.getString("metodo").equals("nfc")){
+                                    if (jsonObject_1.getString("metodo").equals("nfc")) {
                                         ll_clienteodoo.setVisibility(View.VISIBLE);
-                                    }else{
+                                    } else {
                                         ll_clienteodoo.setVisibility(View.GONE);
                                     }
                                 } catch (JSONException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
                                     try {
-                                        logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoMetodo1",e));
-                                    }catch (JSONException e1){
+                                        logCE.EscirbirLog(getApplicationContext(), jsonObjectError.put("CreditoMetodo1", e));
+                                    } catch (JSONException e1) {
                                         e1.printStackTrace();
                                     }
                                     e.printStackTrace();
                                 }
-                                if (jsonObject_1.has("imagen")){
+                                if (jsonObject_1.has("imagen")) {
                                     try {
-                                        if (jsonObject_1.getString("imagen").equals("ok")){
+                                        if (jsonObject_1.getString("imagen").equals("ok")) {
                                             btn_creditoticket.setVisibility(View.VISIBLE);
-                                        }else {
+                                        } else {
                                             btn_creditoticket.setVisibility(View.GONE);
                                         }
-                                    }catch (JSONException e) {
+                                    } catch (JSONException e) {
+                                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                                .setTitle(R.string.error)
+                                                .setMessage(String.valueOf(e))
+                                                .setPositiveButton(R.string.btn_ok,null).show();
                                         try {
-                                            logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoImagen1",e));
-                                        }catch (JSONException e1){
+                                            logCE.EscirbirLog(getApplicationContext(), jsonObjectError.put("CreditoImagen1", e));
+                                        } catch (JSONException e1) {
                                             e1.printStackTrace();
                                         }
                                         e.printStackTrace();
                                     }
                                 }
-                                tvfleetmsj1.setVisibility(View.VISIBLE);
-                                tvfleetlabel1.setVisibility(View.VISIBLE);
-                                tvproductomsj1.setVisibility(View.VISIBLE);
-                                tvproductolabel1.setVisibility(View.VISIBLE);
-                                imagen.setVisibility(View.VISIBLE);
-                                et_odm.setVisibility(View.VISIBLE);
+                                try {
+                                    if (!jsonObject_1.getString("metodo").equals("nombre")){
+                                        vtitle.setVisibility(View.VISIBLE);
+                                        tvcreditolabel1.setVisibility(View.VISIBLE);
+                                        tvcreditomsj1.setVisibility(View.VISIBLE);
+                                        tvfleetmsj1.setVisibility(View.VISIBLE);
+                                        tvfleetlabel1.setVisibility(View.VISIBLE);
+                                        tvproductomsj1.setVisibility(View.VISIBLE);
+                                        tvproductolabel1.setVisibility(View.VISIBLE);
+                                        imagen.setVisibility(View.VISIBLE);
+                                        et_odm.setVisibility(View.VISIBLE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                    }else if(jsonObject_1.getString("metodo").equals("nombre")){
+                                        if (jsonObject_1.has("nroveh")){
+                                            tvfleetmsj1.setVisibility(View.VISIBLE);
+                                            tvfleetlabel1.setVisibility(View.VISIBLE);
+                                            tvproductomsj1.setVisibility(View.VISIBLE);
+                                            tvproductolabel1.setVisibility(View.VISIBLE);
+                                            imagen.setVisibility(View.VISIBLE);
+                                            et_odm.setVisibility(View.VISIBLE);
+                                            layout_nombre.setVisibility(View.GONE);
+                                            layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        }else if(!jsonObject_1.has("nroveh")){
+                                            tvfleetmsj1.setVisibility(View.GONE);
+                                            tvfleetlabel1.setVisibility(View.GONE);
+                                            tvproductomsj1.setVisibility(View.GONE);
+                                            tvproductolabel1.setVisibility(View.GONE);
+                                            imagen.setVisibility(View.GONE);
+                                            et_odm.setVisibility(View.GONE);
+                                            layout_nombre.setVisibility(View.GONE);
+                                            layout_nombre_vehiculo.setVisibility(View.VISIBLE);
+                                        }
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                    }
+                                } catch (JSONException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
+                                    e.printStackTrace();
+
+                                }
                             }
                         }
                     }
@@ -531,6 +721,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         try {
                             et_odm.setText(jsonObject_2.getString("odm"));
                         } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoOdm2",e));
                             }catch (JSONException e1){
@@ -545,6 +739,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         try {
                             et_clientecg.setText(jsonObject_2.getString("nip"));
                         } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoNip2",e));
                             }catch (JSONException e1){
@@ -560,6 +758,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         try {
                             tvfleetmsj1.setText(jsonObject_2.getString("fleet"));
                         }catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoFleet2",e));
                             }catch (JSONException e1){
@@ -576,6 +778,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         try{
                             tvcreditomsj1.setText(jsonObject_2.getString("odoo"));
                         }catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoOdoo2",e));
                             }catch (JSONException e1){
@@ -592,6 +798,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         try {
                             tvrfid1.setText(jsonObject_2.getString("cliente"));
                         }catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCliente2",e));
                             }catch (JSONException e1){
@@ -613,6 +823,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 imagen.setImageResource(R.drawable.cancel);
                             }
                         }catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoImagen2",e));
                             }catch (JSONException e1){
@@ -635,6 +849,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         cardView_2.setVisibility(View.GONE);
                         CardViewNIP1.setVisibility(View.GONE);
                         CardViewNIP2.setVisibility(View.GONE);
+                        CardViewTEXT1.setVisibility(View.GONE);
+                        CardViewTEXT2.setVisibility(View.GONE);
                         tvrfid1.setVisibility(View.GONE);
                         btn_creditoticket.setVisibility(View.GONE);
                         vtitle.setVisibility(View.GONE);
@@ -649,11 +865,20 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         fab.setVisibility(View.GONE);
                         ll_clienteodoo.setVisibility(View.GONE);
                         ll_busqueda_nip.setVisibility(View.GONE);
+                        layout_nombre.setVisibility(View.GONE);
+                        layout_nombre2.setVisibility(View.GONE);
+                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                        layout_nombre_vehiculo2.setVisibility(View.GONE);
                     }
                     else if (jsonObject_2.has("bomba")) {
+                        Log.i("json",jsonObject_2.toString());
                         try {
                             tvbomba.setText("Bomba : "+jsonObject_2.getString("bomba"));
                         } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba2",e));
                             }catch (JSONException e1){
@@ -675,6 +900,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }
                             CardViewNIP1.setVisibility(View.GONE);
                             CardViewNIP2.setVisibility(View.VISIBLE);
+                            CardViewTEXT1.setVisibility(View.GONE);
+                            CardViewTEXT2.setVisibility(View.VISIBLE);
                             tvrfid1.setVisibility(View.GONE);
                             btn_creditoticket.setVisibility(View.GONE);
                             tvcreditolabel1.setVisibility(View.GONE);
@@ -689,6 +916,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             fab.setVisibility(View.VISIBLE);
                             ll_clienteodoo.setVisibility(View.GONE);
                             ll_busqueda_nip.setVisibility(View.GONE);
+                            layout_nombre.setVisibility(View.GONE);
+                            layout_nombre2.setVisibility(View.GONE);
+                            layout_nombre_vehiculo.setVisibility(View.GONE);
+                            layout_nombre_vehiculo2.setVisibility(View.GONE);
                         }else if(jsonObject_2.has("metodo")){
                             if(!jsonObject_2.has("rfc")) {
                                 try {
@@ -704,6 +935,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.GONE);
                                         CardViewNIP1.setVisibility(View.GONE);
                                         CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
                                         tvrfid1.setVisibility(View.VISIBLE);
                                         tvrfid1.setText(TV_NFC);
                                         vtitle.setVisibility(View.GONE);
@@ -719,6 +952,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         fab.setVisibility(View.VISIBLE);
                                         ll_clienteodoo.setVisibility(View.GONE);
                                         ll_busqueda_nip.setVisibility(View.GONE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
                                     }else if(jsonObject_2.getString("metodo").equals("nip")){
                                         tvbomba.setVisibility(View.VISIBLE);
                                         imageView_1.setVisibility(View.GONE);
@@ -731,6 +968,8 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.GONE);
                                         CardViewNIP1.setVisibility(View.GONE);
                                         CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
                                         tvrfid1.setVisibility(View.VISIBLE);
                                         tvrfid1.setText(TV_NIP);
                                         vtitle.setVisibility(View.GONE);
@@ -746,8 +985,54 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         fab.setVisibility(View.VISIBLE);
                                         ll_clienteodoo.setVisibility(View.VISIBLE);
                                         ll_busqueda_nip.setVisibility(View.VISIBLE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                    }else if(jsonObject_2.getString("metodo").equals("nombre")){
+                                        tvbomba.setVisibility(View.VISIBLE);
+                                        imageView_1.setVisibility(View.GONE);
+                                        imageView_2.setVisibility(View.GONE);
+                                        spn_dispensarios_1.setVisibility(View.GONE);
+                                        spn_dispensarios_2.setVisibility(View.GONE);
+                                        imbtn_ticket_1.setVisibility(View.GONE);
+                                        imbtn_ticket_2.setVisibility(View.GONE);
+                                        cardView_1.setVisibility(View.GONE);
+                                        cardView_2.setVisibility(View.GONE);
+                                        CardViewNIP1.setVisibility(View.GONE);
+                                        CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
+                                        tvrfid1.setVisibility(View.VISIBLE);
+                                        tvrfid1.setText(TV_NOMBRE);
+                                        vtitle.setVisibility(View.GONE);
+                                        btn_creditoticket.setVisibility(View.GONE);
+                                        tvcreditolabel1.setVisibility(View.GONE);
+                                        tvcreditomsj1.setVisibility(View.GONE);
+                                        tvfleetmsj1.setVisibility(View.GONE);
+                                        tvfleetlabel1.setVisibility(View.GONE);
+                                        tvproductomsj1.setVisibility(View.GONE);
+                                        tvproductolabel1.setVisibility(View.GONE);
+                                        imagen.setVisibility(View.GONE);
+                                        et_odm.setVisibility(View.GONE);
+                                        fab.setVisibility(View.VISIBLE);
+                                        ll_clienteodoo.setVisibility(View.GONE);
+                                        ll_busqueda_nip.setVisibility(View.GONE);
+                                        if(jsonObject_2.has("nroveh")){
+                                            layout_nombre2.setVisibility(View.GONE);
+                                            layout_nombre_vehiculo2.setVisibility(View.VISIBLE);
+                                        }else if(!jsonObject_2.has("nroveh")){
+                                            layout_nombre2.setVisibility(View.VISIBLE);
+                                            layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                        }
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
                                     }
                                 } catch (JSONException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
                                     try {
                                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoMetodo2",e));
                                     }catch (JSONException e1){
@@ -769,12 +1054,18 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.GONE);
                                         CardViewNIP1.setVisibility(View.GONE);
                                         CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
                                         tvrfid1.setVisibility(View.VISIBLE);
                                         spn_dispensarios_1.setVisibility(View.GONE);
                                         imageView_1.setVisibility(View.GONE);
                                         vtitle.setVisibility(View.VISIBLE);
                                         fab.setVisibility(View.VISIBLE);
                                         ll_busqueda_nip.setVisibility(View.GONE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
                                     }else if (jsonObject_2.getString("metodo").equals("nip")){
                                         tvbomba.setVisibility(View.VISIBLE);
                                         imbtn_ticket_1.setVisibility(View.GONE);
@@ -787,14 +1078,44 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.GONE);
                                         CardViewNIP1.setVisibility(View.GONE);
                                         CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
                                         tvrfid1.setVisibility(View.VISIBLE);
                                         spn_dispensarios_1.setVisibility(View.GONE);
                                         imageView_1.setVisibility(View.GONE);
                                         vtitle.setVisibility(View.VISIBLE);
                                         fab.setVisibility(View.VISIBLE);
                                         ll_busqueda_nip.setVisibility(View.VISIBLE);
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                    }else if(jsonObject_2.getString("metodo").equals("nombre")){
+                                        tvbomba.setVisibility(View.VISIBLE);
+                                        imbtn_ticket_1.setVisibility(View.GONE);
+                                        imbtn_ticket_2.setVisibility(View.GONE);
+                                        spn_dispensarios_1.setVisibility(View.GONE);
+                                        spn_dispensarios_2.setVisibility(View.GONE);
+                                        imageView_1.setVisibility(View.GONE);
+                                        imageView_2.setVisibility(View.GONE);
+                                        cardView_1.setVisibility(View.GONE);
+                                        cardView_2.setVisibility(View.GONE);
+                                        CardViewNIP1.setVisibility(View.GONE);
+                                        CardViewNIP2.setVisibility(View.GONE);
+                                        CardViewTEXT1.setVisibility(View.GONE);
+                                        CardViewTEXT2.setVisibility(View.GONE);
+                                        tvrfid1.setVisibility(View.VISIBLE);
+                                        spn_dispensarios_1.setVisibility(View.GONE);
+                                        imageView_1.setVisibility(View.GONE);
+                                        vtitle.setVisibility(View.VISIBLE);
+                                        fab.setVisibility(View.VISIBLE);
+                                        ll_busqueda_nip.setVisibility(View.GONE);
                                     }
                                 } catch (JSONException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
                                     try {
                                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoMetodo2",e));
                                     }catch (JSONException e1){
@@ -810,6 +1131,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         ll_clienteodoo.setVisibility(View.GONE);
                                     }
                                 } catch (JSONException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
                                     try {
                                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoMetodo2",e));
                                     }catch (JSONException e1){
@@ -826,6 +1151,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         }
                                     }catch (JSONException e) {
                                         try {
+                                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                                    .setTitle(R.string.error)
+                                                    .setMessage(String.valueOf(e))
+                                                    .setPositiveButton(R.string.btn_ok,null).show();
                                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoImagen2",e));
                                         }catch (JSONException e1){
                                             e1.printStackTrace();
@@ -833,14 +1162,51 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         e.printStackTrace();
                                     }
                                 }
-                                tvcreditolabel1.setVisibility(View.VISIBLE);
-                                tvcreditomsj1.setVisibility(View.VISIBLE);
-                                tvfleetmsj1.setVisibility(View.VISIBLE);
-                                tvfleetlabel1.setVisibility(View.VISIBLE);
-                                tvproductomsj1.setVisibility(View.VISIBLE);
-                                tvproductolabel1.setVisibility(View.VISIBLE);
-                                imagen.setVisibility(View.VISIBLE);
-                                et_odm.setVisibility(View.VISIBLE);
+
+                                try {
+                                    if (!jsonObject_2.getString("metodo").equals("nombre")){
+                                        vtitle.setVisibility(View.VISIBLE);
+                                        tvcreditolabel1.setVisibility(View.VISIBLE);
+                                        tvcreditomsj1.setVisibility(View.VISIBLE);
+                                        tvfleetmsj1.setVisibility(View.VISIBLE);
+                                        tvfleetlabel1.setVisibility(View.VISIBLE);
+                                        tvproductomsj1.setVisibility(View.VISIBLE);
+                                        tvproductolabel1.setVisibility(View.VISIBLE);
+                                        imagen.setVisibility(View.VISIBLE);
+                                        et_odm.setVisibility(View.VISIBLE);
+                                        layout_nombre2.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                    }else if(jsonObject_2.getString("metodo").equals("nombre")){
+                                        if (jsonObject_2.has("nroveh")){
+                                            tvfleetmsj1.setVisibility(View.VISIBLE);
+                                            tvfleetlabel1.setVisibility(View.VISIBLE);
+                                            tvproductomsj1.setVisibility(View.VISIBLE);
+                                            tvproductolabel1.setVisibility(View.VISIBLE);
+                                            imagen.setVisibility(View.VISIBLE);
+                                            et_odm.setVisibility(View.VISIBLE);
+                                            layout_nombre2.setVisibility(View.GONE);
+                                            layout_nombre_vehiculo2.setVisibility(View.GONE);
+                                        }else if(!jsonObject_2.has("nroveh")){
+                                            tvfleetmsj1.setVisibility(View.GONE);
+                                            tvfleetlabel1.setVisibility(View.GONE);
+                                            tvproductomsj1.setVisibility(View.GONE);
+                                            tvproductolabel1.setVisibility(View.GONE);
+                                            imagen.setVisibility(View.GONE);
+                                            et_odm.setVisibility(View.GONE);
+                                            layout_nombre2.setVisibility(View.GONE);
+                                            layout_nombre_vehiculo2.setVisibility(View.VISIBLE);
+                                        }
+                                        layout_nombre.setVisibility(View.GONE);
+                                        layout_nombre_vehiculo.setVisibility(View.GONE);
+                                    }
+                                } catch (JSONException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
+                                    e.printStackTrace();
+
+                                }
                             }
                         }
                     }
@@ -854,10 +1220,14 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         imageView_2 = (ImageView) findViewById(R.id.imageView_2);
         cardView_1 = (CardView) findViewById(R.id.CardViewRFID) ;
         cardView_2 = (CardView) findViewById(R.id.CardViewRFID2) ;
+        CardViewTEXT1 = (CardView)findViewById(R.id.CardViewTEXT1);
+        CardViewTEXT2 = (CardView)findViewById(R.id.CardViewTEXT2);
         cardView_1.setOnClickListener(this);
         cardView_2.setOnClickListener(this);
         CardViewNIP1.setOnClickListener(this);
         CardViewNIP2.setOnClickListener(this);
+        CardViewTEXT1.setOnClickListener(this);
+        CardViewTEXT2.setOnClickListener(this);
         addListenerOnButton();
         MacActivity mac = new MacActivity();
         String query = "select p.numero_logico as logico from posicion as p \n" +
@@ -867,7 +1237,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                 "where c.status =0 and dispo.mac_adr='"+mac.getMacAddress()+"'";
         try {
             DataBaseCG cg = new DataBaseCG();
-            connect = cg.control_gas(getApplicationContext());
+            connect = cg.odbc_cecg_app(getApplicationContext());
             stmt = connect.prepareStatement(query);
             rs = stmt.executeQuery();
             ArrayList<String> data = new ArrayList<String>();
@@ -883,7 +1253,11 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
             spn_dispensarios_1.setAdapter(NoCoreAdapter);
             spn_dispensarios_2.setAdapter(NoCoreAdapter);
             spn_dispensarios_2.setSelection(1);
-        } catch (SQLException e) {
+        } catch (SQLException | IllegalAccessException | ClassNotFoundException | InstantiationException | JSONException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             try {
                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoPopulateSpinnerCG",e));
             }catch (JSONException e1){
@@ -912,6 +1286,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             jsonObject_2.put("odm",et_odm.getText());
                         }
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito",e));
                         }catch (JSONException e1){
@@ -944,6 +1322,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             jsonObject_2.put("nip",et_clientecg.getText());
                         }
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         e.printStackTrace();
                     }
                 }
@@ -964,6 +1346,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             try {
                                 bomba1=jsonObject_1.getInt("bomba");
                             } catch (JSONException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba1",e));
                                 }catch (JSONException e1){
@@ -976,6 +1362,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             try {
                                 bomba2=jsonObject_2.getInt("bomba");
                             } catch (JSONException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba2",e));
                                 }catch (JSONException e1){
@@ -989,10 +1379,11 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 "left outer join dispensario as disp on disp.id=p.id_dispensario\n" +
                                 "left outer join corte as c on c.id_dispensario=disp.id\n" +
                                 "left outer join dispositivos as dispo on dispo.id=c.id_dispositivo\n" +
-                                "where c.status =0 and dispo.mac_adr='"+mac.getMacAddress()+"' and p.numero_logico not in("+bomba1+","+bomba2+")";
+                                "where c.status =0 and dispo.mac_adr='"+mac.getMacAddress()+"' and " +
+                                "p.numero_logico not in("+bomba1+","+bomba2+")";
                         try {
                             DataBaseCG cg = new DataBaseCG();
-                            connect = cg.control_gas(getApplicationContext());
+                            connect = cg.odbc_cecg_app(getApplicationContext());
                             stmt = connect.prepareStatement(query);
                             rs = stmt.executeQuery();
                             ArrayList<String> data = new ArrayList<String>();
@@ -1006,7 +1397,11 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             fab_contado dialogFragment = fab_contado
                                     .newInstance("Ticket Contado",data);
                             dialogFragment.show(getFragmentManager(), "dialog");
-                        } catch (SQLException e) {
+                        } catch (SQLException | JSONException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoPopulateSpinnerFabCG",e));
                             }catch (JSONException e1){
@@ -1036,8 +1431,6 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_back:
-                //Intent intent = new Intent(ActivityCreditoDual.this,VentaActivity.class);
-                //startActivity(intent);
                 close_credito dialogFragment = close_credito
                         .newInstance();
                 dialogFragment.show(getFragmentManager(), "dialog");
@@ -1048,8 +1441,6 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         }
     }
     @SuppressLint("NewApi") protected void onNewIntent(Intent intent){
-        //envio de mail
-        //sendEmail("Surtiendo en");
         String etiqueta="";
         if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -1080,6 +1471,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     }
 
                 } catch (JSONException e) {
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
                     try {
                         logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoRfidIdentifiacion",e));
                     }catch (JSONException e1){
@@ -1123,6 +1518,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
             tagContent = new String(payload, languageSize + 1,
                     payload.length - languageSize - 1, textEncoding);
         } catch (UnsupportedEncodingException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             try {
                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoGetTextFromNdefRecord",e));
             }catch (JSONException e1){
@@ -1183,6 +1582,11 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 tvbomba.setText("Bomba : "+jsonObject_1.getString("bomba"));
                                 fab.setVisibility(View.VISIBLE);
                             } catch (JSONException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
+                                e.printStackTrace();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoImageButtonimbtn_ticket1",e));
                                 }catch (JSONException e1){
@@ -1197,6 +1601,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 cardView_1.setVisibility(View.VISIBLE);
                             }
                             CardViewNIP1.setVisibility(View.VISIBLE);
+                            CardViewTEXT1.setVisibility(View.VISIBLE);
                             tvbomba.setVisibility(View.VISIBLE);
                         }else{
                             try {
@@ -1210,6 +1615,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         tvbomba.setText("Bomba : "+jsonObject_1.getString("bomba"));
                                         fab.setVisibility(View.VISIBLE);
                                     } catch (JSONException e) {
+                                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                                .setTitle(R.string.error)
+                                                .setMessage(String.valueOf(e))
+                                                .setPositiveButton(R.string.btn_ok,null).show();
                                         try {
                                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoSpinnerGetBomba1",e));
                                         }catch (JSONException e1){
@@ -1224,9 +1633,14 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_1.setVisibility(View.VISIBLE);
                                     }
                                     CardViewNIP1.setVisibility(View.VISIBLE);
+                                    CardViewTEXT1.setVisibility(View.VISIBLE);
                                     tvbomba.setVisibility(View.VISIBLE);
                                 }
                             } catch (JSONException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba",e));
                                 }catch (JSONException e1){
@@ -1254,6 +1668,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 tvbomba.setText("Bomba : "+jsonObject_2.getString("bomba"));
                                 fab.setVisibility(View.VISIBLE);
                             } catch (JSONException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoImageButtonimbtn_ticket2",e));
                                 }catch (JSONException e1){
@@ -1268,6 +1686,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 cardView_2.setVisibility(View.VISIBLE);
                             }
                             CardViewNIP2.setVisibility(View.VISIBLE);
+                            CardViewTEXT2.setVisibility(View.VISIBLE);
                             tvbomba.setVisibility(View.VISIBLE);
                         }else{
                             try {
@@ -1281,6 +1700,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         tvbomba.setText("Bomba : "+jsonObject_2.getString("bomba"));
                                         fab.setVisibility(View.VISIBLE);
                                     } catch (JSONException e) {
+                                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                                .setTitle(R.string.error)
+                                                .setMessage(String.valueOf(e))
+                                                .setPositiveButton(R.string.btn_ok,null).show();
                                         try {
                                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoSpinnerGetBomba2",e));
                                         }catch (JSONException e1){
@@ -1295,9 +1718,14 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                         cardView_2.setVisibility(View.VISIBLE);
                                     }
                                     CardViewNIP2.setVisibility(View.VISIBLE);
+                                    CardViewTEXT2.setVisibility(View.VISIBLE);
                                     tvbomba.setVisibility(View.VISIBLE);
                                 }
                             } catch (JSONException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoBomba2",e));
                                 }catch (JSONException e1){
@@ -1321,6 +1749,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                 if(adapter.isEnabled()) {
                     cardView_1.setVisibility(View.GONE);
                     CardViewNIP1.setVisibility(View.GONE);
+                    CardViewTEXT1.setVisibility(View.GONE);
                     tvrfid1.setVisibility(View.VISIBLE);
                     tvrfid1.setText(TV_NFC);
                     if (!tgl_area.isChecked()) {
@@ -1329,6 +1758,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             jsonObject_1.put("odoo_activo", odoo_activo);
                             jsonObject_1.put("metodo", "nfc");
                         } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewRFID1",e));
                             }catch (JSONException e1){
@@ -1341,6 +1774,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             jsonObject_2.put("odoo_activo", odoo_activo);
                             jsonObject_2.put("metodo", "nfc");
                         } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewRFID2",e));
                             }catch (JSONException e1){
@@ -1356,14 +1793,20 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
             case R.id.CardViewNIP1:
                 cardView_1.setVisibility(View.GONE);
                 CardViewNIP1.setVisibility(View.GONE);
+                CardViewTEXT1.setVisibility(View.GONE);
                 tvrfid1.setVisibility(View.VISIBLE);
                 tvrfid1.setText(TV_NIP);
                 ll_clienteodoo.setVisibility(View.VISIBLE);
+                ll_busqueda_nip.setVisibility(View.VISIBLE);
                 if(!tgl_area.isChecked()) {
                     try {
                         jsonObject_1.put("odoo_activo",odoo_activo);
                         jsonObject_1.put("metodo", "nip");
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewNIP1",e));
                         }catch (JSONException e1){
@@ -1376,6 +1819,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         jsonObject_2.put("odoo_activo",odoo_activo);
                         jsonObject_2.put("metodo", "nip");
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewNIP2",e));
                         }catch (JSONException e1){
@@ -1388,6 +1835,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
             case R.id.CardViewRFID2:
                 cardView_2.setVisibility(View.GONE);
                 CardViewNIP2.setVisibility(View.GONE);
+                CardViewTEXT2.setVisibility(View.GONE);
                 tvrfid1.setVisibility(View.VISIBLE);
                 tvrfid1.setText(TV_NFC);
                 if(tgl_area.isChecked()) {
@@ -1395,6 +1843,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         jsonObject_2.put("metodo", "nfc");
                         Log.w("metodo",jsonObject_2.getString("metodo"));
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewRFID22",e));
                         }catch (JSONException e1){
@@ -1407,6 +1859,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         jsonObject_1.put("metodo", "nfc");
                         Log.w("metodo",jsonObject_1.getString("metodo"));
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewRFID21",e));
                         }catch (JSONException e1){
@@ -1419,15 +1875,21 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
             case R.id.CardViewNIP2:
                 cardView_2.setVisibility(View.GONE);
                 CardViewNIP2.setVisibility(View.GONE);
-
+                CardViewTEXT2.setVisibility(View.GONE);
                 tvrfid1.setVisibility(View.VISIBLE);
                 tvrfid1.setText(TV_NIP);
 
+                ll_clienteodoo.setVisibility(View.VISIBLE);
+                ll_busqueda_nip.setVisibility(View.VISIBLE);
                 if(!tgl_area.isChecked()) {
                     try {
                         jsonObject_1.put("odoo_activo",odoo_activo);
                         jsonObject_1.put("metodo", "nip");
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewNIP21",e));
                         }catch (JSONException e1){
@@ -1440,6 +1902,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         jsonObject_2.put("odoo_activo",odoo_activo);
                         jsonObject_2.put("metodo", "nip");
                     } catch (JSONException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         try {
                             logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("CreditoCardViewNIP22",e));
                         }catch (JSONException e1){
@@ -1450,24 +1916,53 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                 }
                 Log.w("json",jsonObject_2.toString());
                 break;
+            case R.id.CardViewTEXT1:
+                cardView_1.setVisibility(View.GONE);
+                CardViewNIP1.setVisibility(View.GONE);
+                CardViewTEXT1.setVisibility(View.GONE);
+                tvrfid1.setText(TV_NOMBRE);
+                tvrfid1.setVisibility(View.VISIBLE);
+                layout_nombre.setVisibility(View.VISIBLE);
+                try {
+                    jsonObject_1.put("odoo_activo",odoo_activo);
+                    jsonObject_1.put("metodo", "nombre");
+                } catch (JSONException e) {
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+
+                break;
+            case R.id.CardViewTEXT2:
+                cardView_2.setVisibility(View.GONE);
+                CardViewNIP2.setVisibility(View.GONE);
+                CardViewTEXT2.setVisibility(View.GONE);
+                tvrfid1.setText(TV_NOMBRE);
+                tvrfid1.setVisibility(View.VISIBLE);
+                layout_nombre2.setVisibility(View.VISIBLE);
+                try {
+                    jsonObject_2.put("odoo_activo",odoo_activo);
+                    jsonObject_2.put("metodo", "nombre");
+                } catch (JSONException e) {
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+                break;
             case R.id.btn_creditoticket:
 
-                    ticketFragment tf = new ticketFragment();
-                    cgticket ticket = new cgticket();
-                    String nrotrn = null;
-                    try {
-                        if (!tgl_area.isChecked()) {
-                            nrotrn = vf.validar_utlimo_nrotrn(ActivityCreditoDual.this, jsonObject_1.getString("bomba"));
-                        }else{
-                            nrotrn = vf.validar_utlimo_nrotrn(ActivityCreditoDual.this, jsonObject_2.getString("bomba"));
-                        }
-                    } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
-                        try {
-                            logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Creditobtn_creditoticket_validarultimonrotrn",e));
-                        }catch (JSONException e1){
-                            e1.printStackTrace();
-                        }
-                        e.printStackTrace();
+                ticketFragment tf = new ticketFragment();
+                cgticket ticket = new cgticket();
+                String nrotrn = null;
+                try {
+                    if (!tgl_area.isChecked()) {
+                        nrotrn = vf.validar_utlimo_nrotrn(ActivityCreditoDual.this, jsonObject_1.getString("bomba"));
+                    }else{
+                        nrotrn = vf.validar_utlimo_nrotrn(ActivityCreditoDual.this, jsonObject_2.getString("bomba"));
                     }
                     odm = String.valueOf(et_odm.getText());
                     Log.w("odm1", odm);
@@ -1475,32 +1970,40 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         odm = "0";
                     }
                     //aqui se valida que sea un servicio diferente despues de leer la etiqueta
-                Log.w("ult",ult_nrotrn+nrotrn);
-                String ultnrotrn="";
-                if(!tgl_area.isChecked()){
-                    try {
-                        ultnrotrn=jsonObject_1.getString("ult_nrotrn");
-                    } catch (JSONException e) {
+                    Log.w("ult",ult_nrotrn+nrotrn);
+                    String ultnrotrn="";
+                    if(!tgl_area.isChecked()){
                         try {
-                            logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Creditoc_reditoticket_ultnrotr",e));
-                        }catch (JSONException e1){
-                            e1.printStackTrace();
+                            ultnrotrn=jsonObject_1.getString("ult_nrotrn");
+                        } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                            try {
+                                logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Creditoc_reditoticket_ultnrotr",e));
+                            }catch (JSONException e1){
+                                e1.printStackTrace();
+                            }
+                            e.printStackTrace();
                         }
-                        e.printStackTrace();
-                    }
-                }else{
-                    try {
-                        ultnrotrn=jsonObject_2.getString("ult_nrotrn");
+                    }else{
+                        try {
+                            ultnrotrn=jsonObject_2.getString("ult_nrotrn");
 
-                    } catch (JSONException e) {
-                        try {
-                            logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_ultnrotr",e));
-                        }catch (JSONException e1){
-                            e1.printStackTrace();
+                        } catch (JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                            try {
+                                logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_ultnrotr",e));
+                            }catch (JSONException e1){
+                                e1.printStackTrace();
+                            }
+                            e.printStackTrace();
                         }
-                        e.printStackTrace();
                     }
-                }
                     if (!ultnrotrn.equals(nrotrn)) {
                         JSONObject codcli=null;
                         //obtenemos el codigo del cliente
@@ -1509,18 +2012,25 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 codcli = vf.get_codcli(ActivityCreditoDual.this, jsonObject_1.getString("id_tag"), jsonObject_1.getString("metodo"));
                                 Log.w("codigo", codcli.toString());
                             } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
-
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_get_codcli1",e));
                                 }catch (JSONException e1){
                                     e1.printStackTrace();
                                 }
-                                e.printStackTrace();
+                                /*e.printStackTrace();*/
                             }
                         }else{
                             try {
                                 codcli = vf.get_codcli(ActivityCreditoDual.this, jsonObject_2.getString("id_tag"), jsonObject_2.getString("metodo"));
                             } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 try {
                                     logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_get_codcli2",e));
                                 }catch (JSONException e1){
@@ -1538,47 +2048,52 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }else{
                                 servicio = ticket.consulta_servicio(ActivityCreditoDual.this, jsonObject_2.getString("bomba"));
                             }
-                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException |JSONException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_consulta_servicio",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
                             }
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            try {
-                                logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_consulta_servicio",e));
-                            }catch (JSONException e1){
-                                e1.printStackTrace();
-                            }
-                            e.printStackTrace();
+                            /*e.printStackTrace();*/
                         }
 
                         try {
-                            impreso = cant_impreso(getApplicationContext(), servicio.getString("nrotrn"));
-                        } catch (JSONException e) {
+                            impreso = ticket.cant_impreso(getApplicationContext(), servicio.getString("nrotrn"));
+                            if (impreso.equals(0)) {
+                                try {
+                                    //realizamos el update para asignar el ticket al cliente de credito
+                                    ticket.update_codcli(ActivityCreditoDual.this, nrotrn, codcli.getString("cliente"), codcli.getString("vehiculo"), odm,codcli.getString("tar"));
+                                    cgticket_obj.guardarnrotrn(getApplicationContext(), servicio, 2);
+                                } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
+                                    try {
+                                        logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_guardarnrotrn",e));
+                                    }catch (JSONException e1){
+                                        e1.printStackTrace();
+                                    }
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (JSONException | SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_cant_impreso",e));
                             }catch (JSONException e1){
                                 e1.printStackTrace();
                             }
-                            e.printStackTrace();
+                            /*e.printStackTrace();*/
                         }
-                        Log.w("cant_imp", String.valueOf(impreso));
-                        if (impreso.equals(0)) {
-                            try {
-                                //realizamos el update para asignar el ticket al cliente de credito
-                                ticket.update_codcli(ActivityCreditoDual.this, nrotrn, codcli.getString("cliente"), codcli.getString("vehiculo"), odm,codcli.getString("tar"));
-                                cgticket_obj.guardarnrotrn(getApplicationContext(), servicio, 2);
-                            } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
-                                try {
-                                    logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_guardarnrotrn",e));
-                                }catch (JSONException e1){
-                                    e1.printStackTrace();
-                                }
-                                e.printStackTrace();
-                            }
-                        }
+
 
                         //impresion con copia
                         cgticket cgticket_obj = new cgticket();
@@ -1609,9 +2124,13 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
 
                                 new ClassImpresionTicket(ActivityCreditoDual.this, getApplicationContext(), this.btn_creditoticket, ticket2).execute();
                             }
-                        ticket_otra_bomba=new JSONObject();
+                            ticket_otra_bomba=new JSONObject();
 
                         } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException  e) {
+                            new AlertDialog.Builder(ActivityCreditoDual.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             try {
                                 logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Credito_creditoticket_consulta_impresion",e));
                             }catch (JSONException e1){
@@ -1633,8 +2152,20 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     } else {
                         //condicion cuando no llega el nuevo servicio
                         Toast.makeText(this, "Servicio aun no listo, espere un momento.", Toast.LENGTH_LONG).show();
+                }
+                } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    try {
+                        logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("Creditobtn_creditoticket_validarultimonrotrn",e));
+                    }catch (JSONException e1){
+                        e1.printStackTrace();
                     }
-                    break;
+                    /*e.printStackTrace();*/
+                }
+                break;
             case R.id.imbtn_clientecg:
                 int len_nip = et_clientecg.getText().length();
                 if (len_nip==0){
@@ -1661,6 +2192,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         }
 
                     } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                        new AlertDialog.Builder(ActivityCreditoDual.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                         e.printStackTrace();
                     }
                 }
@@ -1702,96 +2237,28 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         @Override
         protected String doInBackground(String... params) {
             Log.w("odoo",odoo_activo.toString());
-            if (odoo_activo){
-                try {
 
-                    // Enter URL address where your php file resides
-                    url = new URL("http://189.206.183.110:1390/cliente_odoo-search_fa.php");
+            JSONObject j = new JSONObject();
+            try {
+                j.put("saldo",1);
+                j.put("deuda",0);
 
-                } catch (MalformedURLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return e.toString();
-                }
-                try {
-
-                    // Setup HttpURLConnection class to send and receive data from php and mysql
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(READ_TIMEOUT);
-                    conn.setConnectTimeout(CONNECTION_TIMEOUT);
-                    conn.setRequestMethod("POST");
-
-                    // setDoInput and setDoOutput to true as we send and recieve data
-                    conn.setDoInput(true);
-                    conn.setDoOutput(true);
-
-                    // add parameter to our above url
-                    Uri.Builder builder = new Uri.Builder().appendQueryParameter("searchQuery", searchQuery);
-                    String query = builder.build().getEncodedQuery();
-
-                    OutputStream os = conn.getOutputStream();
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                    writer.write(query);
-                    writer.flush();
-                    writer.close();
-                    os.close();
-                    conn.connect();
-
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                    return e1.toString();
+                j.put("limite",1);
+                if (!tgl_area.isChecked()) {
+                    j.put("cliente", cgticket_obj.get_cliente_den(ActivityCreditoDual.this, jsonObject_1.getString("id_tag"), metodo));
+                }else{
+                    j.put("cliente", cgticket_obj.get_cliente_den(ActivityCreditoDual.this, jsonObject_2.getString("id_tag"), metodo));
                 }
 
-                try {
-
-                    int response_code = conn.getResponseCode();
-
-                    // Check if successful connection made
-                    if (response_code == HttpURLConnection.HTTP_OK) {
-
-                        // Read data sent from server
-                        InputStream input = conn.getInputStream();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                        StringBuilder result = new StringBuilder();
-                        String line;
-
-                        while ((line = reader.readLine()) != null) {
-                            result.append(line);
-                        }
-
-                        // Pass data to onPostExecute method
-                        Log.w("result",result.toString());
-                        return (result.toString());
-
-                    } else {
-                        return("Connection error");
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return e.toString();
-                } finally {
-                    conn.disconnect();
-                }
-            }else{
-                JSONObject j = new JSONObject();
-                try {
-                    j.put("saldo",1);
-                    j.put("deuda",0);
-
-                    j.put("limite",1);
-                    if (!tgl_area.isChecked()) {
-                        j.put("cliente",cgticket_obj.get_cliente_den(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo));
-                    }else{
-                        j.put("cliente",cgticket_obj.get_cliente_den(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo));
-                    }
-
-                } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                return (j.toString());
+            } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                new AlertDialog.Builder(ActivityCreditoDual.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                e.printStackTrace();
             }
+            return (j.toString());
+
         }
 
         @Override
@@ -1812,7 +2279,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     if (!tgl_area.isChecked()){
                         activo=vf.validar_estado(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                         estacion=vf.validar_estacion(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
-                        cargas_turno=vf.validar_cargas_turno(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"));
+                        cargas_turno=vf.validar_cargas_turno(ActivityCreditoDual.this,jsonObject_1.getString("metodo"),jsonObject_1.getString("id_tag"));
                         dia=vf.carga_dia(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                         hora=vf.validar_hora(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                         monto=vf.validar_monto(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
@@ -1824,7 +2291,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                     }else{
                         activo=vf.validar_estado(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
                         estacion=vf.validar_estacion(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
-                        cargas_turno=vf.validar_cargas_turno(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"));
+                        cargas_turno=vf.validar_cargas_turno(ActivityCreditoDual.this,jsonObject_2.getString("metodo"),jsonObject_2.getString("id_tag"));
                         dia=vf.carga_dia(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
                         hora=vf.validar_hora(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
                         monto=vf.validar_monto(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
@@ -2064,6 +2531,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 }
                                 borrar();
                             } catch (InterruptedException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 e.printStackTrace();
                             }
                         }
@@ -2080,15 +2551,25 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                 }
                                 borrar();
                             } catch (InterruptedException e) {
+                                new AlertDialog.Builder(ActivityCreditoDual.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                                 e.printStackTrace();
                             }
                         }
                     }
                 } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
                     // You to understand what actually error is and handle it appropriately
-                    Toast.makeText(ActivityCreditoDual.this,"Cliente no entontrado",Toast.LENGTH_SHORT).show();
-                    Log.w("ERR",e.toString());
-
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    try {
+                        logCE.EscirbirLog(getApplicationContext(),jsonObjectError.put("creditoticket_validarrestricciones",e));
+                    }catch (JSONException e1){
+                        e1.printStackTrace();
+                    }
                 }
 
             }
@@ -2184,29 +2665,6 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         tvrfid1.setText(R.string.rfid);
         vg.invalidate();
     }
-    public Integer cant_impreso (Context con, String ticket ){
-        ResultSet rs;
-        Integer res=0;
-        Log.w("nrotrn",ticket);
-        String query = "select impreso from despachos where nrotrn="+ticket+"";
-        try {
-            DataBaseCG CG = new DataBaseCG();
-            connect = CG.odbc_cecg_app(con);
-            stmt = connect.prepareStatement(query);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                res = rs.getInt("impreso");
-            }
-            connect.close();
-            stmt.close();
-            rs.close();
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-
 
 
     protected void sendEmail(String metodo) {
@@ -2222,6 +2680,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
         try {
             emailSubject = metodo+" 0"+jsonObject_1.getString("bomba");
         } catch (JSONException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
         }
         String emailBody = "Prueba de correo";
@@ -2230,5 +2692,203 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
     }
     public void doNegativeClick(){
         Toast.makeText(this, "Ha pulsado Cancelar", Toast.LENGTH_SHORT).show();
+    }
+    public void SearchCustomerName(View v){
+        try {
+            if (!tgl_area.isChecked()){
+                if (etSearchCustomer.getText().length()<MIN_SEARCH){
+                    String error = "El minimo de caracteres para buscar es (" + String.valueOf(MIN_SEARCH)
+                            + "), la busqueda actual es de "+ etSearchCustomer.getText().length()
+                            + " caracter(es).";
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(error)
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                }else {
+                    Log.i("cliente buscar", etSearchCustomer.getText().toString());
+                    List<DataCustomerCG> dataCustomerCG = new ArrayList<>(cgticket_obj.getCustomerCG(
+                            this, etSearchCustomer.getText().toString()));
+                    mRVCustomerCG = (RecyclerView) findViewById(R.id.clientes_cg);
+                    mAdapter = new AdapterCustomerCG(ActivityCreditoDual.this, dataCustomerCG);
+                    mRVCustomerCG.setAdapter(mAdapter);
+                    mRVCustomerCG.setLayoutManager(new LinearLayoutManager(ActivityCreditoDual.this));
+                }
+            }else{
+                if (etSearchCustomer2.getText().length()<MIN_SEARCH){
+                    String error = "El minimo de caracteres para buscar es (" + String.valueOf(MIN_SEARCH)
+                            + "), la busqueda actual es de "+ etSearchCustomer.getText().length()
+                            + " caracter(es).";
+                    new AlertDialog.Builder(ActivityCreditoDual.this)
+                            .setTitle(R.string.error)
+                            .setMessage(error)
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                }else {
+                    Log.i("cliente buscar", etSearchCustomer2.getText().toString());
+                    List<DataCustomerCG> dataCustomerCG2 = new ArrayList<>(cgticket_obj.getCustomerCG(
+                            this, etSearchCustomer2.getText().toString()));
+                    mRVCustomerCG2 = (RecyclerView) findViewById(R.id.clientes_cg2);
+                    mAdapter2 = new AdapterCustomerCG(ActivityCreditoDual.this, dataCustomerCG2);
+                    mRVCustomerCG2.setAdapter(mAdapter2);
+                    mRVCustomerCG2.setLayoutManager(new LinearLayoutManager(ActivityCreditoDual.this));
+                }
+            }
+
+        } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+        }
+        Log.i("ET Search Customer CG", etSearchCustomer.getText().toString());
+
+        CloseKeyboard();
+    }
+    public void CloseKeyboard(){
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            view.clearFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+    public void AdapterClickCustomerCG(JSONObject js){
+        Log.i("AdapterClickCustomerCG",String.valueOf(js));
+        try {
+            tvrfid1.setText(js.getString("cliente"));
+        } catch (JSONException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+        if (!tgl_area.isChecked()) {
+            layout_nombre.setVisibility(View.GONE);
+            layout_nombre_vehiculo.setVisibility(View.VISIBLE);
+            try {
+                tvvehiculo_cliente.setText(js.getString("cliente"));
+                tvvehiculo_codcli.setText(js.getString("codcli"));
+                tvvehiculo_rfc.setText(js.getString("rfc"));
+                List<DataCustomerCG> dataCustomerVehicleCG = new ArrayList<>(cgticket_obj.getCustomerVehicleCG(
+                        this,js.getString("codcli")));
+                mRVCustomerVehicleCG = (RecyclerView) findViewById(R.id.clientesvehiculos_cg);
+                mAdapterVehicle = new AdapterCustomerVehicleCG(ActivityCreditoDual.this,dataCustomerVehicleCG);
+                mRVCustomerVehicleCG.setAdapter(mAdapterVehicle);
+                mRVCustomerVehicleCG.setLayoutManager(new LinearLayoutManager(ActivityCreditoDual.this));
+                Log.i("vehiculo", String.valueOf(dataCustomerVehicleCG));
+            } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                new AlertDialog.Builder(ActivityCreditoDual.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                e.printStackTrace();
+            }
+        }else if(tgl_area.isChecked()){
+            layout_nombre2.setVisibility(View.GONE);
+            layout_nombre_vehiculo2.setVisibility(View.VISIBLE);
+            try {
+                tvvehiculo_cliente2.setText(js.getString("cliente"));
+                tvvehiculo_codcli2.setText(js.getString("codcli"));
+                tvvehiculo_rfc2.setText(js.getString("rfc"));
+                List<DataCustomerCG> dataCustomerVehicleCG2 = new ArrayList<>(cgticket_obj.getCustomerVehicleCG(
+                        this,js.getString("codcli")));
+                mRVCustomerVehicleCG2 = (RecyclerView) findViewById(R.id.clientesvehiculos_cg2);
+                mAdapterVehicle2 = new AdapterCustomerVehicleCG(ActivityCreditoDual.this,dataCustomerVehicleCG2);
+                mRVCustomerVehicleCG2.setAdapter(mAdapterVehicle2);
+                mRVCustomerVehicleCG2.setLayoutManager(new LinearLayoutManager(ActivityCreditoDual.this));
+                Log.i("vehiculo", String.valueOf(dataCustomerVehicleCG2));
+            } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                new AlertDialog.Builder(ActivityCreditoDual.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                e.printStackTrace();
+            }
+        }
+        try {
+            PutJsonAdapterToggle(tgl_area.isChecked(),js);
+        } catch (JSONException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+
+    }
+    public void AdapterClickCustomerVehicleCG(JSONObject js){
+        Log.i("CustomerVehicleCG",String.valueOf(js));
+        try {
+            PutJsonAdapterToggle(tgl_area.isChecked(),js);
+            if(!tgl_area.isChecked()){
+                new ActivityCreditoDual.AsyncFetch(jsonObject_1.getString("rfc"),jsonObject_1.getString("metodo")).execute();
+                tvfleetmsj1.setVisibility(View.VISIBLE);
+                tvfleetlabel1.setVisibility(View.VISIBLE);
+                tvproductomsj1.setVisibility(View.VISIBLE);
+                tvproductolabel1.setVisibility(View.VISIBLE);
+                imagen.setVisibility(View.VISIBLE);
+                et_odm.setVisibility(View.VISIBLE);
+                layout_nombre.setVisibility(View.GONE);
+                layout_nombre_vehiculo.setVisibility(View.GONE);
+            }else{
+                new ActivityCreditoDual.AsyncFetch(jsonObject_2.getString("rfc"),jsonObject_2.getString("metodo")).execute();
+                tvfleetmsj1.setVisibility(View.VISIBLE);
+                tvfleetlabel1.setVisibility(View.VISIBLE);
+                tvproductomsj1.setVisibility(View.VISIBLE);
+                tvproductolabel1.setVisibility(View.VISIBLE);
+                imagen.setVisibility(View.VISIBLE);
+                et_odm.setVisibility(View.VISIBLE);
+                layout_nombre2.setVisibility(View.GONE);
+                layout_nombre_vehiculo2.setVisibility(View.GONE);
+
+            }
+        } catch (JSONException e) {
+            new AlertDialog.Builder(ActivityCreditoDual.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+    }
+
+    public void PutJsonAdapterToggle(boolean b,JSONObject js) throws JSONException {
+        Log.i("Putjson",String.valueOf(js));
+        if (!b){
+            if (js.has("rfc")) {
+                jsonObject_1.put("rfc", js.getString("rfc"));
+            }if (js.has("cliente")) {
+                jsonObject_1.put("cliente", js.getString("cliente"));
+            }if(js.has("codcli")) {
+                jsonObject_1.put("codcli", js.getString("codcli"));
+            }if(js.has("vehiculo")){
+                jsonObject_1.put("vehiculo",js.getString("vehiculo"));
+            }if(js.has("rsp")){
+                jsonObject_1.put("rsp",js.getString("rsp"));
+            }if(js.has("nroveh")){
+                jsonObject_1.put("nroveh",js.getString("nroveh"));
+            }if(js.has("tar")){
+                jsonObject_1.put("id_tag",js.getString("tar"));
+            jsonObject_1.put("tar",js.getString("tar"));
+            }
+        }else{
+            if (js.has("rfc")) {
+                jsonObject_2.put("rfc", js.getString("rfc"));
+            }if (js.has("cliente")) {
+                jsonObject_2.put("cliente", js.getString("cliente"));
+            }if(js.has("codcli")) {
+                jsonObject_2.put("codcli", js.getString("codcli"));
+            }if(js.has("vehiculo")){
+                jsonObject_2.put("vehiculo",js.getString("vehiculo"));
+            }if(js.has("rsp")){
+                jsonObject_2.put("rsp",js.getString("rsp"));
+            }if(js.has("nroveh")){
+                jsonObject_2.put("nroveh",js.getString("nroveh"));
+            }if(js.has("tar")){
+                jsonObject_2.put("tar",js.getString("tar"));
+                jsonObject_2.put("id_tag",js.getString("tar"));
+            }
+        }
     }
 }

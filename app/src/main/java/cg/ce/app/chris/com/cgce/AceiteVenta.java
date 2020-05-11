@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import org.json.JSONException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,7 +60,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
                     R.layout.spinner_bombas, data);
             connect.close();
             spn_dispensarios.setAdapter(NoCoreAdapter);
-        } catch (SQLException e) {
+        } catch (SQLException | JSONException e) {
 
             e.printStackTrace();
         }

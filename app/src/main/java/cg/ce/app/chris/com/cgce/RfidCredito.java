@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -127,7 +128,16 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                         pdLoading.show();
                         JSONObject ticket_otra_bomba = null;
                         cgticket ticket = new cgticket();
-                        Integer bomba_libre = ticket.get_bomba_libre(getApplicationContext(), bomba);
+                        Integer bomba_libre = null;
+                        try {
+                            bomba_libre = ticket.get_bomba_libre(getApplicationContext(), bomba);
+                        } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                            e.printStackTrace();
+                            new AlertDialog.Builder(RfidCredito.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                        }
                         try {
                             servicio = ticket.consulta_servicio(RfidCredito.this, bomba);
                             ticket_otra_bomba = ticket.consulta_servicio(getApplicationContext(), String.valueOf(bomba_libre));

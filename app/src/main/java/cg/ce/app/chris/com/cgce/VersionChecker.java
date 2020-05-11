@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.PortUnreachableException;
 import java.net.URL;
 
 /**
@@ -22,7 +23,10 @@ public class VersionChecker {
     /**
      * El enlace al archivo autoupdate_info.txt guardado en el servidor pegaso.
      */
-    public static final String INFO_FILE = "http://189.206.183.110:1390/cecg_app/autoupdate_info.txt";
+    public static final String MARCA = "Repsol";
+    public static final String INFO_FILE_COMBU = "http://189.206.183.110:1390/cecg_app/autoupdate_info.txt";
+    public static final String INFO_FILE_REPSOL = "http://189.206.183.110:1390/cecg_app/autoupdate_info_repsol.txt";
+
     /**
      * El código de versión establecido en el AndroidManifest.xml de la versión
      * instalada de la aplicación. Es el valor numérico que usa Android para
@@ -69,7 +73,12 @@ public class VersionChecker {
             currentVersionName = pckginfo.versionName;
 
             // Datos remotos
-            String data = downloadHttp(new URL(INFO_FILE));
+            String data=null;
+            if (MARCA == "Combu"){
+                data = downloadHttp(new URL(INFO_FILE_COMBU));
+            }else if(MARCA == "Repsol"){
+                data = downloadHttp(new URL(INFO_FILE_REPSOL));
+            }
             Log.w("json",data);
             JSONObject json = new JSONObject(data);
             latestVersionCode = json.getInt("versionCode");

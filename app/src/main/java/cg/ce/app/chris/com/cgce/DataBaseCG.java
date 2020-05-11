@@ -112,7 +112,7 @@ public class DataBaseCG {
 
         return conn;
     }
-    public Connection odbc_cecg_app(Context con){
+    public Connection odbc_cecg_app(Context con) throws JSONException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         context = con;
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -122,43 +122,30 @@ public class DataBaseCG {
         String user=null;
         String base=null;
         String pass = null;
-        try {
-            direccion = cursor.getString("ip");
-            puerto = cursor.getString("puerto");
-            user = cursor.getString("userdb");
-            base = cursor.getString("db");
-            pass = cursor.getString("passdb");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+        direccion = cursor.getString("ip");
+        puerto = cursor.getString("puerto");
+        user = cursor.getString("userdb");
+        base = cursor.getString("db");
+        pass = cursor.getString("passdb");
+
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Connection conn = null;
         String connString = null;
         String ConnURL = null;
-        try {
-            String driver = "net.sourceforge.jtds.jdbc.Driver";
-            Class.forName(driver).newInstance();
-            //test = com.microsoft.sqlserver.jdbc.SQLServerDriver.class;
-            connString = "jdbc:jtds:sqlserver://" + direccion +":"+puerto+"/" + base + ";encrypt=false;user="+user+";password="+pass+";";
 
-            conn = DriverManager.getConnection(connString);
-            Log.w("ConnectionCG","open");
-        } catch (SQLException e) {
-            Log.w("SQLException",e);
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            Log.w("ClassNotFoundException",e);
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        String driver = "net.sourceforge.jtds.jdbc.Driver";
+        Class.forName(driver).newInstance();
+        //test = com.microsoft.sqlserver.jdbc.SQLServerDriver.class;
+        connString = "jdbc:jtds:sqlserver://" + direccion +":"+puerto+"/" + base + ";encrypt=false;user="+user+";password="+pass+";";
+
+        conn = DriverManager.getConnection(connString);
+        Log.w("ConnectionCG","open");
         return conn;
     }
-    public Connection control_gas(Context con){
+    public Connection control_gas(Context con) throws JSONException{
         Connection connect;
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
@@ -168,16 +155,13 @@ public class DataBaseCG {
         String user=null;
         String base=null;
         String pass = null;
-        try {
-            direccion = cursor.getString("ip");
-            puerto = cursor.getString("puerto");
-            user = cursor.getString("userdb");
-            base = cursor.getString("db");
-            pass = cursor.getString("passdb");
-        } catch (JSONException e) {
-            e.printStackTrace();
 
-        }
+        direccion = cursor.getString("ip");
+        puerto = cursor.getString("puerto");
+        user = cursor.getString("userdb");
+        base = cursor.getString("db");
+        pass = cursor.getString("passdb");
+
         connect = CONN(user, pass, base, direccion, Integer.valueOf(puerto));
         return connect;
     }

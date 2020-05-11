@@ -173,7 +173,8 @@
             android:theme="@style/ContentMain" />
         <activity
             android:name=".ActivityCreditoDual"
-            android:theme="@style/ContentMain">
+            android:theme="@style/ContentMain"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>

@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * Created by chris on 29/06/17.
@@ -58,7 +59,7 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
             this.copia=String.valueOf(jsonObject.getString("copia"));
             this.comentarios=String.valueOf(jsonObject.getString("comentario"));
             this.nip=cg.nip_desp(context);
-        } catch (JSONException e) {
+        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -79,9 +80,9 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
 
             // Web Service al equipo
             //url = new URL (cg.urltimbre(context));
-            Log.w("Url Timbre", String.valueOf(cg.urltimbre(context)));
+            /*Log.w("Url Timbre", String.valueOf(cg.urltimbre(context)));*/
 
-            switch (2){
+            switch (1){
                 case 1:
                     url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
                     break;

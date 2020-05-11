@@ -4,6 +4,7 @@ package cg.ce.app.chris.com.cgce;
  * Created by chris on 17/01/17.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Connection;
@@ -38,6 +40,7 @@ public class Splashscreen extends Activity {
     }
     /** Called when the activity is first created. */
     Thread splashTread;
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,7 +154,7 @@ public class Splashscreen extends Activity {
                         }
                     }//termina
                     Splashscreen.this.finish();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
 
                     // do nothing
                 } finally {
@@ -163,7 +166,7 @@ public class Splashscreen extends Activity {
         splashTread.start();
 
     }
-    public int validardisp(Context con){
+    public int validardisp(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         ValidarDispositivo  mac_add=new ValidarDispositivo();
         //valor de res 0-sin autorizacion, 1-autorizado
         int res=0;

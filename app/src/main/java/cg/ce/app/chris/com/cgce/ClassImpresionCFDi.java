@@ -22,6 +22,7 @@ import com.google.zxing.WriterException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 import static android.content.Context.WINDOW_SERVICE;
@@ -132,7 +133,11 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
                     "&rr"+ String.valueOf(cfdienvio.getString("rfc")).toUpperCase()+
                     "&tt"+ String.valueOf(cfdienvio.getString("importe")).toUpperCase()+
                     "&rr"+ String.valueOf(cfdienvio.getString("uuid"));
-        } catch (JSONException e) {
+        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+            new android.support.v7.app.AlertDialog.Builder(context)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
         }
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qr_cadena,

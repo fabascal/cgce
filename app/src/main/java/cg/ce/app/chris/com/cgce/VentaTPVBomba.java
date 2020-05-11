@@ -78,7 +78,7 @@ public class VentaTPVBomba extends AppCompatActivity implements View.OnClickList
             ArrayAdapter NoCoreAdapter = new ArrayAdapter(this,
                     R.layout.spinner_bombas, data);
             spn_dispensarios.setAdapter(NoCoreAdapter);
-        } catch (SQLException e) {
+        } catch (SQLException | JSONException e) {
             e.printStackTrace();
         }
     }

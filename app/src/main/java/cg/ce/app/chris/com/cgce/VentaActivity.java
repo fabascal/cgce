@@ -1,6 +1,7 @@
 package cg.ce.app.chris.com.cgce;
 
 
+import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.sql.SQLException;
 
 import cg.ce.app.chris.com.cgce.Fragments.JarreoFullScreenFragment;
@@ -46,7 +49,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
 
-
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,7 +228,11 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                         try {
                             bdnipmanager = ticket.getNipManager(getApplicationContext());
                             Log.w("nip",bdnipmanager);
-                        } catch (SQLException e) {
+                        } catch (SQLException | ClassNotFoundException | InstantiationException | JSONException | IllegalAccessException e) {
+                            new AlertDialog.Builder(VentaActivity.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                             e.printStackTrace();
                         }
                         if(bdnipmanager != null) {

@@ -17,6 +17,8 @@ import com.epson.epos2.printer.Printer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
+
 public class CinepolisBoleto extends DialogFragment implements View.OnClickListener, CinepolisAsyncResponse {
 
     View root;
@@ -71,8 +73,20 @@ public class CinepolisBoleto extends DialogFragment implements View.OnClickListe
             case R.id.imbtn_finalizar:
                 if (Float.parseFloat(tvboletos.getText().toString())>0){
                     ServiciosActivity serviciosActivity = new ServiciosActivity();
-                    serviciosActivity.sendMessage(tvmail.getText().toString(),tvfolio.getText().toString(),tvprecio.getText().toString(),mensaje,tvboletos.getText().toString(),cgticket.get_estacion(getActivity()));
-                    cgticket.guardarnrotrn3(getActivity(),tvfolio.getText().toString(),tvmail.getText().toString(),tvboletos.getText().toString(),tvprecio.getText().toString() ,3);
+                    try {
+                        serviciosActivity.sendMessage(tvmail.getText().toString(),tvfolio.getText().toString(),tvprecio.getText().toString(),mensaje,tvboletos.getText().toString(),cgticket.get_estacion(getActivity()));
+                    } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException e) {
+                        new android.support.v7.app.AlertDialog.Builder(CinepolisBoleto.this.getActivity())
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                        e.printStackTrace();
+                    }
+                    try {
+                        cgticket.guardarnrotrn3(getActivity(),tvfolio.getText().toString(),tvmail.getText().toString(),tvboletos.getText().toString(),tvprecio.getText().toString() ,3);
+                    } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException |JSONException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
                 Intent intent = new Intent(getActivity(),VentaActivity.class);
                 startActivity(intent);

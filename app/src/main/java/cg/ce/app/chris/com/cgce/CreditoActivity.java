@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import org.json.JSONException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,7 +55,7 @@ public class CreditoActivity extends AppCompatActivity {
             ArrayAdapter NoCoreAdapter = new ArrayAdapter(this,
                     android.R.layout.simple_list_item_1, data);
             spn_dispensarios.setAdapter(NoCoreAdapter);
-        } catch (SQLException e) {
+        } catch (SQLException | JSONException e) {
             e.printStackTrace();
         }
     }

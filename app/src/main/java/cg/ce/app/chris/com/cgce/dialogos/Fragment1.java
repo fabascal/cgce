@@ -24,6 +24,7 @@ import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.LogCE;
 import cg.ce.app.chris.com.cgce.MacActivity;
 import cg.ce.app.chris.com.cgce.R;
+import cg.ce.app.chris.com.cgce.RfidCredito;
 import cg.ce.app.chris.com.cgce.VentaActivity;
 import cg.ce.app.chris.com.cgce.cgticket;
 
@@ -60,13 +61,27 @@ public class Fragment1 extends DialogFragment {
                             Dialog f = (Dialog) dialog;
                             EditText contrasena_input = (EditText) f.findViewById(R.id.contrasena_input);
                             Log.w("cont", String.valueOf(contrasena_input.getText()));
-                            Boolean nip_val = validar_nip(String.valueOf(contrasena_input.getText()));
-                            Log.w("nip", String.valueOf(nip_val));
+                            Boolean nip_val = null;
+                            try {
+                                nip_val = validar_nip(String.valueOf(contrasena_input.getText()));
+                            } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException e) {
+                                new android.support.v7.app.AlertDialog.Builder(Fragment1.this.getActivity())
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
+                                e.printStackTrace();
+                            }
                             if (nip_val == true) {
-                                corte_cinepolis();
-                                corte_finalizar();
-
-
+                                try {
+                                    corte_cinepolis();
+                                    corte_finalizar();
+                                } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException e) {
+                                    new android.support.v7.app.AlertDialog.Builder(Fragment1.this.getActivity())
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
+                                    e.printStackTrace();
+                                }
                                 Intent i = getActivity().getPackageManager()
                                         .getLaunchIntentForPackage( getActivity().getPackageName() );
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -99,7 +114,7 @@ public class Fragment1 extends DialogFragment {
         }
         return null;
     }
-    public boolean validar_nip(String nip){
+    public boolean validar_nip(String nip) throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException {
         ResultSet r;
         Boolean res=false;
         DataBaseCG dbcg = new DataBaseCG();
@@ -127,7 +142,7 @@ public class Fragment1 extends DialogFragment {
 
         return res;
     }
-    public boolean corte_cinepolis(){
+    public boolean corte_cinepolis() throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException {
         JSONObject js = cg.corte_cinepolis(getActivity());
         JSONObject js2 = cg.corte_datos((getActivity()));
         try {
@@ -144,7 +159,7 @@ public class Fragment1 extends DialogFragment {
         }
 
     }
-    public boolean corte_finalizar () {
+    public boolean corte_finalizar () throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException {
         String Log_state="";
 
         LogCE logce= new LogCE();

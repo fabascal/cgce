@@ -1,15 +1,19 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+
+import org.json.JSONException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,7 +32,7 @@ public class ContadoActivity extends AppCompatActivity {
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
 
-
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +56,7 @@ public class ContadoActivity extends AppCompatActivity {
                 "where c.status =0 and dispo.mac_adr='"+mac.getMacAddress()+"'";
         try {
             DataBaseCG gc = new DataBaseCG();
-            connect = gc.control_gas(getApplicationContext());
+            connect = gc.odbc_cecg_app(getApplicationContext());
             stmt = connect.prepareStatement(query);
             rs = stmt.executeQuery();
 
@@ -66,7 +70,11 @@ public class ContadoActivity extends AppCompatActivity {
                     R.layout.spinner_bombas, data);
             connect.close();
             spn_dispensarios.setAdapter(NoCoreAdapter);
-        } catch (SQLException e) {
+        } catch (SQLException | IllegalAccessException | ClassNotFoundException | InstantiationException | JSONException e) {
+            new AlertDialog.Builder(ContadoActivity.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
 
             e.printStackTrace();
         }
@@ -102,19 +110,6 @@ public class ContadoActivity extends AppCompatActivity {
                         Intent intent = new Intent(ContadoActivity.this,ActivityTicket.class);
                         intent.putExtra("bomba",spn_dispensarios.getSelectedItem().toString());
                         startActivity(intent);
-
-                        /*Bundle bundle = new Bundle();
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            bundle.putString("bomba",jsonObject.put("bomba",String.valueOf(spn_dispensarios.getSelectedItem().toString())).toString());
-                        } catch (JSONException e) {
-                            Crashlytics.log(e.toString());
-                            e.printStackTrace();
-                        }
-                        ticketFragment ticketfragment = new ticketFragment();
-                        ticketfragment.setArguments(bundle);
-                        transaction.add(R.id.activity_contado,ticketfragment);
-                        break;*/
                 }
 
                 transaction.commit();

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -15,6 +16,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import org.json.JSONException;
+
+import java.sql.SQLException;
 
 public class MarcaUpdateActivity extends FragmentActivity {
 
@@ -38,8 +43,17 @@ public class MarcaUpdateActivity extends FragmentActivity {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         bandera = (Spinner) findViewById(R.id.bandera);
-        ArrayAdapter NoCoreAdapter = new ArrayAdapter(this,
-                R.layout.spinner_banderas, cg.banderas(getApplicationContext()));
+        ArrayAdapter NoCoreAdapter = null;
+        try {
+            NoCoreAdapter = new ArrayAdapter(this,
+                    R.layout.spinner_banderas, cg.banderas(getApplicationContext()));
+        } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+            new AlertDialog.Builder(MarcaUpdateActivity.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
         bandera.setAdapter(NoCoreAdapter);
         url = (EditText) findViewById(R.id.url);
         actualizar = (Button) findViewById(R.id.btn_actualizar);
@@ -58,19 +72,28 @@ public class MarcaUpdateActivity extends FragmentActivity {
                 antes de actualizar se tiene que limpiar la bandera anterior
                 para esto llamamos la funcion limpiarbandera de la clase cgticket
                 */
-                    cg.limpiarbandera(getApplicationContext());
-                /*
+                    try {
+                        cg.limpiarbandera(getApplicationContext());
+                         /*
                 obtenemos el id de la bandera selecionada para establecer como defecto
                 y actualizamos la base con al funcion insertarbandera de la clase cgticket
                  */
-                    cg.insertarbandera(getApplicationContext(),bandera.getSelectedItem().toString());
+                        cg.insertarbandera(getApplicationContext(),bandera.getSelectedItem().toString());
                     /*
                     validamos si se requiere actualizar la url del web service para timbrar y la actualizamos
                      */
-                    if(checkBox.isChecked()) {
-                        Log.w("check","ok");
-                        cg.insertarurl(getApplicationContext(), bandera.getSelectedItem().toString(), url.getText().toString());
+                        if(checkBox.isChecked()) {
+                            Log.w("check","ok");
+                            cg.insertarurl(getApplicationContext(), bandera.getSelectedItem().toString(), url.getText().toString());
+                        }
+                    } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                        new AlertDialog.Builder(MarcaUpdateActivity.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                        e.printStackTrace();
                     }
+
                 /*
                 Finalizamos regresando a la clase principal de marca
                  */

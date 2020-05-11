@@ -58,8 +58,10 @@ public class ValidacionFlotillero {
             String query="";
             if (metodo=="nfc") {
                 query = "select diacar from ClientesVehiculos where tag= '" + tag + "'";
-            }else{
+            }else if (metodo=="nip"){
                 query = "select diacar from ClientesVehiculos where tag= '" + tag + "'";
+            }else if(metodo=="nombre"){
+                query = "select diacar from ClientesVehiculos where tar= '" + tag + "'";
             }
             r = stmt.executeQuery(query);
             while (r.next()) {
@@ -102,8 +104,10 @@ public class ValidacionFlotillero {
             Log.w("estacion metodo" , metodo);
             if (metodo =="nfc") {
                 query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv left outer join Gasolineras as g on g.cod=cv.codgas where cv.tag= '" + tag + "'";
-            }else{
+            }else if (metodo == "nip"){
                 query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv left outer join Gasolineras as g on g.cod=cv.codgas where cv.tag= '" + tag + "'";
+            }else if ( metodo == "nombre"){
+                query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv left outer join Gasolineras as g on g.cod=cv.codgas where cv.tar= '" + tag + "'";
             }
             Log.w("query estacion", query);
             r = stmt.executeQuery(query);
@@ -129,7 +133,7 @@ public class ValidacionFlotillero {
         }
         return resultado;
     }
-    public String sorteo_inicio (Context context) throws SQLException {
+    public String sorteo_inicio (Context context) throws SQLException, ClassNotFoundException, InstantiationException, JSONException, IllegalAccessException {
         Date inicio =null;
         ResultSet r;
         Connection connection= cg.odbc_cecg_app(context);
@@ -146,7 +150,7 @@ public class ValidacionFlotillero {
         connection.close();
         return String.valueOf(inicio);
     }
-    public String sorteo_fin (Context context) throws SQLException {
+    public String sorteo_fin (Context context) throws SQLException, ClassNotFoundException, InstantiationException, JSONException, IllegalAccessException {
         Date fin =null;
         ResultSet r;
         Connection connection= cg.odbc_cecg_app(context);
@@ -162,7 +166,7 @@ public class ValidacionFlotillero {
         connection.close();
         return String.valueOf(fin);
     }
-    public String sorteo_nombre (Context context) throws SQLException {
+    public String sorteo_nombre (Context context) throws SQLException, ClassNotFoundException, InstantiationException, JSONException, IllegalAccessException {
         String nombre =null;
         ResultSet r;
         Connection connection= cg.odbc_cecg_app(context);
@@ -179,7 +183,7 @@ public class ValidacionFlotillero {
         return nombre;
     }
 
-    public  int validar_sorteo(Context context) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public  int validar_sorteo(Context context) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         int resultado = 0;
         Date hoy = null,inicio = null,fin = null;
         ResultSet r;
@@ -204,12 +208,17 @@ public class ValidacionFlotillero {
         connection.close();
         return resultado;
     }
-    public  int validar_cargas_turno(Context context,String tag) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public  int validar_cargas_turno(Context context,String metodo, String tag) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         ResultSet r;
         int resutltado =0;
+        String query="";
         Connection connection= cg.odbc_cg(context);
         Statement stmt = connection.createStatement();
-        String query="SELECT limtur as limtur,tar as tar,acutur as acutur FROM ClientesVehiculos where tag ='" + tag + "'";
+        if (metodo == "nombre"){
+            query = "SELECT limtur as limtur,tar as tar,acutur as acutur FROM ClientesVehiculos where tar ='" + tag + "'";
+        }else {
+            query = "SELECT limtur as limtur,tar as tar,acutur as acutur FROM ClientesVehiculos where tag ='" + tag + "'";
+        }
         r = stmt.executeQuery(query);
         while (r.next()) {
             int limtur = r.getInt("limtur");
@@ -284,9 +293,11 @@ public class ValidacionFlotillero {
             String query="";
             Log.w("estacion metodo" , metodo);
             if (metodo =="nfc") {
-                query = "select est from ClientesVehiculos where tag= '" + tag + "'";
-            }else{
-                query = "select est from ClientesVehiculos where tag= '" + tag + "'";
+                query = "select est from ClientesVehiculos where tag = '" + tag + "'";
+            }else if (metodo =="nip"){
+                query = "select est from ClientesVehiculos where tag = '" + tag + "'";
+            }else if (metodo == "nombre"){
+                query = "select est from ClientesVehiculos where tar = '" + tag + "'";
             }
             Log.w("query estacion", query);
             r = stmt.executeQuery(query);
@@ -312,7 +323,7 @@ public class ValidacionFlotillero {
         }
         return resultado;
     }
-    public String cveest_app(Context context){
+    public String cveest_app(Context context) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         ResultSet r;
         String resultado="";
         Connection connection=cg.odbc_cecg_app(context);
@@ -348,8 +359,10 @@ public class ValidacionFlotillero {
             String query="";
             if (metodo=="nfc") {
                 query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tag= '" + tag + "'";
-            }else{
+            }else if(metodo=="nip"){
                 query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tag= '" + tag + "'";
+            }else if(metodo =="nombre"){
+                query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tar= '" + tag + "'";
             }
             r = stmt.executeQuery(query);
             while (r.next()) {
@@ -418,8 +431,10 @@ public class ValidacionFlotillero {
             String query="";
             if (metodo=="nfc") {
                 query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tag= '" + tag + "'";
-            }else {
+            }else if(metodo=="nip"){
                 query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tag= '" + tag + "'";
+            }else if(metodo=="nombre"){
+                query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tar= '" + tag + "'";
             }
             r = stmt.executeQuery(query);
             while (r.next()) {
@@ -462,9 +477,14 @@ public class ValidacionFlotillero {
             Statement stmt = connection.createStatement();
             String query="";
             if (metodo=="nfc") {
-                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
-            }else{
-                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
+                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
+                        "left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
+            }else if(metodo=="nip"){
+                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
+                        "left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
+            }else if(metodo=="nombre"){
+                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
+                        "left outer join Productos as p on p.cod=cv.codprd where cv.tar='" + tag + "'";
             }
             r = stmt.executeQuery(query);
             while (r.next()) {
@@ -493,19 +513,17 @@ public class ValidacionFlotillero {
         String resultado="";
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query = "select top 1 nrotrn from Despachos where nrobom ="+bomba+" order by nrotrn desc";
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                resultado=r.getString("nrotrn");
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+        Statement stmt = connection.createStatement();
+        String query = "select top 1 nrotrn from Despachos where nrobom ="+bomba+" order by nrotrn desc";
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            resultado=r.getString("nrotrn");
         }
+        connection.close();
+        r.close();
+        stmt.close();
+
         try {
             connection.close();
         } catch (SQLException e) {
@@ -519,34 +537,32 @@ public class ValidacionFlotillero {
         JSONObject resultado=new JSONObject();
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            if (metodo=="nfc") {
-                query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
-                        "left outer join Clientes as c on c.cod=cv.codcli\n" +
-                        "where cv.tag='" + tag + "'";
-            }else{
-                query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
-                        "left outer join Clientes as c on c.cod=cv.codcli\n" +
-                        "where cv.tag='" + tag + "'";
-            }
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                try {
-                    resultado.put("cliente",r.getInt("cliente"));
-                    resultado.put("vehiculo",r.getInt("vehiculo"));
-                    resultado.put("tar",r.getInt("tar"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+        Statement stmt = connection.createStatement();
+        String query="";
+        if (metodo=="nfc") {
+            query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
+                    "left outer join Clientes as c on c.cod=cv.codcli\n" +
+                    "where cv.tag='" + tag + "'";
+        }else{
+            query = "select c.cod as cliente,cv.nroveh as vehiculo,cv.tar as tar from ClientesVehiculos as cv\n" +
+                    "left outer join Clientes as c on c.cod=cv.codcli\n" +
+                    "where cv.tag='" + tag + "'";
         }
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            try {
+                resultado.put("cliente",r.getInt("cliente"));
+                resultado.put("vehiculo",r.getInt("vehiculo"));
+                resultado.put("tar",r.getInt("tar"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        connection.close();
+        r.close();
+        stmt.close();
+
         try {
             connection.close();
         } catch (SQLException e) {

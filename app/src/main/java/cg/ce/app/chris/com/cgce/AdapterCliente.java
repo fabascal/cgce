@@ -25,8 +25,7 @@ public class AdapterCliente extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private LayoutInflater inflater;
     List<DataCliente> data= Collections.emptyList();
-    DataCliente current;
-    int currentPos=0;
+
 
     // create constructor to initialize context and data sent from MainActivity
     public AdapterCliente(Context context, List<DataCliente> data){

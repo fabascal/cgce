@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.StrictMode;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -206,7 +207,7 @@ public class AceiteCreditoMetodoNFC extends AppCompatActivity implements View.On
                     wsProductoWeb.execute();
                     Intent intent = new Intent(this,VentaActivity.class);
                     startActivity(intent);
-                } catch (JSONException e) {
+                } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
                 Log.w("json",jsonenviaproducto.toString());
@@ -223,7 +224,16 @@ public class AceiteCreditoMetodoNFC extends AppCompatActivity implements View.On
             String a ="FORMAT: " + scanFormat;
             String b="CONTENT: " + scanContent;
             WSEstacionOdoo estacionOdoo = new WSEstacionOdoo(AceiteCreditoMetodoNFC.this,estacion);
-            WSProductOdoo productOdoo = new WSProductOdoo(AceiteCreditoMetodoNFC.this,scanContent);
+            WSProductOdoo productOdoo = null;
+            try {
+                productOdoo = new WSProductOdoo(AceiteCreditoMetodoNFC.this,scanContent);
+            } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                new AlertDialog.Builder(AceiteCreditoMetodoNFC.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                e.printStackTrace();
+            }
             productOdoo.delegate = this;
             productOdoo.execute();
         }else{
@@ -271,7 +281,7 @@ public class AceiteCreditoMetodoNFC extends AppCompatActivity implements View.On
                 img_aceite.setImageBitmap(decodeBase64(jsonproducto.getString("imagen")));
                 img_aceite.setBackgroundColor(Color.TRANSPARENT);
             }
-        }catch(JSONException e){
+        }catch(JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e){
             e.printStackTrace();
         }
     }

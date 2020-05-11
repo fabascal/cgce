@@ -67,7 +67,7 @@ public class JarreoFullScreenFragment extends DialogFragment {
         try {
             fillPosicion();
             fillTiptrn();
-        } catch (SQLException e) {
+        } catch (SQLException | JSONException e) {
             Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
@@ -105,7 +105,7 @@ public class JarreoFullScreenFragment extends DialogFragment {
         return view;
     }
 
-    public void fillPosicion() throws SQLException {
+    public void fillPosicion() throws SQLException, JSONException {
         DataBaseCG gc = new DataBaseCG();
         connect = gc.control_gas(getActivity());
         stmt = connect.prepareStatement(QUERY);

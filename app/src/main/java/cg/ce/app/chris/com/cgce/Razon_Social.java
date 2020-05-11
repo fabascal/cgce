@@ -36,6 +36,7 @@ public class Razon_Social extends AppCompatActivity implements View.OnClickListe
     ValidateTablet tablet = new ValidateTablet();
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

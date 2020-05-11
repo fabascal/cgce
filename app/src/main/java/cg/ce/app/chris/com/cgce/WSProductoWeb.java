@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * Created by chris on 20/06/17.
@@ -52,7 +54,11 @@ public class WSProductoWeb extends AsyncTask<String, String, String> {
             this.nrotrn=jsonObject.getString("nota");
             this.isla= String.valueOf(jsonObject.getInt("isla"));
             this.fecha = cia.fechaaceite(context,jsonObject);
-        } catch (JSONException e) {
+        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
         }
     }

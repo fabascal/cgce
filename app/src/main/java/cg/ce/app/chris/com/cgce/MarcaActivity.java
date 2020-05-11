@@ -3,10 +3,15 @@ package cg.ce.app.chris.com.cgce;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.json.JSONException;
+
+import java.sql.SQLException;
 
 public class MarcaActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,7 +33,15 @@ public class MarcaActivity extends AppCompatActivity implements View.OnClickList
         url = ( TextView ) findViewById(R.id.url);
         btn_actualizar = ( Button ) findViewById(R.id.btn_actualizar);
         btn_actualizar.setOnClickListener(this);
-        bandera.setText(cg.nombrebandera(this));
+        try {
+            bandera.setText(cg.nombrebandera(this));
+        } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+            new AlertDialog.Builder(MarcaActivity.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
         //url.setText(cg.urltimbre(this));
     }
 

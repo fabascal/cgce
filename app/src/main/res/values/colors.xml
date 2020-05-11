@@ -18,6 +18,7 @@
     <color name="RepsolNaranjaDark">#ff7103</color>
     <color name="EnerPrimary">#02d1b7</color>
     <color name="EnerPrimaryDark">#1a9bdc</color>
+    <color name="Blanco">#fff</color>
 
     
 </resources>

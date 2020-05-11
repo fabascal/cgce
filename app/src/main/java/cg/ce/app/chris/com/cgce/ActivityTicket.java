@@ -1,12 +1,17 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +21,9 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.epson.epos2.Epos2Exception;
+import com.google.zxing.WriterException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +60,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
 
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sensores.bluetooth();
@@ -92,20 +101,11 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 precio.setText("$ " + String.format("%.2f", Double.valueOf(String.valueOf(formateador2.format(ticket.getDouble("precio"))))));
                 monto.setText("$ " + String.valueOf(formateador2.format(ticket.getDouble("total"))));
 
-            } catch (SQLException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (JSONException e) {
-                Toast.makeText(ActivityTicket.this, e.toString(), Toast.LENGTH_LONG).show();
+            } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException e) {
+                new AlertDialog.Builder(ActivityTicket.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
                 e.printStackTrace();
             }
         }
@@ -114,7 +114,15 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 view_spn_metodo_den();
-                fill_spn_metodo_den();
+                try {
+                    fill_spn_metodo_den();
+                } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                    new AlertDialog.Builder(ActivityTicket.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -126,7 +134,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     }
 
 
-    public void fill_spn_metodo_den(){
+    public void fill_spn_metodo_den() throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
                 getSelectedItem().toString().equals("T. Credito")){
             tpv = cg.getTPVs(this, "1");
@@ -149,7 +157,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 getSelectedItem().toString().equals("Monederos") ){
             spn_metodo_den.setVisibility(View.VISIBLE);
         }else{
-            spn_metodo_den.setVisibility(View.GONE);
+            //spn_metodo_den.setVisibility(View.GONE);
         }
     }
 
@@ -186,39 +194,24 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                         Log.w("ticket con tiptrn",ticket.toString());
                         cg.guardarnrotrn(getApplicationContext(), ticket, 1);
                     }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new Impresion().execute();
-                    }
-                });
-
-                /*
-                try {
-                    int impreso=cg.cant_impreso(this,ticket.getString("nrotrn"));
-                    if (impreso==0 || impreso ==10){
-                        if(ticket.getDouble("total")>=200){
-                            Sorteo sorteo = new Sorteo();
-                            sorteo.execute();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new Impresion().execute();
                         }
-                    }
-                    Toast.makeText(ActivityTicket.this,event_ticket,Toast.LENGTH_LONG).show();
-                } catch (JSONException e) {
+                    });
+                    Intent intent = new Intent(ActivityTicket.this,VentaActivity.class);
+                    startActivity(intent);
+
+                } catch (ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException | JSONException e) {
                     e.printStackTrace();
-                }*/
-                Intent intent = new Intent(ActivityTicket.this,VentaActivity.class);
-                startActivity(intent);
+                    new AlertDialog.Builder(ActivityTicket.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+
+                }
+
 
 
 
@@ -256,10 +249,27 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             try {
                 print = new TicketPrint(ActivityTicket.this, ticket);
                 event_ticket = print.Print();
-            } catch (JSONException e) {
-                e.printStackTrace();
+                ActivityTicket.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(ActivityTicket.this)
+                                .setTitle(R.string.error)
+                                .setMessage(event_ticket)
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                });
+            } catch (JSONException | SQLException | IllegalAccessException | ClassNotFoundException | InstantiationException | Epos2Exception | WriterException e) {
+                ActivityTicket.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(ActivityTicket.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                });
             }
-            Log.w("evento ticket",event_ticket);
+           /* Log.w("evento ticket",event_ticket);*/
             return null;
         }
         @Override
@@ -271,6 +281,13 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
 
         }
     }
+
+    Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message message) {
+
+        }
+    };
 
     public class Sorteo extends AsyncTask<JSONObject, String, String> {
 

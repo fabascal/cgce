@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -144,11 +145,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 JSONObject cfdi_envio= null;
                 try {
                     cfdi_envio = getJson(cfdi_data);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
+                } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | JSONException e) {
+                    new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
                     e.printStackTrace();
                 }
                 //String res = timbre.getCFDi(cfdi_envio);
@@ -162,7 +163,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
         }
 
     }
-    public JSONObject getJson (JSONObject jsonObject) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public JSONObject getJson (JSONObject jsonObject) throws IllegalAccessException, ClassNotFoundException, InstantiationException, JSONException {
         cgticket cgticket_obj = new cgticket();
 
         JSONObject ticket=null;
@@ -172,7 +173,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
             ticket = cgticket_obj.consulta_servicio(getApplicationContext(),bomba);
             nip = cgticket_obj.nip_desp(getApplicationContext());
-        } catch (SQLException e) {
+        } catch (SQLException  e) {
             e.printStackTrace();
         }
         JSONObject jsoncfdi = new JSONObject();

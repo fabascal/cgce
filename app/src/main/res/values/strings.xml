@@ -147,4 +147,6 @@
     <string name="nonipmanager">La estacion aun no cuenta con la configuracion para realizar jarreos, falta nip de gerente.</string>
     <string name="qtyvales">Vales</string>
     <string name="metodoPago">Metodo de pago</string>
+    <string name="error">Combu-Go Warning!!!</string>
+    <string name="nombre">Nombre</string>
 </resources>

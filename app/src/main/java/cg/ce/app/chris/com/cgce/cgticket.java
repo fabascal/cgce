@@ -1,7 +1,6 @@
 package cg.ce.app.chris.com.cgce;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -49,19 +48,7 @@ public class cgticket {
         Connection conn = dbcg.odbc_cg(con);
         Statement stmt = conn.createStatement();
         try {
-            /*r = stmt.executeQuery("\n" +
-                    "SELECT top 1 desp.nrotrn,desp.can,desp.mto,desp.pre,prod.den,desp.nrobom,resp.den,\n" +
-                    "Convert(VARCHAR(10), cast(cast(desp.fchtrn-1 as int) as datetime) , 111),desp.codprd,gas.cveest,desp.mtogto,desp.codcli,\n" +
-                    "cli.den,desp.hratrn,desp.codgas,desp.codprd,desp.nroveh,desp.odm,desp.fchcor,desp.nrotur,desp.nrocte \n" +
-                    "FROM ["+base+"].[dbo].[Despachos] as desp \n" +
-                    "left outer join ["+base+"].[dbo].[Productos] as prod on prod.cod=desp.codprd \n" +
-                    "left outer join ["+base+"].[dbo].[Responsables] as resp on resp.cod=desp.codres \n" +
-                    "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
-                    "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n"      +
-                    //"where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    "where desp.nrotrn='3797870' order by desp.nrotrn desc");
 
-             */
             r = stmt.executeQuery("SELECT top 1 desp.nrotrn,desp.can,desp.mto,desp.pre,prod.den,desp.nrobom,resp.den,\n" +
                     "Convert(VARCHAR(10), cast(cast(desp.fchtrn-1 as int) as datetime) , 111),desp.codprd,gas.cveest,desp.mtogto,desp.codcli,\n" +
                     "cli.den,desp.hratrn,desp.codgas,desp.codprd,desp.nroveh,desp.odm,desp.fchcor,desp.nrotur,desp.nrocte,\n" +
@@ -74,7 +61,7 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    //"where desp.nrotrn='39006530' order by desp.nrotrn desc");
+                    //"where desp.nrotrn='39184070' order by desp.nrotrn desc");
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {
@@ -190,7 +177,7 @@ public class cgticket {
         }
 
     }
-    public String getNipManager(Context context) throws SQLException {
+    public String getNipManager(Context context) throws SQLException, ClassNotFoundException, InstantiationException, JSONException, IllegalAccessException {
         String nip = null;
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -207,7 +194,7 @@ public class cgticket {
         return nip;
     }
 
-    public JSONObject corte_cinepolis(Context context){
+    public JSONObject corte_cinepolis(Context context) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         JSONObject resultado = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -243,7 +230,7 @@ public class cgticket {
         }
         return resultado;
     }
-    public JSONObject corte_datos(Context context){
+    public JSONObject corte_datos(Context context) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         JSONObject resultado = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -366,7 +353,7 @@ public class cgticket {
         hora_impresa=hora.substring(0,2)+":"+hora.substring(2,4);
         return hora_impresa;
     }
-    public boolean guardarnrotrn2 (Context con, String ticket, int venta) {
+    public boolean guardarnrotrn2 (Context con, String ticket, int venta) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 
@@ -394,7 +381,7 @@ public class cgticket {
             return false;
         }
     }
-    public boolean guardarnrotrn3 (Context con, String folio, String correo, String boletos, String total, int venta) {
+    public boolean guardarnrotrn3 (Context con, String folio, String correo, String boletos, String total, int venta) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 
@@ -421,7 +408,7 @@ public class cgticket {
             return false;
         }
     }
-    public Integer get_corte(Context con){
+    public Integer get_corte(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         Integer res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -452,21 +439,16 @@ public class cgticket {
         Log.w("res", String.valueOf(res));
         return res;
     }
-    public boolean actualizar_cant_impreso (Context con, String ticket ){
+    public boolean actualizar_cant_impreso (Context con, String ticket ) throws ClassNotFoundException, InstantiationException, JSONException, IllegalAccessException, SQLException {
         String query = "update despachos set impreso=1 where nrotrn="+ticket+"";
-        try {
-            DataBaseCG dbcg = new DataBaseCG();
-            Connection conn = dbcg.odbc_cecg_app(con);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(query);
-            stmt.close();
-            conn.close();
-            return true;
-        }catch(SQLException e){
-            e.printStackTrace();
-            return false;
-        }
 
+        DataBaseCG dbcg = new DataBaseCG();
+        Connection conn = dbcg.odbc_cecg_app(con);
+        Statement stmt = conn.createStatement();
+        stmt.executeUpdate(query);
+        stmt.close();
+        conn.close();
+        return true;
     }
     public boolean guardarnrotrn (Context con,JSONObject ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         DataBaseManager manager = new DataBaseManager(con);
@@ -515,7 +497,7 @@ public class cgticket {
             conn.close();
             return false;
         }
-    }public boolean guardarnrotrn_old (Context con,String ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    }public boolean guardarnrotrn_old (Context con,String ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 
@@ -648,7 +630,7 @@ public class cgticket {
         }
     }
 
-    public String nip_desp (Context con){
+    public String nip_desp (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res="";
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -746,10 +728,14 @@ public class cgticket {
             query = "select c.den from Clientes as c\n" +
                     "left outer join ClientesVehiculos as cv on cv.codcli=c.cod\n" +
                     "where cv.tag ='" + tag + "'";
-        }else{
+        }else if(metodo=="nip"){
             query = "select c.den from Clientes as c\n" +
                     "left outer join ClientesVehiculos as cv on cv.codcli=c.cod\n" +
                     "where cv.tag ='" + tag + "'";
+        }else if(metodo=="nombre"){
+            query = "select c.den from Clientes as c\n" +
+                    "left outer join ClientesVehiculos as cv on cv.codcli=c.cod\n" +
+                    "where cv.tar ='" + tag + "'";
         }
         try {
             Statement stmt = conn.createStatement();
@@ -764,12 +750,12 @@ public class cgticket {
         }
         return res;
     }
-    public String nombre_depsachador (Context con){
+    public String nombre_depsachador (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res="DESPACHADOR";
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
-        DataBaseManager manager = new DataBaseManager(con);
-        cursor = manager.cargarcursorodbc2();
+        /*DataBaseManager manager = new DataBaseManager(con);
+        cursor = manager.cargarcursorodbc2();*/
         String query = "select d.nombre as pass from despachadores d \n" +
                 "left outer join corte c on c.id_despachador=d.id \n" +
                 "left outer join dispositivos dis on dis.id=c.id_dispositivo\n " +
@@ -787,7 +773,7 @@ public class cgticket {
         }
         return res;
     }
-    public int id_depsachador (Context con){
+    public int id_depsachador (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         int res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -833,7 +819,7 @@ public class cgticket {
         }
         return "Device don't have mac address or wi-fi is disabled";
     }
-    public Integer get_bomba_libre(Context con, String bomba){
+    public Integer get_bomba_libre(Context con, String bomba) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         Integer res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -855,7 +841,7 @@ public class cgticket {
         }
         return res;
     }
-    public Integer get_configid(Context con){
+    public Integer get_configid(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         Integer res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -881,7 +867,7 @@ public class cgticket {
         }
         return res;
     }
-    public String get_cveest(Context con){
+    public String get_cveest(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res=null;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -908,7 +894,7 @@ public class cgticket {
         }
         return res;
     }
-    public String get_estacion(Context con){
+    public String get_estacion(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res=null;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -935,7 +921,7 @@ public class cgticket {
         }
         return res;
     }
-    public int guardaraceite (Context con, JSONObject jsonObject) {
+    public int guardaraceite (Context con, JSONObject jsonObject) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         int res=0;
         String nota=null;
         JSONObject aceite = jsonObject;
@@ -1037,7 +1023,7 @@ public class cgticket {
             return false;
         }
     }
-    public  int cantimpresoaceite(Context con, JSONObject jsonObject){
+    public  int cantimpresoaceite(Context con, JSONObject jsonObject) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         int res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1061,7 +1047,7 @@ public class cgticket {
         }
         return res;
     }
-    public  int bandera(Context con){
+    public  int bandera(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         int res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1081,7 +1067,7 @@ public class cgticket {
         }
         return res;
     }
-    public  Integer urltimbre(Context con){
+    public  Integer urltimbre(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         Integer res=null;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1101,7 +1087,7 @@ public class cgticket {
         }
         return res;
     }
-    public  String nombrebandera(Context con){
+    public  String nombrebandera(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res=null;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1121,7 +1107,7 @@ public class cgticket {
         }
         return res;
     }
-    public  ArrayList<String> banderas(Context con){
+    public  ArrayList<String> banderas(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res=null;
         ArrayList<String> data = new ArrayList<String>();
         DataBaseCG cg = new DataBaseCG();
@@ -1144,7 +1130,7 @@ public class cgticket {
     }
 
 
-    public boolean limpiarbandera (Context con){
+    public boolean limpiarbandera (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
         String query = null;
@@ -1163,7 +1149,7 @@ public class cgticket {
             return false;
         }
     }
-    public boolean insertarbandera (Context con, String bandera){
+    public boolean insertarbandera (Context con, String bandera) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
         String query = null;
@@ -1183,7 +1169,7 @@ public class cgticket {
             return false;
         }
     }
-    public boolean insertarurl(Context con, String bandera,String url){
+    public boolean insertarurl(Context con, String bandera,String url) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
         String query = null;
@@ -1203,7 +1189,7 @@ public class cgticket {
             return false;
         }
     }
-    public  String fechaaceite (Context con, JSONObject jsonObject){
+    public  String fechaaceite (Context con, JSONObject jsonObject) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         String res=null;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1229,7 +1215,7 @@ public class cgticket {
         Log.w("fecha_res",res);
         return res;
     }
-    public int get_isla (Context con, JSONObject jsonObject){
+    public int get_isla (Context con, JSONObject jsonObject) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         int res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1259,7 +1245,7 @@ public class cgticket {
 
         return res;
     }
-    public Integer cant_impreso (Context con, String ticket ){
+    public Integer cant_impreso (Context con, String ticket ) throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
         Integer res=10;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -1267,23 +1253,20 @@ public class cgticket {
         cursor = manager.cargarcursorodbc2();
         String query = "select impreso from despachos where nrotrn="+ticket+"";
         Log.w("query impreso", query);
-        try {
-            Statement stmt = conn.createStatement();
-            r=stmt.executeQuery(query);
-            if (r.next()) {
-                res = r.getInt("impreso");
-            }
-            conn.close();
 
-            stmt.close();
-
-        }catch(SQLException e){
-            e.printStackTrace();
+        Statement stmt = conn.createStatement();
+        r = stmt.executeQuery(query);
+        if (r.next()) {
+            res = r.getInt("impreso");
         }
+        conn.close();
+
+        stmt.close();
+
         Log.w("res impreso",String.valueOf(res));
         return res;
     }
-    public JSONObject estacion_domicilio (Context con){
+    public JSONObject estacion_domicilio (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         ResultSet rs;
         JSONObject domicilio = new JSONObject();
         DataBaseCG cg = new DataBaseCG();
@@ -1322,8 +1305,49 @@ public class cgticket {
         }
         return domicilio;
     }
+    //funcion para obtener los datos de los clientes mediante una parte de su nombre
+    public List<DataCustomerCG> getCustomerCG(Context context, String nombre) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
+        List<DataCustomerCG> dataCustomerCGS = new ArrayList<>();
+
+        ResultSet rs;
+        DataBaseCG cg = new DataBaseCG();
+        Connection conn = cg.odbc_cg(context);
+        String query = "select cod as cod,den as den,rfc as rfc from Clientes where den like '%" + nombre + "%'";
+        Statement stmt = conn.createStatement();
+        rs = stmt.executeQuery(query);
+        while (rs.next()){
+            DataCustomerCG data = new DataCustomerCG();
+            data.codcli = rs.getString("cod");
+            data.den = rs.getString("den");
+            data.rfc = rs.getString("rfc");
+            dataCustomerCGS.add(data);
+        }
+        return dataCustomerCGS;
+    }
+    //Funcion para obtener los vehiculos mediante el codigo de cliente
+    public List<DataCustomerCG> getCustomerVehicleCG(Context context, String codcli) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
+        List<DataCustomerCG> dataCustomerCGS = new ArrayList<>();
+        ResultSet rs;
+        DataBaseCG cg = new DataBaseCG();
+        Connection conn = cg.odbc_cg(context);
+        String query = "select rsp as rsp,plc as plc,den as den,tar as tar,nroveh as nroveh from ClientesVehiculos where codcli="+codcli+" order by nroveh";
+        Statement stmt = conn.createStatement();
+        rs = stmt.executeQuery(query);
+        while (rs.next()){
+            DataCustomerCG data = new DataCustomerCG();
+            data.rsp = rs.getString("rsp");
+            data.plc = rs.getString("plc");
+            data.den_vehicle = rs.getString("den");
+            data.tar = rs.getInt("tar");
+            data.nroveh = rs.getInt("nroveh");
+            dataCustomerCGS.add(data);
+            Log.i("vehicle_db", String.valueOf(data.den_vehicle));
+        }
+        return dataCustomerCGS;
+    }
     //funcion para obtener las tpv de la estacion
-    public ArrayList<String> getTPVs(Context context, String tipo){
+    public ArrayList<String> getTPVs(Context context, String tipo) throws ClassNotFoundException,
+            SQLException, InstantiationException, JSONException, IllegalAccessException {
         List<TPVs> tpVsList;
         ArrayList<String> data = new ArrayList<String>();
         tpVsList=new ArrayList<>();
@@ -1336,8 +1360,6 @@ public class cgticket {
             Statement stmt = conn.createStatement();
             rs = stmt.executeQuery(query);
             while (rs.next()){
-                /*tpVsList.add(new TPVs(rs.getInt("id"),
-                        rs.getString("nombre")));*/
                 String id = rs.getString("nombre");
                 data.add(id);
             }

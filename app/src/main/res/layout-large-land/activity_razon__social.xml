@@ -175,6 +175,7 @@
                 android:layout_weight="2"
                 android:id="@+id/et_cp"
                 android:layout_width="250dp"
+                android:textSize="@dimen/text_tablet_config"
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout

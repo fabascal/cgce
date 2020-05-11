@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import com.google.zxing.WriterException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 import cg.ce.app.chris.com.cgce.ActivityTicket;
@@ -31,7 +33,7 @@ import cg.ce.app.chris.com.cgce.cgticket;
 
 import static android.content.Context.WINDOW_SERVICE;
 
-public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
+    public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
     JSONObject ticket ;
     Activity context;
     private Printer mPrinter = null;
@@ -43,14 +45,14 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
     DecimalFormat formateador21 = new DecimalFormat("###,###.##");
     Activity activity;
 
-    public TicketPrint(ActivityTicket activityTicket, JSONObject ticket) throws JSONException {
+    public TicketPrint(ActivityTicket activityTicket, JSONObject ticket) throws JSONException, SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         this.ticket=ticket;
         this.context=activityTicket;
         this.activity=activityTicket;
         ticket.put("impreso",tf.cant_impreso(this.activity.getApplicationContext(),ticket.getString("nrotrn")));
     }
 
-    public String Print() throws JSONException {
+    public String Print() throws JSONException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, Epos2Exception, WriterException {
         Log.w("ticket clase",ticket.toString());
         if(runPrintReceiptSequence()) {
             tf.actualizar_cant_impreso(activity.getApplicationContext(),ticket.getString("nrotrn"));
@@ -60,7 +62,7 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
         }
     }
 
-    public boolean runPrintReceiptSequence() {
+    public boolean runPrintReceiptSequence() throws Epos2Exception, ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException, WriterException {
         if (!initializeObject()) {
             return false;
         }
@@ -76,14 +78,8 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
         }
         return true;
     }
-    public boolean initializeObject() {
-        try {
-            mPrinter = new Printer( mPrinter.TM_M30, mPrinter.MODEL_ANK,activity);
-        }
-        catch (Exception e) {
-            event = ShowMsg.showExceptionCE(e, "Printer", activity);
-            return false;
-        }
+    public boolean initializeObject() throws Epos2Exception {
+        mPrinter = new Printer( mPrinter.TM_M30, mPrinter.MODEL_ANK,activity);
         mPrinter.setReceiveEventListener(this);
         return true;
     }
@@ -91,7 +87,8 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
     //Ticket Repsol
     //prueba
 
-    public boolean createReceiptData() {
+
+    public boolean createReceiptData() throws Epos2Exception, ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException, WriterException {
         String method = "";
         Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.isologo_repsol);
         StringBuilder textData = new StringBuilder();
@@ -111,178 +108,156 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
         }
 
 
-        try {
-            JSONObject datos_domicilio = tf.estacion_domicilio(activity);
-            JSONObject vehiculo= new JSONObject();
-            String titulo="",folio_impreso="",cliente="",venta="",tpv="";
 
-            Log.w("ticket",ticket.getString("nrotrn"));
-            String metodoPago="";
-            if (ticket.getInt("impreso") == 0 || ticket.getInt("impreso")==10) {
-                titulo = "O R I G I N A L";
-                metodoPago = ticket.getString("rut");
-                folio_impreso = ticket.getString("nrotrn")+"0";
-            } else if(ticket.getInt("impreso")==1){
-                titulo = "C O P I A";
-                folio_impreso = "C O P I A";
-                metodoPago = tf.get_rut(context,ticket);
+        JSONObject datos_domicilio = tf.estacion_domicilio(activity);
+        JSONObject vehiculo= new JSONObject();
+        String titulo="",folio_impreso="",cliente="",venta="",tpv="";
+
+        Log.w("ticket",ticket.getString("nrotrn"));
+        String metodoPago="";
+        if (ticket.getInt("impreso") == 0 || ticket.getInt("impreso")==10) {
+            titulo = "O R I G I N A L";
+            metodoPago = ticket.getString("rut");
+            folio_impreso = ticket.getString("nrotrn")+"0";
+        } else if(ticket.getInt("impreso")==1){
+            titulo = "C O P I A";
+            folio_impreso = "C O P I A";
+            metodoPago = tf.get_rut(context,ticket);
+        }
+        Log.w("ticket",ticket.toString());
+        if (ticket.getInt("codcli")!=0 ){
+            vehiculo=tf.get_vehiculo(activity,ticket.getString("nrotrn"),ticket.getString("bomba"));
+            cliente=ticket.getString("dencli");
+            Log.w("vehiculo",vehiculo.toString());
+            venta="CREDITO";
+        }else{
+            vehiculo=tf.get_vehiculo(activity,ticket.getString("nrotrn"),ticket.getString("bomba"));
+
+            if (ticket.has("tpv")) {
+                if (ticket.getJSONObject("tpv").has("nombre")) {
+                    tpv = ticket.getJSONObject("tpv").getString("nombre");
+                }
             }
-            Log.w("ticket",ticket.toString());
-            if (ticket.getInt("codcli")!=0 ){
-                vehiculo=tf.get_vehiculo(activity,ticket.getString("nrotrn"),ticket.getString("bomba"));
-                cliente=ticket.getString("dencli");
-                Log.w("vehiculo",vehiculo.toString());
-                venta="CREDITO";
-            }else{
-                vehiculo=tf.get_vehiculo(activity,ticket.getString("nrotrn"),ticket.getString("bomba"));
+            cliente="Publico General";
+            venta="CONTADO" +" "+tpv;
+        }
+        method = "addTextAlign";
 
-                if (ticket.has("tpv")) {
-                    if (ticket.getJSONObject("tpv").has("nombre")) {
-                        tpv = ticket.getJSONObject("tpv").getString("nombre");
-                    }
-                }
-                cliente="Publico General";
-                venta="CONTADO" +" "+tpv;
+        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+        method = "addImage";
+        mPrinter.addImage(logoData, 0, 0,
+                logoData.getWidth(),
+                logoData.getHeight(),
+                Printer.COLOR_1,
+                Printer.MODE_MONO,
+                Printer.HALFTONE_DITHER,
+                Printer.PARAM_DEFAULT,
+                Printer.COMPRESS_AUTO);
+        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        textData.append("\n");
+        //textData.append("REPSOL"+"\n");
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+        textData.append("\n");
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        textData.append(ticket.getString("cveest")+"\n");
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+        textData.append(datos_domicilio.getString("estacion")+"\n");
+        textData.append(datos_domicilio.getString("calle")+" "+datos_domicilio.getString("exterior")+" "+datos_domicilio.getString("interior")+"\n");
+        textData.append("COL."+datos_domicilio.getString("colonia")+" C.P. "+datos_domicilio.getString("cp")+"\n");
+        textData.append(datos_domicilio.getString("localidad")+", "+datos_domicilio.getString("municipio")+"\n");
+        textData.append(datos_domicilio.getString("rfc")+"\n");
+        //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
+        textData.append("\n");
+        textData.append("Regimen Fiscal"+"\n");
+        textData.append(datos_domicilio.getString("regimen")+"\n");
+        textData.append("\n");
+        textData.append("Lugar de Expedicion"+"\n");
+        textData.append(datos_domicilio.getString("municipio")+" "+datos_domicilio.getString("estado")+"\n");
+        textData.append("\n");
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        textData.append("***** "+titulo+" *****"+"\n");
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+        textData.append("\n");
+        mPrinter.addTextAlign(Printer.ALIGN_LEFT);
+        textData.append(cliente+"\n");
+        textData.append(metodoPago+"\n");
+        //textData.append("\n");
+        if(ticket.has("codcli")) {
+            if (vehiculo.has("rsp")) {
+                textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
             }
-            method = "addTextAlign";
-
-            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-            method = "addImage";
-            mPrinter.addImage(logoData, 0, 0,
-                    logoData.getWidth(),
-                    logoData.getHeight(),
-                    Printer.COLOR_1,
-                    Printer.MODE_MONO,
-                    Printer.HALFTONE_DITHER,
-                    Printer.PARAM_DEFAULT,
-                    Printer.COMPRESS_AUTO);
-            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            textData.append("\n");
-            //textData.append("REPSOL"+"\n");
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
-            textData.append("\n");
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            textData.append(ticket.getString("cveest")+"\n");
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
-            textData.append(datos_domicilio.getString("estacion")+"\n");
-            textData.append(datos_domicilio.getString("calle")+" "+datos_domicilio.getString("exterior")+" "+datos_domicilio.getString("interior")+"\n");
-            textData.append("COL."+datos_domicilio.getString("colonia")+" C.P. "+datos_domicilio.getString("cp")+"\n");
-            textData.append(datos_domicilio.getString("localidad")+", "+datos_domicilio.getString("municipio")+"\n");
-            textData.append(datos_domicilio.getString("rfc")+"\n");
-            //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
-            textData.append("\n");
-            textData.append("Regimen Fiscal"+"\n");
-            textData.append(datos_domicilio.getString("regimen")+"\n");
-            textData.append("\n");
-            textData.append("Lugar de Expedicion"+"\n");
-            textData.append(datos_domicilio.getString("municipio")+" "+datos_domicilio.getString("estado")+"\n");
-            textData.append("\n");
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            textData.append("***** "+titulo+" *****"+"\n");
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
-            textData.append("\n");
-            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
-            textData.append(cliente+"\n");
-            textData.append(metodoPago+"\n");
-            //textData.append("\n");
-            if(ticket.has("codcli")) {
-                if (vehiculo.has("rsp")) {
-                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
-                }
-                if (vehiculo.has("nroeco")) {
-                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
-                }
-                if (vehiculo.has("placa")) {
-                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
-                }
-                if (vehiculo.has("ultodm")) {
-                    textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
-                }
-                textData.append("------------------------------\n");
+            if (vehiculo.has("nroeco")) {
+                textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
             }
-            method = "addText";
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-
-
-
-            textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + String.valueOf(ticket.getInt("bomba")) + "\n");
-            textData.append("FECHA: " + ticket.getString("fecha") + "  HORA: "+ticket.getString("hora")+"\n");
-            textData.append("VENDEDOR  : " + String.valueOf(ticket.getString("despachador")).toUpperCase() + "\n");
-            textData.append("PRECIO    : $ " + String.format("%.2f",Double.valueOf(formateador2.format(ticket.getDouble("precio")))) + "\n");
-            textData.append("VOLUMEN   : " + String.format("%.4f",Double.valueOf(formateador4.format(ticket.getDouble("cantidad")))) + " LITROS " + String.valueOf(ticket.getString("producto")).toUpperCase() + "\n");
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            textData.append("IMPORTE   : $ " +formateador2.format(ticket.getDouble("total")) + "\n");
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
-            textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble("total"))),true)+"\n");
-            //textData.append("\n");
-            textData.append("\n");
+            if (vehiculo.has("placa")) {
+                textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+            }
+            if (vehiculo.has("ultodm")) {
+                textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
+            }
             textData.append("------------------------------\n");
-            textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
-            textData.append("________________________________\n");
-            textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-            textData.append("|      combuexpress.com.mx      |\n");
-            textData.append("________________________________\n");
-            method = "addText";
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
+        }
+        method = "addText";
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
 
-            //textData.append("POR DISPOSICION DEL SAT SI REQUIERE FACTURA DEBERA SOLICITARLA DENTRO DE LAS 24 HRS POSTERIORES AL DIA DE CONSUMO\n");
-            method = "addText";
-            mPrinter.addText(textData.toString());
-            textData.delete(0, textData.length());
-            /*if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
-                method = "addBarcode";
-                mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-                mPrinter.addBarcode(String.valueOf(folio_impreso),
-                        Printer.BARCODE_CODE39,
-                        Printer.HRI_BELOW,
-                        Printer.FONT_A,
-                        barcodeWidth,
-                        barcodeHeight);
-                mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-            }*/
-            if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
-                Bitmap qrrespol=null;
-                QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket,datos_domicilio),
-                        null,
-                        Contents.Type.TEXT,
-                        BarcodeFormat.QR_CODE.toString(),
-                        smallerDimension);
-                try {
-                    qrrespol = qrCodeEncoder1.encodeAsBitmap();
-                } catch (WriterException e) {
-                    e.printStackTrace();
-                }
-                mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-                mPrinter.addImage (qrrespol, 0, 0,
-                        qrrespol.getWidth(),
-                        qrrespol.getHeight(),
-                        Printer.COLOR_1,
-                        Printer.MODE_MONO,
-                        Printer.HALFTONE_DITHER,
-                        Printer.PARAM_DEFAULT,
-                        Printer.COMPRESS_AUTO);
-            }
-            textData.append("\n");
-            /*Bitmap qrrespol=null;
+
+
+        textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + String.valueOf(ticket.getInt("bomba")) + "\n");
+        textData.append("FECHA: " + ticket.getString("fecha") + "  HORA: "+ticket.getString("hora")+"\n");
+        textData.append("VENDEDOR  : " + String.valueOf(ticket.getString("despachador")).toUpperCase() + "\n");
+        textData.append("PRECIO    : $ " + String.format("%.2f",Double.valueOf(formateador2.format(ticket.getDouble("precio")))) + "\n");
+        textData.append("VOLUMEN   : " + String.format("%.4f",Double.valueOf(formateador4.format(ticket.getDouble("cantidad")))) + " LITROS " + String.valueOf(ticket.getString("producto")).toUpperCase() + "\n");
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        textData.append("IMPORTE   : $ " +formateador2.format(ticket.getDouble("total")) + "\n");
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+        textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble("total"))),true)+"\n");
+        //textData.append("\n");
+        textData.append("\n");
+        textData.append("------------------------------\n");
+        textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
+        textData.append("________________________________\n");
+        textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
+        textData.append("|      combuexpress.com.mx      |\n");
+        textData.append("________________________________\n");
+        method = "addText";
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+
+        //textData.append("POR DISPOSICION DEL SAT SI REQUIERE FACTURA DEBERA SOLICITARLA DENTRO DE LAS 24 HRS POSTERIORES AL DIA DE CONSUMO\n");
+        method = "addText";
+        mPrinter.addText(textData.toString());
+        textData.delete(0, textData.length());
+        /*if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
+            method = "addBarcode";
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            mPrinter.addBarcode(String.valueOf(folio_impreso),
+                    Printer.BARCODE_CODE39,
+                    Printer.HRI_BELOW,
+                    Printer.FONT_A,
+                    barcodeWidth,
+                    barcodeHeight);
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+        }*/
+        if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
+            Bitmap qrrespol=null;
             QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket,datos_domicilio),
                     null,
                     Contents.Type.TEXT,
@@ -302,113 +277,126 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
                     Printer.HALFTONE_DITHER,
                     Printer.PARAM_DEFAULT,
                     Printer.COMPRESS_AUTO);
+        }
+        textData.append("\n");
+        /*Bitmap qrrespol=null;
+        QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket,datos_domicilio),
+                null,
+                Contents.Type.TEXT,
+                BarcodeFormat.QR_CODE.toString(),
+                smallerDimension);
+        try {
+            qrrespol = qrCodeEncoder1.encodeAsBitmap();
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+        mPrinter.addImage (qrrespol, 0, 0,
+                qrrespol.getWidth(),
+                qrrespol.getHeight(),
+                Printer.COLOR_1,
+                Printer.MODE_MONO,
+                Printer.HALFTONE_DITHER,
+                Printer.PARAM_DEFAULT,
+                Printer.COMPRESS_AUTO);
 
-             */
-            textData.append("\n");
-            mPrinter.addText(textData.toString());
-            ValidacionFlotillero vf = new ValidacionFlotillero();
-            Integer sorteo= vf.validar_sorteo(context);
-            String inicio = vf.sorteo_inicio(context);
-            String fin = vf.sorteo_fin(context);
+         */
+        textData.append("\n");
+        mPrinter.addText(textData.toString());
+        ValidacionFlotillero vf = new ValidacionFlotillero();
+        Integer sorteo= vf.validar_sorteo(context);
+        String inicio = vf.sorteo_inicio(context);
+        String fin = vf.sorteo_fin(context);
 
-            if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10){
-                if (sorteo>0 ) {
-                    if (ticket.getDouble("total")>=200){
-                        Bitmap logoviaje = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ganaconcombu);
-                        method = "addImage";
-                        mPrinter.addImage(logoviaje, 0, 0,
-                                logoviaje.getWidth(),
-                                logoviaje.getHeight(),
-                                Printer.COLOR_1,
-                                Printer.MODE_MONO,
-                                Printer.HALFTONE_DITHER,
-                                Printer.PARAM_DEFAULT,
-                                Printer.COMPRESS_AUTO);
-                        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-                        mPrinter.addText(textData.toString());
-                        textData.delete(0, textData.length());
-                        textData.append("\n");
-
-
-                        //textData.append("EL VIAJE DE TU VIDA\n");
-                        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
-                        mPrinter.addText(textData.toString());
-                        textData.delete(0, textData.length());
-                        mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+        if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10){
+            if (sorteo>0 ) {
+                if (ticket.getDouble("total")>=200){
+                    Bitmap logoviaje = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ganaconcombu);
+                    method = "addImage";
+                    mPrinter.addImage(logoviaje, 0, 0,
+                            logoviaje.getWidth(),
+                            logoviaje.getHeight(),
+                            Printer.COLOR_1,
+                            Printer.MODE_MONO,
+                            Printer.HALFTONE_DITHER,
+                            Printer.PARAM_DEFAULT,
+                            Printer.COMPRESS_AUTO);
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                    mPrinter.addText(textData.toString());
+                    textData.delete(0, textData.length());
+                    textData.append("\n");
 
 
-                        mPrinter.addTextAlign(Printer.ALIGN_LEFT);
-                        textData.append("             ESTACION   :   " + datos_domicilio.getString("estacion")+"\n");
-                        textData.append("                FOLIO   :   " +  folio_impreso +"\n");
-                        textData.append("                FECHA   :   " + ticket.getString("fecha") +"\n");
-                        textData.append("                MONTO   :   " + formateador2.format(ticket.getDouble("total")) +"\n");
-                        textData.append("             PRODUCTO   :   " + ticket.getString("producto") +"\n");
-                        mPrinter.addText(textData.toString());
-                        textData.delete(0, textData.length());
-                        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-                        textData.append("\n");
-                        textData.append("\n");
-                        mPrinter.addText(textData.toString());
-                        textData.delete(0, textData.length());
-                        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-                        textData.append("INGRESA A :\n");
-                        textData.append("www.ganaconcombu.com\n");
-                        textData.append("LLENA LA FORMA\n");
-                        textData.append("Y GANA CON combu\n");
-                        mPrinter.addText(textData.toString());
-                        textData.delete(0, textData.length());
-                        //QR
+                    //textData.append("EL VIAJE DE TU VIDA\n");
+                    mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+                    mPrinter.addText(textData.toString());
+                    textData.delete(0, textData.length());
+                    mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
 
-                        Bitmap qrcfdi=null;
-                        String qr_cadena="URL: https://ganaconcombu.com?es="+ ticket.getString("cveest")+"&fo="+ String.valueOf(folio_impreso)+"&fe="+ ticket.getString("fecha")+"&mo="+ formateador2.format(ticket.getDouble("total"))+"&pr="+ ticket.getString("codprd");
-                        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qr_cadena,
-                                null,
-                                Contents.Type.TEXT,
-                                BarcodeFormat.QR_CODE.toString(),
-                                smallerDimension);
-                        try {
-                            qrcfdi = qrCodeEncoder.encodeAsBitmap();
-                        } catch (WriterException e) {
-                            e.printStackTrace();
-                        }
-                        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-                        mPrinter.addImage (qrcfdi, 0, 0,
-                                qrcfdi.getWidth(),
-                                qrcfdi.getHeight(),
-                                Printer.COLOR_1,
-                                Printer.MODE_MONO,
-                                Printer.HALFTONE_DITHER,
-                                Printer.PARAM_DEFAULT,
-                                Printer.COMPRESS_AUTO);
-                        textData.append("\n");
-                        textData.append("SCANEA EL CODIGO QR\n");
-                        textData.append("PARA INGRESAR A LA PROMOCION\n");
-                        textData.append("\n");
-                        textData.append("\n");
-                        textData.append("PROMOCION : "+vf.sorteo_nombre(context)+"\n");
-                        textData.append("VIGENCIA DEL "+inicio +" \n");
-                        textData.append("AL "+fin+"\n");
-                        textData.append("\n");
-                        //textData.append("PROMOCION 2:\n");
-                        //textData.append("VIGENCIA 00 de MES al 00 de MES,\n");
-                        //textData.append("entrega del 50% de los incentivos\n");
-                        //textData.append("00 de MES de 2019\n");
-                    }
+
+                    mPrinter.addTextAlign(Printer.ALIGN_LEFT);
+                    textData.append("             ESTACION   :   " + datos_domicilio.getString("estacion")+"\n");
+                    textData.append("                FOLIO   :   " +  folio_impreso +"\n");
+                    textData.append("                FECHA   :   " + ticket.getString("fecha") +"\n");
+                    textData.append("                MONTO   :   " + formateador2.format(ticket.getDouble("total")) +"\n");
+                    textData.append("             PRODUCTO   :   " + ticket.getString("producto") +"\n");
+                    mPrinter.addText(textData.toString());
+                    textData.delete(0, textData.length());
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                    textData.append("\n");
+                    textData.append("\n");
+                    mPrinter.addText(textData.toString());
+                    textData.delete(0, textData.length());
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                    textData.append("INGRESA A :\n");
+                    textData.append("www.ganaconcombu.com\n");
+                    textData.append("LLENA LA FORMA\n");
+                    textData.append("Y GANA CON combu\n");
+                    mPrinter.addText(textData.toString());
+                    textData.delete(0, textData.length());
+                    //QR
+
+                    Bitmap qrcfdi=null;
+                    String qr_cadena="URL: https://ganaconcombu.com?es="+ ticket.getString("cveest")+"&fo="+ String.valueOf(folio_impreso)+"&fe="+ ticket.getString("fecha")+"&mo="+ formateador2.format(ticket.getDouble("total"))+"&pr="+ ticket.getString("codprd");
+                    QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qr_cadena,
+                            null,
+                            Contents.Type.TEXT,
+                            BarcodeFormat.QR_CODE.toString(),
+                            smallerDimension);
+                    qrcfdi = qrCodeEncoder.encodeAsBitmap();
+
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                    mPrinter.addImage (qrcfdi, 0, 0,
+                            qrcfdi.getWidth(),
+                            qrcfdi.getHeight(),
+                            Printer.COLOR_1,
+                            Printer.MODE_MONO,
+                            Printer.HALFTONE_DITHER,
+                            Printer.PARAM_DEFAULT,
+                            Printer.COMPRESS_AUTO);
+                    textData.append("\n");
+                    textData.append("SCANEA EL CODIGO QR\n");
+                    textData.append("PARA INGRESAR A LA PROMOCION\n");
+                    textData.append("\n");
+                    textData.append("\n");
+                    textData.append("PROMOCION : "+vf.sorteo_nombre(context)+"\n");
+                    textData.append("VIGENCIA DEL "+inicio +" \n");
+                    textData.append("AL "+fin+"\n");
+                    textData.append("\n");
+                    //textData.append("PROMOCION 2:\n");
+                    //textData.append("VIGENCIA 00 de MES al 00 de MES,\n");
+                    //textData.append("entrega del 50% de los incentivos\n");
+                    //textData.append("00 de MES de 2019\n");
                 }
             }
-
-
-            mPrinter.addText(textData.toString());
-
-            method = "addCut";
-            mPrinter.addCut(Printer.CUT_FEED);
         }
-        catch (Exception e) {
-            event=e.toString();
-            Log.w("Errorimprimir",e);
-            event=ShowMsg.showExceptionCE(e, method,context);
-            return false;
-        }
+
+
+        mPrinter.addText(textData.toString());
+
+        method = "addCut";
+        mPrinter.addCut(Printer.CUT_FEED);
+
 
         textData = null;
 
@@ -426,7 +414,7 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
 
         mPrinter = null;
     }
-    public boolean printData() {
+    public boolean printData() throws Epos2Exception {
         if (mPrinter == null) {
             return false;
         }
@@ -444,83 +432,43 @@ public class TicketPrint implements  com.epson.epos2.printer.ReceiveListener {
 
             activity.runOnUiThread(new Runnable() {
                 @Override
-                public synchronized void run() {
-
-                    ShowMsg.showMsg(makeErrorMessage(status), activity);
+                public void run() {
+                    new AlertDialog.Builder(activity)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(makeErrorMessage(status)))
+                            .setPositiveButton(R.string.btn_ok,null).show();
                 }
             });
 
             //ShowMsg.showMsg(makeErrorMessage(status), context);
-            try {
-                mPrinter.disconnect();
-            }
-            catch (Exception ex) {
-                event=ex.toString();
-                // Do nothing
-            }
+
+            mPrinter.disconnect();
+
             return false;
         }
 
-        try {
-
-
-            mPrinter.sendData(Printer.PARAM_DEFAULT);
-        }
-        catch (Exception e) {
-            event=e.toString();
-            ShowMsg.showException(e, "sendData", activity);
-            try {
-                mPrinter.disconnect();
-            }
-            catch (Exception ex) {
-                event = ex.toString();
-                // Do nothing
-            }
-            return false;
-        }
-
+        mPrinter.sendData(Printer.PARAM_DEFAULT);
         return true;
     }
-    public boolean connectPrinter() {
+    public boolean connectPrinter() throws Epos2Exception {
         boolean isBeginTransaction = false;
 
         if (mPrinter == null) {
             return false;
         }
 
-        try {
-            DataBaseManager manager = new DataBaseManager(activity);
-            String target = manager.target();//"BT:00:01:90:C6:81:22";
-            //activity.Toast.makeText(context,target,Toast.LENGTH_LONG).show();
 
-            mPrinter.connect(target ,Printer.PARAM_DEFAULT);
-        }
-        catch (Exception e) {
-            event = e.toString();
-            Log.w("Errorimprimier",e);
-            ShowMsg.showException(e, "connect", context);
-            return false;
-        }
+        DataBaseManager manager = new DataBaseManager(activity);
+        String target = manager.target();//"BT:00:01:90:C6:81:22";
+        //activity.Toast.makeText(context,target,Toast.LENGTH_LONG).show();
 
-        try {
-            mPrinter.beginTransaction();
-            isBeginTransaction = true;
-        }
-        catch (Exception e) {
-            event= e.toString();
-            ShowMsg.showException(e, "beginTransaction", activity);
-        }
+        mPrinter.connect(target ,Printer.PARAM_DEFAULT);
+
+        mPrinter.beginTransaction();
+        isBeginTransaction = true;
 
         if (isBeginTransaction == false) {
-            try {
-                mPrinter.disconnect();
-            }
-            catch (Epos2Exception e) {
-               event=e.toString();
-                // Do nothing
-                return false;
-            }
-
+            mPrinter.disconnect();
         }
 
         return true;

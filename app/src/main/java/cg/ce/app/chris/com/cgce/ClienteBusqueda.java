@@ -1,6 +1,7 @@
 package cg.ce.app.chris.com.cgce;
 
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -50,6 +51,7 @@ public class ClienteBusqueda extends AppCompatActivity  {
     SearchView searchView = null;
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

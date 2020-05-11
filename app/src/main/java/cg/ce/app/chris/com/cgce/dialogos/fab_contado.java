@@ -26,6 +26,7 @@ import cg.ce.app.chris.com.cgce.ClassImpresionTicket;
 import cg.ce.app.chris.com.cgce.LogCE;
 import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
 import cg.ce.app.chris.com.cgce.R;
+import cg.ce.app.chris.com.cgce.RfidCredito;
 import cg.ce.app.chris.com.cgce.cgticket;
 
 
@@ -83,7 +84,15 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 view_spn_metodo_den();
-                fill_spn_metodo_den();
+                try {
+                    fill_spn_metodo_den();
+                } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException e) {
+                    new android.support.v7.app.AlertDialog.Builder(fab_contado.this.getActivity())
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -102,7 +111,7 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
         return null;
     }
 
-    public void fill_spn_metodo_den(){
+    public void fill_spn_metodo_den() throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException {
         if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
                 getSelectedItem().toString().equals("T. Credito")){
             tpv = cg.getTPVs(getActivity(), "1");

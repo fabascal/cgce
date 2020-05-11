@@ -113,7 +113,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             jsAceiteTicket.put("nip",cg.nip_desp(this));
             jsAceiteTicket.put("despachador",cg.nombre_depsachador(this));
             jsAceiteTicket.put("fecha", df.format(Calendar.getInstance().getTime()));
-        } catch (JSONException e) {
+        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
 

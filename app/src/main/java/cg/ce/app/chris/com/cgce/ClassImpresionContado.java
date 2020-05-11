@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.ImageButton;
 
@@ -18,6 +19,7 @@ import com.epson.epos2.printer.ReceiveListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 /**
@@ -66,7 +68,7 @@ public class ClassImpresionContado extends AsyncTask<JSONObject,String,Boolean> 
             }else{
                 impreso_calculado=0;
             }
-        } catch (JSONException e) {
+        } catch (JSONException | SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             try {
                 logCE.EscirbirLog(context,jsonObjectError.put("impresion",e));
             } catch (JSONException e1) {
@@ -103,7 +105,11 @@ public class ClassImpresionContado extends AsyncTask<JSONObject,String,Boolean> 
         if (result.equals(true)){
             try {
                 tf.actualizar_cant_impreso(context,ticket.getString("nrotrn"));
-            } catch (JSONException e) {
+            } catch (JSONException | ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException e) {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
                 try {
                     logCE.EscirbirLog(context,jsonObjectError.put("impresion",e));
                 } catch (JSONException e1) {

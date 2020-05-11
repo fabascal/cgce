@@ -130,6 +130,65 @@
         android:layout_height="2px"
         android:background="@color/RespsolAzul"
         android:layout_below="@id/tvrfid1"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/tvrfid1">
+        <include
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:id="@+id/layout_nombre"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_below="@id/tvrfid1"
+            layout="@layout/activity_credito_dual_nombre"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/tvrfid1">
+        <include
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:id="@+id/layout_nombre2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_below="@id/tvrfid1"
+            layout="@layout/activity_credito_dual_nombre_2"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/tvrfid1">
+        <include
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:id="@+id/layout_nombre_vehiculo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_below="@id/tvrfid1"
+            layout="@layout/activity_credito_dual_vehiculo"/>
+    </LinearLayout><LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_below="@id/tvrfid1">
+    <include
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
+        android:id="@+id/layout_nombre_vehiculo2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_below="@id/tvrfid1"
+        layout="@layout/activity_credito_dual_vehiculo2"/>
+</LinearLayout>
     <!---inicia nfc-->
     <LinearLayout
         android:layout_marginTop="20dp"
@@ -273,7 +332,7 @@
                 android:fadingEdge="horizontal|vertical" />
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
             <android.support.v7.widget.CardView
                 android:visibility="gone"
@@ -287,9 +346,7 @@
                 android:layout_marginTop="8dp"
                 app:cardBackgroundColor="#E6E6E6"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true">
+                app:layout_constraintLeft_toLeftOf="parent">
 
                 <ImageView
                     android:id="@+id/imageviewTag"
@@ -344,6 +401,37 @@
                     android:textSize="40sp"
                     style="@style/repsoldatacliente"/>
             </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:visibility="gone"
+                    android:id="@+id/CardViewTEXT1"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="260dp"
+                    android:layout_height="90dp"
+                    app:cardCornerRadius="3dp"
+                    app:cardElevation="8dp"
+                    android:layout_marginTop="8dp"
+                    app:cardBackgroundColor="#E6E6E6"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    >
+                    <ImageView
+                        android:id="@+id/imageviewTEXT1"
+                        android:layout_width="96dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:src="@drawable/repsolnombres"/>
+                    <TextView
+                        android:layout_marginTop="0dp"
+                        android:id="@+id/cv_textTEXT1"
+                        android:text="@string/nombre"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center"
+                        android:textStyle="normal|bold"
+                        android:textSize="30sp"
+                        style="@style/repsoldatacliente"/>
+                </android.support.v7.widget.CardView>
             </LinearLayout>
         </LinearLayout>
         <ImageButton
@@ -390,7 +478,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <android.support.v7.widget.CardView
@@ -462,6 +550,41 @@
                         android:text="@string/nip"
                         android:textSize="40sp"
                         android:textStyle="normal|bold"
+                        style="@style/repsoldatacliente"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:visibility="gone"
+                    android:id="@+id/CardViewTEXT2"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="260dp"
+                    android:layout_height="90dp"
+                    app:cardCornerRadius="3dp"
+                    app:cardElevation="8dp"
+                    android:layout_marginTop="8dp"
+                    app:cardBackgroundColor="#E6E6E6"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true">
+
+
+                    <ImageView
+                        android:id="@+id/imageviewTEXT2"
+                        android:layout_width="96dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:src="@drawable/repsolnombres"/>
+
+                    <TextView
+                        android:layout_marginTop="0dp"
+                        android:id="@+id/cv_textTEXT2"
+                        android:text="@string/nombre"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center"
+                        android:textStyle="normal|bold"
+                        android:textSize="30sp"
                         style="@style/repsoldatacliente"/>
                 </android.support.v7.widget.CardView>
             </LinearLayout>

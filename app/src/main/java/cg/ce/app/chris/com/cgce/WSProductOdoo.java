@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * Created by chris on 13/05/17.
@@ -31,7 +34,7 @@ public class WSProductOdoo extends AsyncTask<String, String, String> {
     public static final int READ_TIMEOUT = 7000;
     public ProductoResultListener delegate = null;
 
-    public WSProductOdoo(Context context,String ean13){
+    public WSProductOdoo(Context context,String ean13) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         pdLoading = new ProgressDialog(context);
         this.ean13=ean13;
         config_id=String.valueOf(ticket.get_configid(context));
