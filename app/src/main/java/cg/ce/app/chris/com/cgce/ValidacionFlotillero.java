@@ -571,55 +571,45 @@ public class ValidacionFlotillero {
     }
 
     //funcion para obtener datos del cliente
-    public JSONObject get_vehiculo(Context context,String tag) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public JSONObject get_vehiculo(Context context,String tag) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         JSONObject resultado = new JSONObject();
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query = "select plc,rsp,nroeco,ultodm from ClientesVehiculos where tag='"+tag+"'";
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                try {
-                    if ( r.getString("plc").length()<=0) {
-                        resultado.put("placa","S/P");
-                    }else {
-                        resultado.put("placa", r.getString("plc"));
-                    }
-                    if (r.getString("rsp").length()<=0){
-                        resultado.put("rps","S/R");
-                    }else {
-                        resultado.put("rsp", r.getString("rsp"));
-                    }
-                    if (r.getString("nroeco").length()<=0){
-                        resultado.put("nroeco","S/N");
-                    }else {
-                        resultado.put("nroeco", r.getString("nroeco"));
-                    }
-                    if (r.getString("ultodm").length()<=0){
-                        resultado.put("ultodm","S/O");
-                    }else {
-                        resultado.put("ultodm", r.getString("ultodm"));
-                    }
-                    Log.w("placa1",resultado.getString("placa"));
-                    Log.w("conductor1",resultado.getString("rsp"));
-                    Log.w("eco1",resultado.getString("nroeco"));
-                    Log.w("km1",resultado.getString("ultodm"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+        Statement stmt = connection.createStatement();
+        String query = "select plc,rsp,nroeco,ultodm from ClientesVehiculos where tag='"+tag+"'";
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+
+            if ( r.getString("plc").length()<=0) {
+                resultado.put("placa","S/P");
+            }else {
+                resultado.put("placa", r.getString("plc"));
             }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            if (r.getString("rsp").length()<=0){
+                resultado.put("rps","S/R");
+            }else {
+                resultado.put("rsp", r.getString("rsp"));
+            }
+            if (r.getString("nroeco").length()<=0){
+                resultado.put("nroeco","S/N");
+            }else {
+                resultado.put("nroeco", r.getString("nroeco"));
+            }
+            if (r.getString("ultodm").length()<=0){
+                resultado.put("ultodm","S/O");
+            }else {
+                resultado.put("ultodm", r.getString("ultodm"));
+            }
+            Log.w("placa1",resultado.getString("placa"));
+            Log.w("conductor1",resultado.getString("rsp"));
+            Log.w("eco1",resultado.getString("nroeco"));
+            Log.w("km1",resultado.getString("ultodm"));
+
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection.close();
+        r.close();
+        stmt.close();
         return resultado;
     }
 

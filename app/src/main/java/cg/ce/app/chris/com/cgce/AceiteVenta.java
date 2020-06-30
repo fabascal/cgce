@@ -1,9 +1,11 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -27,6 +29,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
     Connection connect;
     PreparedStatement stmt;
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +64,10 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
             connect.close();
             spn_dispensarios.setAdapter(NoCoreAdapter);
         } catch (SQLException | JSONException e) {
-
+            new AlertDialog.Builder(AceiteVenta.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
         }
 

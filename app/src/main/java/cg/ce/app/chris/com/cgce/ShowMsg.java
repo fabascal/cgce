@@ -26,25 +26,10 @@ public class ShowMsg {
         else {
             msg = e.toString();
         }
-
         show(msg, context);
     }
-    public static String  showExceptionCE(Exception e, String method, Context context) {
-        String msg = "";
-        if (e instanceof Epos2Exception) {
-            msg = String.format(
-                    "%s\n\t%s\n%s\n\t%s",
-                    context.getString(R.string.title_err_code),
-                    getEposExceptionText(((Epos2Exception) e).getErrorStatus()),
-                    context.getString(R.string.title_err_method),
-                    method);
-        }
-        else {
-            msg = e.toString();
-        }
-        return msg;
-    }
-    public static void showResult(int code, String errMsg, Activity context) {
+
+    public static void showResult(int code, String errMsg, Context context) {
         String msg = "";
         if (errMsg.isEmpty()) {
             msg = String.format(
@@ -63,22 +48,28 @@ public class ShowMsg {
         show(msg, context);
     }
 
-    public static void showMsg(String msg, Activity context) {
-
+    public static void showMsg(String msg, Context context) {
         show(msg, context);
     }
 
-    private static void show(String msg, Context context) {
-        //Looper.prepare();
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setMessage(msg);
-        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                return ;
+    private static void show(final String msg, final Context context) {
+        Activity activity = (Activity)context;
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                alertDialog.setMessage(msg);
+                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        return ;
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
             }
         });
-        alertDialog.create();
-        alertDialog.show();
     }
 
     private static String getEposExceptionText(int state) {
@@ -143,7 +134,7 @@ public class ShowMsg {
         String return_text = "";
         switch (state) {
             case Epos2CallbackCode.CODE_SUCCESS:
-                return_text = "PRINT_SUCCESS";
+                return_text = "IMPRESION CORRECTA.";
                 break;
             case Epos2CallbackCode.CODE_PRINTING:
                 return_text = "PRINTING";
@@ -189,6 +180,90 @@ public class ShowMsg {
                 break;
             case Epos2CallbackCode.CODE_ERR_BATTERY_LOW:
                 return_text = "ERR_BATTERY_LOW";
+                break;
+            case Epos2CallbackCode.CODE_ERR_TOO_MANY_REQUESTS:
+                return_text = "ERR_TOO_MANY_REQUESTS";
+                break;
+            case Epos2CallbackCode.CODE_ERR_REQUEST_ENTITY_TOO_LARGE:
+                return_text = "ERR_REQUEST_ENTITY_TOO_LARGE";
+                break;
+            case Epos2CallbackCode.CODE_CANCELED:
+                return_text = "CODE_CANCELED";
+                break;
+            case Epos2CallbackCode.CODE_ERR_NO_MICR_DATA:
+                return_text = "ERR_NO_MICR_DATA";
+                break;
+            case Epos2CallbackCode.CODE_ERR_ILLEGAL_LENGTH:
+                return_text = "ERR_ILLEGAL_LENGTH";
+                break;
+            case Epos2CallbackCode.CODE_ERR_NO_MAGNETIC_DATA:
+                return_text = "ERR_NO_MAGNETIC_DATA";
+                break;
+            case Epos2CallbackCode.CODE_ERR_RECOGNITION:
+                return_text = "ERR_RECOGNITION";
+                break;
+            case Epos2CallbackCode.CODE_ERR_READ:
+                return_text = "ERR_READ";
+                break;
+            case Epos2CallbackCode.CODE_ERR_NOISE_DETECTED:
+                return_text = "ERR_NOISE_DETECTED";
+                break;
+            case Epos2CallbackCode.CODE_ERR_PAPER_JAM:
+                return_text = "ERR_PAPER_JAM";
+                break;
+            case Epos2CallbackCode.CODE_ERR_PAPER_PULLED_OUT:
+                return_text = "ERR_PAPER_PULLED_OUT";
+                break;
+            case Epos2CallbackCode.CODE_ERR_CANCEL_FAILED:
+                return_text = "ERR_CANCEL_FAILED";
+                break;
+            case Epos2CallbackCode.CODE_ERR_PAPER_TYPE:
+                return_text = "ERR_PAPER_TYPE";
+                break;
+            case Epos2CallbackCode.CODE_ERR_WAIT_INSERTION:
+                return_text = "ERR_WAIT_INSERTION";
+                break;
+            case Epos2CallbackCode.CODE_ERR_ILLEGAL:
+                return_text = "ERR_ILLEGAL";
+                break;
+            case Epos2CallbackCode.CODE_ERR_INSERTED:
+                return_text = "ERR_INSERTED";
+                break;
+            case Epos2CallbackCode.CODE_ERR_WAIT_REMOVAL:
+                return_text = "ERR_WAIT_REMOVAL";
+                break;
+            case Epos2CallbackCode.CODE_ERR_DEVICE_BUSY:
+                return_text = "ERR_DEVICE_BUSY";
+                break;
+            case Epos2CallbackCode.CODE_ERR_IN_USE:
+                return_text = "ERR_IN_USE";
+                break;
+            case Epos2CallbackCode.CODE_ERR_CONNECT:
+                return_text = "ERR_CONNECT";
+                break;
+            case Epos2CallbackCode.CODE_ERR_DISCONNECT:
+                return_text = "ERR_DISCONNECT";
+                break;
+            case Epos2CallbackCode.CODE_ERR_MEMORY:
+                return_text = "ERR_MEMORY";
+                break;
+            case Epos2CallbackCode.CODE_ERR_PROCESSING:
+                return_text = "ERR_PROCESSING";
+                break;
+            case Epos2CallbackCode.CODE_ERR_PARAM:
+                return_text = "ERR_PARAM";
+                break;
+            case Epos2CallbackCode.CODE_RETRY:
+                return_text = "RETRY";
+                break;
+            case Epos2CallbackCode.CODE_ERR_DIFFERENT_MODEL:
+                return_text = "ERR_DIFFERENT_MODEL";
+                break;
+            case Epos2CallbackCode.CODE_ERR_DIFFERENT_VERSION:
+                return_text = "ERR_DIFFERENT_VERSION";
+                break;
+            case Epos2CallbackCode.CODE_ERR_DATA_CORRUPTED:
+                return_text = "ERR_DATA_CORRUPTED";
                 break;
             default:
                 return_text = String.format("%d", state);

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+   <android.support.constraint.Guideline
+       android:id="@+id/vertical"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:orientation="vertical"
+       app:layout_constraintGuide_percent="0.5"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintBottom_toBottomOf="parent"/>
+   <android.support.constraint.Guideline
+       android:id="@+id/horizontal"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:orientation="horizontal"
+       app:layout_constraintGuide_percent="0.5"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintBottom_toBottomOf="parent"/>
+   <TextView
+       android:text="@string/aceite"
+       android:textSize="45sp"
+       android:textStyle="bold"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintBottom_toTopOf="@id/dividerTitle"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       />
+   <View
+       android:id="@+id/dividerTitle"
+       android:layout_width="0dp"
+       android:layout_height="1dp"
+       android:layout_marginTop="5dp"
+       android:layout_marginStart="8dp"
+       android:layout_marginEnd="8dp"
+       android:background="@color/colorBlack"
+       app:layout_constraintBottom_toTopOf="@id/tv_denominacion"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"/>
+   <TextView
+       android:id="@+id/tv_denominacion"
+       android:text="@string/aceite"
+       android:textSize="35sp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintBottom_toTopOf="@id/tv_precio"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"/>
+   <TextView
+       android:id="@+id/tv_precio"
+       android:text="100"
+       android:textSize="30sp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginEnd="10dp"
+       app:layout_constraintBottom_toTopOf="@id/horizontal"
+       app:layout_constraintEnd_toEndOf="parent"/>
+   <LinearLayout
+       android:id="@+id/llcantidad"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintTop_toBottomOf="@id/horizontal"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent">
+
+      <Button
+          android:id="@+id/decrease"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="40sp"
+          android:text="-" />
+
+      <TextView
+          android:id="@+id/tv_cantidad"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="16dp"
+          android:layout_marginLeft="40dp"
+          android:layout_marginRight="40dp"
+          android:layout_marginTop="16dp"
+          android:text="1"
+          android:textStyle="bold"
+          android:textSize="70sp" />
+
+      <Button
+          android:id="@+id/increase"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="40sp"
+          android:text="+" />
+   </LinearLayout>
+
+   <TextView
+       android:id="@+id/tv_total"
+       android:text="100"
+       android:textStyle="bold"
+       android:textSize="40sp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintTop_toBottomOf="@id/llcantidad"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"/>
+   <LinearLayout
+       android:visibility="gone"
+       android:layout_width="match_parent"
+       android:layout_height="40dp"
+       android:weightSum="4"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintTop_toBottomOf="@id/tv_total">
+      <ImageButton
+          android:layout_marginStart="50dp"
+          android:src="@drawable/cancel_vector"
+          android:layout_weight="1"
+          android:scaleType="fitXY"
+          android:background="@color/TRANSPARENT"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"/>
+      <View
+          android:layout_width="0dp"
+          android:layout_height="0dp"
+          android:layout_weight="2"
+          />
+      <ImageButton
+          android:layout_marginEnd="50dp"
+          android:src="@drawable/ok_vector"
+          android:layout_weight="1"
+          android:scaleType="fitXY"
+          android:background="@color/TRANSPARENT"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"/>
+
+
+   </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

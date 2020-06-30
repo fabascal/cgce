@@ -32,20 +32,20 @@ import cg.ce.app.chris.com.cgce.cgticket;
 import static android.content.Context.WINDOW_SERVICE;
 
 public class SorteoPrint implements  com.epson.epos2.printer.ReceiveListener{
-    JSONObject js ;
-    Context context;
+    private JSONObject js ;
+    private Context context;
     private Printer mPrinter = null;
-    String event;
+    private String event;
     cgticket tf = new cgticket();
     int impreso_calculado1;
     DecimalFormat formateador2 = new DecimalFormat("###,###.##");
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
     DecimalFormat formateador21 = new DecimalFormat("###,###.##");
-    Activity activity;
+    private Activity activity;
 
 
 
-    public SorteoPrint(ActivityTicket activityTicket, JSONObject ticket) throws JSONException {
+    public SorteoPrint(ActivityTicket activityTicket, JSONObject ticket)  {
         this.js=ticket;
         this.context=context;
         this.activity=activityTicket;
@@ -81,7 +81,7 @@ public class SorteoPrint implements  com.epson.epos2.printer.ReceiveListener{
             mPrinter = new Printer( mPrinter.TM_M30, mPrinter.MODEL_ANK,activity);
         }
         catch (Exception e) {
-            event = ShowMsg.showExceptionCE(e, "Printer", activity);
+            //event = ShowMsg.showException(e, "Printer", context);
             return false;
         }
         mPrinter.setReceiveEventListener(this);

@@ -90,7 +90,7 @@ import static android.content.Context.WINDOW_SERVICE;
 
     public boolean createReceiptData() throws Epos2Exception, ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException, WriterException {
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.isologo_repsol);
+        Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion_total);
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         final int barcodeWidth = 2;
@@ -565,7 +565,7 @@ import static android.content.Context.WINDOW_SERVICE;
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public synchronized void run() {
-                    event=ShowMsg.showExceptionCE(e, "endTransaction", activity);
+                    ShowMsg.showException(e, "endTransaction", activity);
                 }
             });
         }
@@ -578,7 +578,7 @@ import static android.content.Context.WINDOW_SERVICE;
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public synchronized void run() {
-                    event=ShowMsg.showExceptionCE(e, "disconnect", activity);
+                    ShowMsg.showException(e, "disconnect", activity);
                 }
             });
         }

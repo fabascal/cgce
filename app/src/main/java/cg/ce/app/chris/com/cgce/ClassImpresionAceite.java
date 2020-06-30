@@ -47,11 +47,7 @@ public class ClassImpresionAceite extends AsyncTask<JSONObject,String,Boolean> i
         this.aceite=jsonObject;
         this.items=aceite.getJSONArray("items");
         if (aceite.has("impreso")) {
-            try {
-                this.impreso = aceite.getInt("impreso");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            this.impreso = aceite.getInt("impreso");
         }
     }
     @Override
@@ -255,7 +251,7 @@ public class ClassImpresionAceite extends AsyncTask<JSONObject,String,Boolean> i
             textData.append("IMPORTE   : " + aceite.getString("total") + "\n");
             textData.append(letra.Convertir(String.valueOf(aceite.getDouble("total_print")),true)+"\n");
             textData.append("\n");
-            textData.append("PRODUCTOS\n");
+            textData.append("CANT      DESCRIPCION           PRECIO   IMPORTE\n");
             textData.append("================================================\n");
             textData.append("\n");
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
@@ -267,10 +263,11 @@ public class ClassImpresionAceite extends AsyncTask<JSONObject,String,Boolean> i
 
             for (int i = 0; i < items.length(); i++) {
                 JSONObject jo = items.getJSONObject(i);
-                String cantidad = String.valueOf(1);
-                String producto = jo.getString("descripcion").toUpperCase();
-                String precio = String.valueOf(jo.getDouble("precio"));
-                textData.append(cantidad +" "+producto +" "+precio);
+                String cantidad = jo.getString("cantidad");
+                String producto = fillblank(cantidad.length(),7) + jo.getString("descripcion").toUpperCase();
+                String precio = fillblank(cantidad.length()+producto.length(),33) + String.valueOf(jo.getDouble("precio"));
+                String importe= fillblank(cantidad.length()+producto.length()+precio.length(),43) + String.valueOf(jo.getInt("cantidad")*jo.getDouble("precio"));
+                textData.append(cantidad + producto + precio + importe);
 
                 mPrinter.addText(textData.toString());
                 textData.delete(0, textData.length());
@@ -296,6 +293,18 @@ public class ClassImpresionAceite extends AsyncTask<JSONObject,String,Boolean> i
 
         return true;
     }
+    public String fillblank(int data, int margen){
+        int espacios = 0;
+        String result="";
+        if (margen > data) {
+            espacios = margen - data;
+        }
+        for (int i = 0 ; i<espacios; i++){
+            result += " ";
+        }
+        return result;
+    }
+
     public void finalizeObject() {
         if (mPrinter == null) {
             return;

@@ -1,0 +1,146 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+	package
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:3:5-38
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+uses-permission#android.permission.BLUETOOTH
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:5:5-67
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:5:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:6:5-73
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:6:22-71
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:7:5-66
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:7:22-64
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:8:5-80
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:8:22-78
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:9:5-80
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:9:22-78
+application
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:11:5-56:19
+	android:label
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:14:9-41
+	android:allowBackup
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:12:9-35
+	android:icon
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:13:9-43
+	android:theme
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:15:9-40
+activity#com.epson.epos2_printer.SettingActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:16:9-18:62
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:18:13-49
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:17:13-44
+activity#com.epson.epos2_printer.PrinterSettingActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:19:9-21:62
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:21:13-49
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:20:13-51
+activity#com.epson.epos2_printer.FirmwareUpdateActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:22:9-24:62
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:24:13-49
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:23:13-51
+activity#com.epson.epos2_printer.MonitorActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:25:9-27:62
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:27:13-49
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:26:13-44
+activity#com.epson.epos2_printer.SingleMonitorActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:28:9-30:62
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:30:13-49
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:29:13-50
+activity#com.epson.epos2_printer.MultipleMonitorActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:31:9-33:62
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:33:13-49
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:32:13-52
+activity#com.epson.epos2_printer.MainActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:34:9-50:20
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:37:13-49
+	android:label
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:36:13-46
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:35:13-41
+intent-filter#android.hardware.usb.action.USB_ACCESSORY_ATTACHED+android.hardware.usb.action.USB_DEVICE_ATTACHED+android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:38:13-44:29
+action#android.hardware.usb.action.USB_DEVICE_ATTACHED
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:17-90
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:25-87
+action#android.hardware.usb.action.USB_ACCESSORY_ATTACHED
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:40:17-93
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:40:25-90
+action#android.intent.action.MAIN
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:41:17-69
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:41:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:43:17-77
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:43:27-74
+meta-data#android.hardware.usb.action.USB_DEVICE_ATTACHED
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:45:13-46:57
+	android:resource
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:46:17-54
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:45:24-86
+meta-data#android.hardware.usb.action.USB_ACCESSORY_ATTACHED
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:47:13-48:60
+	android:resource
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:48:17-57
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:47:24-89
+activity#com.epson.epos2_printer.DiscoveryActivity
+ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:51:9-55:20
+	android:screenOrientation
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:54:13-49
+	android:label
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:53:13-46
+	android:name
+		ADDED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:52:13-46
+uses-sdk
+INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support:appcompat-v7:27.1.0] C:\Users\fabas\.android\build-cache\ec4f97e88a98ad5755f2060bb25fabad73fafc6e\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.0] C:\Users\fabas\.android\build-cache\4a6221391025344c8bd9fb5187321a5f03e36977\output\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\fabas\.android\build-cache\576728757b0b5ba4d4ee044405fd697a5f5142f1\output\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\fabas\.android\build-cache\6288bc21c1231439afef9041c15f8ed2697e0621\output\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\fabas\.android\build-cache\29c524c1abdf1fba8ef6db6c33440900faaaf364\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.0] C:\Users\fabas\.android\build-cache\03a9af4225e65662e562d43e99232d4543795196\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.0] C:\Users\fabas\.android\build-cache\a31f2a3aa2814eb8e932d5fe98cc072092546074\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.0] C:\Users\fabas\.android\build-cache\92f5632f6daf2828f45b306c5d28d800c1c86761\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.0] C:\Users\fabas\.android\build-cache\babbb1a8968092849f82b09e00798c72d3cd296d\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.0] C:\Users\fabas\.android\build-cache\b0f4b187733e8210f1bb1cc9cb7bda7d9b299c6e\output\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\fabas\.android\build-cache\62b55bb2965817681d13b37f433eed9d2b5f6391\output\AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\fabas\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml

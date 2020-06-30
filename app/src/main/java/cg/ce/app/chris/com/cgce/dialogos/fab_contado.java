@@ -113,7 +113,7 @@ public class fab_contado extends DialogFragment implements View.OnClickListener{
 
     public void fill_spn_metodo_den() throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException {
         if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
-                getSelectedItem().toString().equals("T. Credito")){
+                getSelectedItem().toString().equals("T. Debito")){
             tpv = cg.getTPVs(getActivity(), "1");
             ArrayAdapter MonederoAdapter = new ArrayAdapter(getActivity(),
                     android.R.layout.simple_spinner_item, tpv);

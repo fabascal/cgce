@@ -3,6 +3,7 @@ package cg.ce.app.chris.com.cgce;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,6 +15,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import cg.ce.app.chris.com.cgce.listeners.StringListener;
 
 /**
  * Created by chris on 1/12/16.
@@ -27,17 +30,14 @@ public class cgticket {
     JSONObject cursor = null;
     LogCE logCE = new LogCE();
 
-    public JSONObject consulta_servicio(Context con,String bomba) throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public JSONObject consulta_servicio(Context con,String bomba) throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
 
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 
         String base = null;
-        try {
-            base = cursor.getString("db_cg");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        base = cursor.getString("db_cg");
+
         ResultSet r = null;
         JSONObject st=new JSONObject();
         ValidarDispositivo vd = new ValidarDispositivo();
@@ -61,7 +61,7 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    //"where desp.nrotrn='39184070' order by desp.nrotrn desc");
+                    //"where desp.nrotrn='202529190' order by desp.nrotrn desc");
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {
@@ -130,6 +130,112 @@ public class cgticket {
         }
         return st;
     }
+    public String get_nrotrn_aceite(Context con, String bomba) throws JSONException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+        DataBaseManager manager = new DataBaseManager(con);
+        cursor = manager.cargarcursorodbc2();
+
+        String base = null;
+        base = cursor.getString("db_cg");
+        ResultSet r = null;
+        String result;
+        DataBaseCG dbcg = new DataBaseCG();
+        Connection conn = dbcg.odbc_cg(con);
+        Statement stmt = conn.createStatement();
+
+        r = stmt.executeQuery("select top 1 nrotrn as nrotrn from ["+base+"].[dbo].[Despachos] where nrobom="+bomba+" order by nrotrn");
+        if (!r.next() ) {
+            System.out.println("No data");
+        }
+        result =  String.valueOf(r.getInt("nrotrn"));
+        r.close();
+        stmt.close();
+        conn.close();
+        System.out.println("nro de aceite");
+        System.out.println(result);
+        return result;
+    }
+    public JSONObject consulta_servicio_aceite(Context con,String bomba) throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
+        String nrotrn_mayor = get_nrotrn_aceite(con, bomba);
+        String nrotrn_menor = nrotrn_mayor.substring(0,nrotrn_mayor.length()-1) + "0";
+        DataBaseManager manager = new DataBaseManager(con);
+        cursor = manager.cargarcursorodbc2();
+        int qty=0;
+        double total=0;
+
+        String base = null;
+        base = cursor.getString("db_cg");
+
+        ResultSet r = null;
+        JSONObject st=new JSONObject();
+        JSONObject st_list ;
+        JSONArray items = new JSONArray();
+        ValidarDispositivo vd = new ValidarDispositivo();
+        MacActivity mac_add = new MacActivity();
+        String mac = mac_add.getMacAddress();
+        Log.w("Mac", "Mac: " + mac);
+        DataBaseCG dbcg = new DataBaseCG();
+        Connection conn = dbcg.odbc_cg(con);
+        Statement stmt = conn.createStatement();
+
+
+        r = stmt.executeQuery("SELECT desp.nrotrn as nrotrn,desp.can as can,desp.mto as mto,desp.pre as pre,prod.den as prod_den,desp.nrobom as nrobom ,resp.den as resp_den,\n" +
+                "Convert(VARCHAR(10), cast(cast(desp.fchtrn-1 as int) as datetime) , 111) as fecha,desp.codprd as codprd,gas.cveest as cveest,desp.mtogto as mtogto,desp.codcli as codcli,\n" +
+                "cli.den as cli_den,desp.hratrn as hratrn,desp.codgas as codgas,desp.nroveh as nroveh,desp.odm as odm,desp.fchcor as fchcor,desp.nrotur as nrotur,desp.nrocte as nrocte,\n" +
+                "(select top 1 pre as precio from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as precio,\n" +
+                "(select top 1 iva as iva from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as iva,\n" +
+                "(select top 1 preiie as preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as ieps \n" +
+                "FROM ["+base+"].[dbo].[Despachos] as desp\n" +
+                "left outer join ["+base+"].[dbo].[Productos] as prod on prod.cod=desp.codprd \n" +
+                "left outer join ["+base+"].[dbo].[Responsables] as resp on resp.cod=desp.codres \n" +
+                "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
+                "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
+                "where desp.nrotrn between " + nrotrn_mayor + " and "+ nrotrn_menor +" order by desp.nrotrn desc ");
+
+        String despachador;
+        if (!r.next() ) {
+            System.out.println("No data");
+        }
+        if (r.getString("resp_den") == null){
+            despachador="DESPACHADOR";
+        }else{
+            despachador=r.getString(7);
+        }
+        st.put("nrotrn",nrotrn_menor);
+        st.put("bomba",r.getInt("nrobom"));
+        st.put("despachador",nombre_depsachador(con));
+        st.put("fecha",r.getString("fecha"));
+        st.put("cveest",r.getString("cveest"));
+        st.put("codcli",r.getInt("codcli"));
+        st.put("dencli",r.getString("cli_den"));
+        st.put("hora",hora(String.valueOf(r.getInt("hratrn"))));
+        st.put("codgas",r.getInt("codgas"));
+        st.put("nroveh",r.getInt("nroveh"));
+        st.put("odm",r.getString("odm"));
+        st.put("fchcor",r.getString("fchcor"));
+        st.put("nrotur",r.getString("nrotur"));
+        st.put("nrocte",r.getString("nrocte"));
+        st.put("mtogto",0);
+        st.put("logusu",1);
+        while (r.next()){
+            qty+= r.getInt("can");
+            total += r.getDouble("mto");
+            st_list = new JSONObject();
+            st_list.put("cantidad",r.getString("can"));
+            st_list.put("precio",r.getString("precio"));
+            st_list.put("total",String.format("%.2f",r.getDouble("mto")));
+            st_list.put("producto",r.getString("prod_den"));
+            st_list.put("id_producto",r.getString("codprd"));
+            items.put(st_list);
+            st.put("items",items);
+        }
+        st.put("qty",qty);
+        st.put("total",total);
+        r.close();
+        conn.close();
+        stmt.close();
+        System.out.println("result oil for print" + String.valueOf(st));
+        return st;
+    }
     public JSONObject busca_producto (Context context, String barcode) throws SQLException, JSONException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         JSONObject res = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
@@ -191,6 +297,7 @@ public class cgticket {
         }
         conn.close();
         stmt.close();
+        r.close();
         return nip;
     }
 
@@ -224,6 +331,7 @@ public class cgticket {
                 }
                 stmt.close();
                 conn.close();
+                r.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -257,6 +365,8 @@ public class cgticket {
                 }
             }
             conn.close();
+            stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -298,11 +408,6 @@ public class cgticket {
             connection.close();
             r.close();
             stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -432,6 +537,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -487,6 +593,7 @@ public class cgticket {
 
             stmt.close();
             conn.close();
+            r.close();
             Log.w("combu","true");
             guardarnrotrn2(con,ticket.getString("nrotrn"),venta);
             return true;
@@ -709,6 +816,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -739,6 +847,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -762,6 +871,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -783,6 +893,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -830,6 +941,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -856,6 +968,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -883,6 +996,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -910,6 +1024,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -953,6 +1068,7 @@ public class cgticket {
 
             stmt.close();
             conn.close();
+            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
 
@@ -979,6 +1095,7 @@ public class cgticket {
             stmt.executeUpdate("update ["+base+"].[dbo].[aceites] set web=1 where nrotrn = "+jsonObject.getString("nrotrn")+"");
             stmt.close();
             conn.close();
+            r.close();
             Log.w("combu","true");
             return true;
         } catch (SQLException e) {
@@ -1294,6 +1411,8 @@ public class cgticket {
                 }
             }
             conn.close();
+            stmt.close();
+            rs.close();
         }catch(SQLException e){
             e.printStackTrace();
         }

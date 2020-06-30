@@ -1,6 +1,8 @@
 package cg.ce.app.chris.com.cgce.socket;
 
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,18 +15,27 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-public class SGPMGateway extends AsyncTask<JSONObject, Integer, String> {
+import cg.ce.app.chris.com.cgce.R;
+import cg.ce.app.chris.com.cgce.SorteoListener;
+import cg.ce.app.chris.com.cgce.VentaActivity;
+import cg.ce.app.chris.com.cgce.listeners.StringListener;
+import cg.ce.app.chris.com.cgce.listeners.ValesListener;
+
+import static java.lang.Thread.sleep;
+
+public class SGPMGateway extends AsyncTask<JSONObject, String, String> {
     String SERVER_IP;
     int SERVER_PORT;
     String MESSAGE;
     String response="false";
-    //ikolj
+    public StringListener delegate=null;
 
 
     public SGPMGateway (JSONObject jsonObject) throws JSONException {
         SERVER_IP = jsonObject.getString("ip");
         SERVER_PORT = jsonObject.getInt("port");
         MESSAGE = jsonObject.getString("message");
+
     }
 
     @Override
@@ -41,28 +52,38 @@ public class SGPMGateway extends AsyncTask<JSONObject, Integer, String> {
             byte[] buffer = new byte[1024];
             int bytesRead;
             InputStream inputStream = socket.getInputStream();
-
-            /*while ((bytesRead = inputStream.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
-                response += byteArrayOutputStream.toString("UTF-8");
-                System.out.println(response);
-            }*/
-
             do{
                 response="";
                 bytesRead = inputStream.read(buffer);
                 byteArrayOutputStream.write(buffer, 0, bytesRead);
                 response += byteArrayOutputStream.toString("UTF-8");
             }while (inputStream.available()>0);
-            System.out.println(response);
-
             os.close();
             osw.close();
             bw.close();
             socket.close();
         } catch (IOException e) {
+           response="Info|0|" + String.valueOf(e);
             e.printStackTrace();
         }
+       /* int waited = 0;
+        while (waited < 1500) {
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            waited += 100;
+        }*/
         return response;
     }
+
+    @Override
+    protected void onPostExecute(String result) {
+        System.out.println("Gateway response");
+        System.out.println(result);
+        super.onPostExecute(result);
+        delegate.processFinish(result);
+    }
+
 }

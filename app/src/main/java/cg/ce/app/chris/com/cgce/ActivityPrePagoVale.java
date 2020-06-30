@@ -1,5 +1,6 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -54,6 +55,7 @@ public class ActivityPrePagoVale extends AppCompatActivity implements ValesListe
     DecimalFormat decimalFormat = new DecimalFormat("$ #,###.00",symbols);
     TextView total,qty;
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
