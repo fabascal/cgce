@@ -17,6 +17,7 @@ public class AceiteList  {
     public Integer getCantidad(){return cantidad;}
     public Integer getCodprd(){return codprd;}
 
+
     public AceiteList(Integer imagen, String descripcion, Double precio, Integer cantidad, Integer codprd){
         this.imagen = imagen;
         this.descripcion = descripcion;

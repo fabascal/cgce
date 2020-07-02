@@ -90,7 +90,7 @@ import static android.content.Context.WINDOW_SERVICE;
 
     public boolean createReceiptData() throws Epos2Exception, ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException, WriterException {
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion_total);
+        Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion);
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         final int barcodeWidth = 2;

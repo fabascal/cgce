@@ -73,15 +73,15 @@ public class AceiteAdapterRV extends RecyclerView.Adapter<AceiteAdapterRV.ViewHo
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AceiteList aceiteList1 = aceiteLists.get(position);
-                openDialog(aceiteList1);
-                Log.w("Aceite", String.valueOf(aceiteList1.getCantidad()));
-                Log.w("Aceite", String.valueOf(aceiteList1.getDescripcion()));
+
+               AceiteList aceiteList1 = aceiteLists.get(position);
+               openDialog(aceiteList1);
 
             }
         });
 
     }
+
 
     @Override
 

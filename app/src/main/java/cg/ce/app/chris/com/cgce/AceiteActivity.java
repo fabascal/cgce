@@ -3,6 +3,7 @@ package cg.ce.app.chris.com.cgce;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -11,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,8 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -31,8 +29,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,7 +39,6 @@ import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
-import com.epson.epos2.printer.StatusChangeListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -67,7 +62,6 @@ import cg.ce.app.chris.com.cgce.common.QrString;
 import cg.ce.app.chris.com.cgce.dialogos.AceiteCantidad;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
 import cg.ce.app.chris.com.cgce.socket.SGPMGateway;
-import cg.ce.app.chris.com.cgce.webservice.AceiteInsertaWS;
 
 
 public class AceiteActivity extends AppCompatActivity implements View.OnClickListener, StringListener, ReceiveListener,AceiteCantidad.AceiteCantidadListener {
@@ -75,7 +69,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     private static final int REQUEST_PERMISSION = 100;
     private static final int DISCONNECT_INTERVAL = 500;//millseconds
     private Context mContext = null;
-    ImageButton imgbtnscan,btn_imprimir;
+    ImageButton imgbtnscan,btn_imprimir,btn_vender;
     TextView tvname,tvprecio,etprecio;
     JSONObject jsonenviaproducto = new JSONObject();
     String estacion;
@@ -87,7 +81,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     JSONObject jsAceitesList;
     JSONArray items = new JSONArray();
     private RecyclerView recyclerView;
-
+    RecyclerView.Adapter adapter;
     private List<AceiteList> aceiteLists;
     cgticket cg = new cgticket();
     String barcode;
@@ -99,6 +93,9 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     String bomba;
     boolean IsTablet = false;
     ValidateTablet tablet = new ValidateTablet();
+    LinearLayout imageView;
+    ProgressDialog progress;
+
 
     private Printer mPrinter = null;
 
@@ -151,6 +148,10 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             jsAceiteTicket.put("despachador",cg.nombre_depsachador(this));
             jsAceiteTicket.put("fecha", df.format(Calendar.getInstance().getTime()));
         } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+            new AlertDialog.Builder(AceiteActivity.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
         }
 
@@ -161,15 +162,21 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         etprecio =(TextView) findViewById(R.id.etprecio);
         img_aceite = (ImageView) findViewById(R.id.img_aceite);
         btn_imprimir = (ImageButton)findViewById(R.id.btn_imprimir);
+        btn_vender = (ImageButton)findViewById(R.id.btn_vender);
         total = findViewById(R.id.total);
         qty = findViewById(R.id.qty);
         btn_imprimir.setOnClickListener(this);
+        btn_vender.setOnClickListener(this);
 
         if(bundle.getString("tipo_venta")!= null)
         {
             try {
                 jsonenviaproducto.put("tipo_venta",bundle.getString("tipo_venta"));
             } catch (JSONException e) {
+                new AlertDialog.Builder(AceiteActivity.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
                 e.printStackTrace();
             }
         }
@@ -178,7 +185,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void scananim(final Activity activity){
-        LinearLayout imageView = (LinearLayout) findViewById(R.id.image);
+        imageView = (LinearLayout) findViewById(R.id.image);
         final View bar = findViewById(R.id.bar);
         final Animation animation = AnimationUtils.loadAnimation(AceiteActivity.this, R.anim.animationscan);
         bar.setVisibility(View.VISIBLE);
@@ -249,7 +256,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                         .setPositiveButton(R.string.btn_ok,null).show();
             }
         }
-        RecyclerView.Adapter adapter;
+
         JSONArray array = jsAceiteTicket.getJSONArray("items");
         aceiteLists.clear();
         for (int i = 0; i < array.length(); i++){
@@ -260,11 +267,11 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             aceiteLists.add(aceites);
 
         }
-
         adapter = new AceiteAdapterRV(aceiteLists, getApplicationContext(), AceiteActivity.this);
         Log.w("Adapter",String.valueOf(adapter.getItemCount()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
         total();
     }
 
@@ -275,6 +282,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
 
         super.onDestroy();
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
@@ -292,6 +300,10 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                     loadData(res);
                 }
             } catch (SQLException | JSONException | IllegalAccessException | InstantiationException | ClassNotFoundException e ) {
+                new AlertDialog.Builder(AceiteActivity.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
                 e.printStackTrace();
             }
         }else{
@@ -306,17 +318,43 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_imprimir:
+                progress = ProgressDialog.show(this, "Combugo",
+                        "dialog message", true);
+
                 initializeObject();
-                try {
-                    callSGPM(jsAceiteTicket,VENTASECOS,bomba);
-                } catch (JSONException | InterruptedException | ExecutionException e) {
-                    new AlertDialog.Builder(AceiteActivity.this)
-                            .setTitle(R.string.error)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
-                    e.printStackTrace();
+                updateButtonState(false);
+                if (!runPrintReceiptSequence()) {
+                    updateButtonState(true);
                 }
-            break;
+                progress.dismiss();
+                break;
+            case R.id.btn_vender:
+                progress = ProgressDialog.show(this, "CombuGo",
+                        "Registrando venta", true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        try {
+                            callSGPM(jsAceiteTicket,VENTASECOS,bomba);
+                        } catch (JSONException | InterruptedException | ExecutionException e) {
+                            new AlertDialog.Builder(AceiteActivity.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                progress.dismiss();
+                            }
+                        });
+                    }
+                }).start();
+
+                break;
         }
     }
 
@@ -345,6 +383,11 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         SGPMGateway sgmp = new SGPMGateway(cursor);
         sgmp.delegate=this;
         return sgmp.execute(cursor).get();
+    }
+    /*funcion para esconder y mostrar elementos en funcion del ciclo de vida
+    * si la bandera esta en 0 no hay venta, bandera en 1 ya se vendio y esta listo el proceso de impresion*/
+    public void sale_print(Integer flag_sale_print){
+        Log.w("flag_sale_print",String.valueOf(flag_sale_print));
     }
 
     @Override
@@ -395,12 +438,29 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             try {
                 ticketPrint=ticket.consulta_servicio_aceite(getApplicationContext(),bomba);
                 System.out.println(ticketPrint);
+                String e= "Servicio registrado con el numero " + ticketPrint.getString("nrotrn")
+                        + " por un total de $" + ticketPrint.getString("total");
+                new AlertDialog.Builder(AceiteActivity.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+                flag_Gateway_printer=1;
+                btn_imprimir.setEnabled(true);
+                btn_vender.setVisibility(View.GONE);
+                imageView.setVisibility(View.GONE);
+                recyclerView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+                    @Override
+                    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                        String dialog = "No se puede modificar las cantidades ya vendidas.";
+                        new AlertDialog.Builder(AceiteActivity.this)
+                                .setTitle(R.string.error)
+                                .setMessage(dialog)
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                        return true;
+                    }
+                });
 
-                updateButtonState(false);
-                if (!runPrintReceiptSequence()) {
-                    updateButtonState(true);
-                }
-                Log.w("flag",String.valueOf(flag));
+
 
             } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException
                     | JSONException e) {
@@ -412,6 +472,20 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (flag_Gateway_printer==1){
+            String dialog = "No se puede regresar a la pantalla anterior sin imprimir.";
+            new AlertDialog.Builder(AceiteActivity.this)
+                    .setTitle(R.string.error)
+                    .setMessage(dialog)
+                    .setPositiveButton(R.string.btn_ok, null).show();
+        }else {
+            super.onBackPressed();
+        }
+    }
+
     private boolean initializeObject() {
         try {
             mPrinter = new Printer(mPrinter.TM_M30, mPrinter.MODEL_ANK, mContext);
@@ -445,7 +519,6 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             flag=1;
             return false;
         }
-
         if (!printData()) {
             flag=1;
             return false;
@@ -652,7 +725,6 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         if (mPrinter == null) {
             return false;
         }
-
         try {
             DataBaseManager manager = new DataBaseManager(this);
             String target = manager.target();

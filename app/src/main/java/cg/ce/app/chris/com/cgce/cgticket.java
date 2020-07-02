@@ -35,10 +35,10 @@ public class cgticket {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 
-        String base = null;
+        String base;
         base = cursor.getString("db_cg");
 
-        ResultSet r = null;
+        ResultSet r;
         JSONObject st=new JSONObject();
         ValidarDispositivo vd = new ValidarDispositivo();
         MacActivity mac_add = new MacActivity();
@@ -61,7 +61,7 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    //"where desp.nrotrn='202529190' order by desp.nrotrn desc");
+                    /*"where desp.nrotrn='203102080' order by desp.nrotrn desc");*/
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
             } else {
@@ -69,13 +69,6 @@ public class cgticket {
             float a = r.getFloat(11);
             if (a<0){
                 a=a*-1;
-
-            }
-            String despachador;
-            if (r.getString(7) == null){
-                despachador="DESPACHADOR";
-            }else{
-                despachador=r.getString(7);
             }
             st.put("nrotrn",r.getInt(1));
             st.put("cantidad",(r.getFloat(3)+a)/r.getFloat(4));
@@ -240,13 +233,8 @@ public class cgticket {
         JSONObject res = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
-
         String base = null;
-        try {
-            base = cursor.getString("db_cg");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        base = cursor.getString("db_cg");
         ResultSet r = null;
         ValidarDispositivo vd = new ValidarDispositivo();
         MacActivity mac_add = new MacActivity();
@@ -413,36 +401,26 @@ public class cgticket {
         }
         return resultado;
     }
-    public JSONObject consulta_credito(Context con,Integer cliente) throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public JSONObject consulta_credito(Context con,Integer cliente) throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
         JSONObject st=new JSONObject();
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
 
         String base = null;
-        try {
-            base = cursor.getString("db_cg");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        base = cursor.getString("db_cg");
+
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cg(con);
         Statement stmt = conn.createStatement();
-        try {
-            String query = "SELECT tipval as tipval FROM ["+base+"].[dbo].[Clientes] where cod = '"+cliente+"'";
-            Log.w("qwery",query);
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                st.put("tip_cliente", r.getInt("tipval"));
-            }
-            r.close();
-            conn.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        String query = "SELECT tipval as tipval FROM ["+base+"].[dbo].[Clientes] where cod = '"+cliente+"'";
+        Log.w("qwery",query);
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            st.put("tip_cliente", r.getInt("tipval"));
         }
-
+        r.close();
+        conn.close();
+        stmt.close();
         return st;
     }
     public String hora (String hora){
@@ -454,7 +432,7 @@ public class cgticket {
             hora="0"+hora;
         }
         Log.w("hora",hora);
-        String hora_impresa="";
+        String hora_impresa;
         hora_impresa=hora.substring(0,2)+":"+hora.substring(2,4);
         return hora_impresa;
     }
@@ -473,7 +451,8 @@ public class cgticket {
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cecg_app(con);
         String ticket2= ticket+"0";
-        String query = "insert into ["+base+"].[dbo].[despachos] (nrotrn,nota,corte,impreso,tipo_venta,flotillero) values("+String.valueOf(ticket)+","+ticket2+","+get_corte(con)+",0,"+venta+",0)";
+        String query = "insert into ["+base+"].[dbo].[despachos] (nrotrn,nota,corte,impreso,tipo_venta," +
+                "flotillero) values("+ticket+","+ticket2+","+get_corte(con)+",0,"+venta+",0)";
         try {
             Statement stmt = conn.createStatement();
             Log.w("query", query);
@@ -500,7 +479,9 @@ public class cgticket {
         ValidarDispositivo vd = new ValidarDispositivo();
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cecg_app(con);
-        String query = "insert into ["+base+"].[dbo].[despachos] (nrotrn,nota,corte,impreso,tipo_venta,flotillero,folios,cinepolis_correo,boletos,total) values(0,0,"+get_corte(con)+",0,"+venta+",0, '"+String.valueOf(folio)+"','"+String.valueOf(correo)+"',"+ boletos+","+total+")";
+        String query = "insert into ["+base+"].[dbo].[despachos] (nrotrn,nota,corte,impreso,tipo_venta," +
+                "flotillero,folios,cinepolis_correo,boletos,total) values(0,0,"+get_corte(con)+",0," +
+                ""+venta+",0, '"+folio+"','"+correo+"',"+ boletos+","+total+")";
         try {
             Statement stmt = conn.createStatement();
             Log.w("query", query);
@@ -575,35 +556,32 @@ public class cgticket {
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cg(con);
         Statement stmt = conn.createStatement();
-        try {
-            String ticket2=String.valueOf(ticket.getString("nrotrn"))+"0";
-            Log.w("combu",String.valueOf(ticket)+"//"+String.valueOf(ticket2));
-            if (ticket.has("rut")){
-                Log.w("query tiptrn","update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", rut="+ ticket.getString("rut") +", tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
-                if(ticket.getString("rut").substring(0,1).equals("6")){
-                    stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
-                }else{
-                    stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+",codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
-                }
-
+        String ticket2=ticket.getString("nrotrn")+"0";
+        if (ticket.has("rut")){
+            Log.w("query tiptrn","update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+"," +
+                    " rut="+ ticket.getString("rut") +", tiptrn= "+ ticket.getInt("tiptrn") +
+                    " where nrotrn = "+ticket.getString("nrotrn")+"");
+            if(ticket.getString("rut").substring(0,1).equals("6")){
+                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codres='"+
+                        getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+
+                        ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
             }else{
-                System.out.println("identificacion es credito");
-                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+" where nrotrn = "+ticket.getString("nrotrn")+"");
+                stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+"," +
+                        "codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', " +
+                        "tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
             }
 
-            stmt.close();
-            conn.close();
-            r.close();
-            Log.w("combu","true");
-            guardarnrotrn2(con,ticket.getString("nrotrn"),venta);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Log.w("combu","false");
-            stmt.close();
-            conn.close();
-            return false;
+        }else{
+            System.out.println("identificacion es credito");
+            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+" where nrotrn = "+ticket.getString("nrotrn")+"");
         }
+
+        stmt.close();
+        conn.close();
+        r.close();
+        Log.w("combu","true");
+        guardarnrotrn2(con,ticket.getString("nrotrn"),venta);
+        return true;
     }public boolean guardarnrotrn_old (Context con,String ticket,int venta) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
