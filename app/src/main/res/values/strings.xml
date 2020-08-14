@@ -149,4 +149,9 @@
     <string name="metodoPago">Metodo de pago</string>
     <string name="error">Combu-Go Warning!!!</string>
     <string name="nombre">Nombre</string>
+    <string name="BrandID">BrandID</string>
+    <string name="BrandName">BrandName</string>
+    <string name="CfdiURL">CfdiURL</string>
+    <string name="brand_activity">Marca</string>
+    <string name="BrandImage">BrandImage</string>
 </resources>

@@ -1,0 +1,41 @@
+<!--
+    Copyright 2017 Google Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <string name="app_name">UpdateManager Sample</string>
+
+    <string name="description_deferred_reboot">
+        Hi! I\'m an app that wants to defer reboots because they might interfere with the user or
+        with other operations.
+    </string>
+
+    <string name="current_version_info">Android Things version: %s\nOEM version: %s</string>
+    <string name="pending_version_info">New Android Things version: %s\nNew OEM version: %s</string>
+
+    <string name="status_idle">Status: device is up to date</string>
+    <string name="status_checking">Status: checking for updates</string>
+    <string name="status_update_available">Status: an update is available</string>
+    <string name="status_downloading">Status: downloading update (%d%%)</string>
+    <string name="status_finalizing">Status: finalizing update</string>
+    <string name="status_needs_reboot">Status: updated, ready to restart</string>
+    <string name="status_error">Status: an error occurred</string>
+
+    <string name="reboot_message">Your device will restart automatically at %s.</string>
+
+    <string name="update_channel">Update channel:</string>
+    <string name="check_now">Check now</string>
+    <string name="restart_now">Restart now</string>
+    <string name="restarting">Restarting...</string>
+</resources>

@@ -8,9 +8,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -21,6 +24,7 @@ import android.widget.LinearLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +50,21 @@ public class Splashscreen extends Activity {
         super.onCreate(savedInstanceState);
         sensores.bluetooth();
         sensores.wifi(this,true);
-        setContentView(R.layout.activity_splashscreen);
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand",Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setContentView(R.layout.activity_splashscreen);
+                break;
+            case "Repsol":
+                setContentView(R.layout.activity_splashscreen_repsol);
+                break;
+            case "Ener":
+                setContentView(R.layout.activity_splashscreen);
+                break;
+            case "Total":
+                setContentView(R.layout.activity_splashscreen);
+                break;
+        }
         if (tablet.esTablet(getApplicationContext())){
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
@@ -73,18 +91,20 @@ public class Splashscreen extends Activity {
                 try {
                     int waited = 0;
                     // Splash screen pause time
-                    ValidacionFlotillero vf = new ValidacionFlotillero();
+                    /*ValidacionFlotillero vf = new ValidacionFlotillero();
                     Boolean flot_activo = vf.isServerReachable("http://189.206.183.110:1390", getApplicationContext());
                     if (flot_activo==true) {
-                        mVC.getData(Splashscreen.this);
+
                     }else{
                         mVC.getDataFalse();
-                    }
+                    }*/
+                    mVC.getData(Splashscreen.this);
+
                     Log.w("mandatory", mVC.getMandatory());
                     Log.w("lates", String.valueOf(mVC.getLatestVersionCode()));
                     Log.w("current", String.valueOf(mVC.getCurrentVersionCode()));
                     Log.w("mvc", String.valueOf(mVC.isNewVersionAvailable()));
-                    while (waited < 1500) {
+                    while (waited < 1000) {
                         sleep(100);
                         waited += 100;
                     }
@@ -126,7 +146,10 @@ public class Splashscreen extends Activity {
                                             startActivity(login_despachador);
                                         }
                                     } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-
+                                        new AlertDialog.Builder(Splashscreen.this)
+                                                .setTitle(R.string.error)
+                                                .setMessage(String.valueOf(e))
+                                                .setPositiveButton(R.string.btn_ok,null).show();
                                         e.printStackTrace();
                                     }
                                 }else{
@@ -147,17 +170,23 @@ public class Splashscreen extends Activity {
                                         startActivity(login_despachador);
                                     }
                                 } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-
+                                    new AlertDialog.Builder(Splashscreen.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok,null).show();
                                     e.printStackTrace();
                                 }
                             }
                         }
                     }//termina
                     Splashscreen.this.finish();
-                } catch (InterruptedException | ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                } catch (InterruptedException | ClassNotFoundException | SQLException |
+                        InstantiationException | JSONException | IllegalAccessException |
+                        IOException | PackageManager.NameNotFoundException e) {
 
                     // do nothing
-                } finally {
+                }
+                finally {
                     Splashscreen.this.finish();
                 }
 
@@ -166,7 +195,8 @@ public class Splashscreen extends Activity {
         splashTread.start();
 
     }
-    public int validardisp(Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
+    public int validardisp(Context con) throws ClassNotFoundException, SQLException,
+            InstantiationException, JSONException, IllegalAccessException {
         ValidarDispositivo  mac_add=new ValidarDispositivo();
         //valor de res 0-sin autorizacion, 1-autorizado
         int res=0;
@@ -178,9 +208,17 @@ public class Splashscreen extends Activity {
         try {
             stmt = conn.createStatement();
         } catch (SQLException e) {
+            new AlertDialog.Builder(Splashscreen.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             try {
                 conn.close();
             } catch (SQLException e1) {
+                new AlertDialog.Builder(Splashscreen.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e1))
+                        .setPositiveButton(R.string.btn_ok,null).show();
                 e1.printStackTrace();
             }
             e.printStackTrace();
@@ -196,12 +234,19 @@ public class Splashscreen extends Activity {
             stmt.close();
             conn.close();
         } catch (SQLException e) {
-
+            new AlertDialog.Builder(Splashscreen.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
         }
         try {
             stmt.close();
         } catch (SQLException e) {
+            new AlertDialog.Builder(Splashscreen.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
 
             e.printStackTrace();
         }

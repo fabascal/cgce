@@ -34,7 +34,7 @@
             android:id="@+id/imageView4"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/dispensariorespol" />
+            android:src="@drawable/dispensario" />
 
         <Spinner
             android:id="@+id/spn_dispensario"
@@ -60,7 +60,7 @@
         android:layout_marginTop="8dp"
         android:background="#00000000"
         android:clickable="true"
-        android:src="@drawable/ticketrepsol"
+        android:src="@drawable/ticket"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imbtn_cfdi"
         app:layout_constraintHorizontal_bias="0.579"
@@ -83,7 +83,7 @@
         android:layout_marginTop="8dp"
         android:background="#00000000"
         android:clickable="true"
-        android:src="@drawable/cfdirepsol"
+        android:src="@drawable/cfdi"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.695"

@@ -3,6 +3,7 @@ package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,18 +55,25 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //sharedPreferences = getSharedPreferences("VALUES", MODE_PRIVATE);
-        //int theme = sharedPreferences.getInt("THEME", 1);
-        //se establece el tema en funcion de un valor
-        //switch (theme) {
-        //   case 1:
-        //        setTheme(R.style.CombuExpress);
-        //        break;
-        //    case 2:
-        //        setTheme(R.style.Respol);
-        //        break;
-        //}
-        setContentView(R.layout.activity_venta);
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_venta);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_venta_repsol);
+                break;
+            case "Ener":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_venta);
+                break;
+            case "Total":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_venta);
+                break;
+        }
         if (tablet.esTablet(getApplicationContext())){
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
@@ -114,14 +122,6 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                     .penaltyDeath()
                     .build());
         }
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_venta);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

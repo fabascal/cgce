@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.PortUnreachableException;
 import java.net.URL;
 
@@ -23,7 +24,7 @@ public class VersionChecker {
     /**
      * El enlace al archivo autoupdate_info.txt guardado en el servidor pegaso.
      */
-    public static final String MARCA = "Repsol";
+    public static final String MARCA = "Combu";
     public static final String INFO_FILE_COMBU = "http://189.206.183.110:1390/cecg_app/autoupdate_info.txt";
     public static final String INFO_FILE_REPSOL = "http://189.206.183.110:1390/cecg_app/autoupdate_info_repsol.txt";
 
@@ -65,34 +66,27 @@ public class VersionChecker {
      *            El contexto de la aplicación, para obtener la información de
      *            la versión actual.
      */
-    public void getData(Context context) {
-        try{
-            // Datos locales
-            PackageInfo pckginfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            currentVersionCode = pckginfo.versionCode;
-            currentVersionName = pckginfo.versionName;
+    public void getData(Context context) throws PackageManager.NameNotFoundException, IOException, JSONException {
 
-            // Datos remotos
-            String data=null;
-            if (MARCA == "Combu"){
-                data = downloadHttp(new URL(INFO_FILE_COMBU));
-            }else if(MARCA == "Repsol"){
-                data = downloadHttp(new URL(INFO_FILE_REPSOL));
-            }
-            Log.w("json",data);
-            JSONObject json = new JSONObject(data);
-            latestVersionCode = json.getInt("versionCode");
-            latestVersionName = json.getString("versionName");
-            downloadURL = json.getString("downloadURL");
-            mandatory = json.getString("mandatory");
-            Log.d("AutoUpdate", "Datos obtenidos con éxito");
-        }catch(JSONException e){
-            Log.e("AutoUpdate", "Ha habido un error con el JSON", e);
-        }catch(PackageManager.NameNotFoundException e){
-            Log.e("AutoUpdate", "Ha habido un error con el packete :S", e);
-        }catch(IOException e){
-            Log.e("AutoUpdate", "Ha habido un error con la descarga", e);
+        // Datos locales
+        PackageInfo pckginfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        currentVersionCode = pckginfo.versionCode;
+        currentVersionName = pckginfo.versionName;
+        // Datos remotos
+        String data=null;
+        if (MARCA == "Combu"){
+            data = downloadHttp(new URL(INFO_FILE_COMBU));
+        }else if(MARCA == "Repsol"){
+            data = downloadHttp(new URL(INFO_FILE_REPSOL));
         }
+        Log.w("json",data);
+        JSONObject json = new JSONObject(data);
+        latestVersionCode = json.getInt("versionCode");
+        latestVersionName = json.getString("versionName");
+        downloadURL = json.getString("downloadURL");
+        mandatory = json.getString("mandatory");
+        Log.d("AutoUpdate", "Datos obtenidos con éxito");
+
     }
     public void getDataFalse(){
         mandatory="0";

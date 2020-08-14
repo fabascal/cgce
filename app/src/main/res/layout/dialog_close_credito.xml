@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
         <ImageView
             android:paddingLeft="5dp"
-            android:src="@drawable/isologo_repsol"
+            android:src="@drawable/combuito"
             android:layout_width="50dp"
             android:layout_height="50dp" />
         <TextView

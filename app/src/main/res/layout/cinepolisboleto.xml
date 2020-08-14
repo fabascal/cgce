@@ -17,7 +17,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="0dp"
         android:contentDescription="@string/cine"
-        android:src="@drawable/repsolcinepolisticket"
+        android:src="@drawable/combucinepolis"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="3:1"
         app:layout_constraintEnd_toEndOf="parent"

@@ -61,7 +61,7 @@ public class DomicilioBusqueda extends AppCompatActivity {
             //cliente_domicilio-search_fa.php
             try {
                 JSONObject cfdi_data = new JSONObject(getIntent().getStringExtra("cliente"));
-                cfdi_data.put("bandera","Repsol");
+                cfdi_data.put("bandera","Combu");
                 tv_cliente_cfdi = (TextView)findViewById(R.id.tv_cliente_cfdi);
                 tv_rfc_cfdi = (TextView)findViewById(R.id.tv_rfc_cfdi);
                 tv_correo_cfdi = (TextView)findViewById(R.id.tv_correo_cfdi);

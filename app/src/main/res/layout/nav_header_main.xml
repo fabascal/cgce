@@ -9,17 +9,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:weightSum="1">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:paddingStart="-100dp"
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@drawable/repsol"
-        android:layout_weight="1.06" />
+        android:src="@drawable/combuito"/>
 
     <TextView
         android:layout_width="match_parent"

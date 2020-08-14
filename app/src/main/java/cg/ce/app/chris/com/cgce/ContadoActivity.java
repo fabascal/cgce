@@ -1,7 +1,9 @@
 package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -36,7 +38,25 @@ public class ContadoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contado);
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_contado);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_contado_repsol);
+                break;
+            case "Ener":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_contado);
+                break;
+            case "Total":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_contado);
+                break;
+        }
         if (tablet.esTablet(getApplicationContext())){
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {

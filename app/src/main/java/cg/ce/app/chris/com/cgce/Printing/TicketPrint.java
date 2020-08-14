@@ -1,6 +1,8 @@
 package cg.ce.app.chris.com.cgce.Printing;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -45,14 +47,16 @@ import static android.content.Context.WINDOW_SERVICE;
     DecimalFormat formateador21 = new DecimalFormat("###,###.##");
     Activity activity;
 
-    public TicketPrint(ActivityTicket activityTicket, JSONObject ticket) throws JSONException, SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public TicketPrint(ActivityTicket activityTicket, JSONObject ticket) throws JSONException,
+            SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         this.ticket=ticket;
         this.context=activityTicket;
         this.activity=activityTicket;
         ticket.put("impreso",tf.cant_impreso(this.activity.getApplicationContext(),ticket.getString("nrotrn")));
     }
 
-    public String Print() throws JSONException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, Epos2Exception, WriterException {
+    public String Print() throws JSONException, ClassNotFoundException, SQLException, InstantiationException,
+            IllegalAccessException, Epos2Exception, WriterException {
         Log.w("ticket clase",ticket.toString());
         if(runPrintReceiptSequence()) {
             tf.actualizar_cant_impreso(activity.getApplicationContext(),ticket.getString("nrotrn"));
@@ -62,7 +66,9 @@ import static android.content.Context.WINDOW_SERVICE;
         }
     }
 
-    public boolean runPrintReceiptSequence() throws Epos2Exception, ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException, WriterException {
+
+    public boolean runPrintReceiptSequence() throws Epos2Exception, ClassNotFoundException, SQLException,
+            InstantiationException, JSONException, IllegalAccessException, WriterException {
         if (!initializeObject()) {
             return false;
         }
@@ -88,9 +94,24 @@ import static android.content.Context.WINDOW_SERVICE;
     //prueba
 
 
-    public boolean createReceiptData() throws Epos2Exception, ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException, WriterException {
+    public boolean createReceiptData() throws Epos2Exception, ClassNotFoundException, SQLException,
+            InstantiationException, JSONException, IllegalAccessException, WriterException {
         String method = "";
         Bitmap logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion);
+        switch (ticket.getString("flag")){
+            case "Combu-Express":
+                logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion);
+                break;
+            case "Repsol":
+                logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion_repsol);
+                break;
+            case "Ener":
+                logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion_ener);
+                break;
+            case "Total":
+                logoData = BitmapFactory.decodeResource(this.activity.getResources(), R.drawable.logo_impresion_total);
+                break;
+        }
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         final int barcodeWidth = 2;
@@ -612,27 +633,15 @@ import static android.content.Context.WINDOW_SERVICE;
         Double lts = jsticket.getDouble("cantidad");
         Double pre = jsticket.getDouble("precio");
         Double ivaentre = Double.valueOf("1" + iva_factor);
-        Log.w("PRE",String.valueOf(pre));
-        Log.w("ieps",String.valueOf(ieps));
-        Log.w("iva",String.valueOf(ivaentre));
         Double precioneto = ((Double.valueOf(pre) - ieps) / ivaentre) * 100;
         Double iva = ((precioneto * lts) * iva_factor) / 100;
         Double subtotal = (precioneto + ieps) * lts;
-        Log.w("precioneto",String.valueOf(precioneto));
-        Log.w("ieps",String.valueOf(ieps));
         String precio_total = String.valueOf(precioneto+ieps);
-        Log.w("precio",precio_total);
         String substr = ".";
-        Log.w("antes",precio_total.substring(0, precio_total.indexOf(substr)));
-        Log.w("despued",precio_total.substring(precio_total.indexOf(substr) , 2));
-
         String inicio = precio_total.substring(0, precio_total.indexOf(substr));
         String fin = precio_total.substring(precio_total.indexOf(substr) + substr.length());
         String precio_impresion = inicio +"."+ fin.substring(0,2);
         String qr = "COMBUGO|"+jsticket.getString("cveest")+"|"+jsdomicilio.getString("estacion")+"|"+jsticket.getString("fecha")+"|"+jsticket.getString("hora")+"|"+precio_impresion+"|"+formateador2.format(iva)+"|"+jsticket.getString("total")+"|"+jsticket.getString("nrotrn")+"|";
-
-
-        Log.w("QR %s",qr);
         return qr;
     }
 }

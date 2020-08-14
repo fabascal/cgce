@@ -2,10 +2,12 @@ package cg.ce.app.chris.com.cgce;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +20,10 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+
+import java.io.IOException;
 
 public class AutoUpdate extends AppCompatActivity implements View.OnClickListener{
     private VersionChecker mVC = new VersionChecker();
@@ -98,7 +104,15 @@ public class AutoUpdate extends AppCompatActivity implements View.OnClickListene
     public class update extends AsyncTask <String,String,String>{
         @Override
         protected String doInBackground(String... strings) {
-            mVC.getData(AutoUpdate.this);
+            try {
+                mVC.getData(AutoUpdate.this);
+            } catch (PackageManager.NameNotFoundException | IOException | JSONException e) {
+                new AlertDialog.Builder(AutoUpdate.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                e.printStackTrace();
+            }
             return null;
         }
         @Override

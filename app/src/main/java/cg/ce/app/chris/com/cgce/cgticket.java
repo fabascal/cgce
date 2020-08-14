@@ -61,10 +61,9 @@ public class cgticket {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                    /*"where desp.nrotrn='203102080' order by desp.nrotrn desc");*/
+                    /*"where desp.nrotrn='39558770' order by desp.nrotrn desc");*/
 //            ResultSet r = stmt.executeQuery("SELECT disp.activo FROM  [cecg_app].[dbo].[dispositivos] as disp where disp.mac_adr = '" + String.valueOf(mac) + "';");
             if (!r.next()) {
-            } else {
             }
             float a = r.getFloat(11);
             if (a<0){
@@ -95,10 +94,10 @@ public class cgticket {
             st.put("logusu",1);
             st.put("iva", r.getDouble(23));
             st.put("ieps", r.getDouble(24));
-            r.close();
+            
             conn.close();
             stmt.close();
-            r.close();
+            
         } catch (SQLException e) {
             e.printStackTrace();
             JSONObject jsonError=null;
@@ -140,7 +139,7 @@ public class cgticket {
             System.out.println("No data");
         }
         result =  String.valueOf(r.getInt("nrotrn"));
-        r.close();
+        
         stmt.close();
         conn.close();
         System.out.println("nro de aceite");
@@ -223,7 +222,7 @@ public class cgticket {
         }
         st.put("qty",qty);
         st.put("total",total);
-        r.close();
+        
         conn.close();
         stmt.close();
         System.out.println("result oil for print" + String.valueOf(st));
@@ -246,14 +245,15 @@ public class cgticket {
         r = stmt.executeQuery("select prd.cod,prd.den,prd.tip,prd.uni,prd.codsat,\n" +
                 "(select top 1 pre from ["+base+"].[dbo].[Precios] where codprd=prd.cod  and fch<=convert(int,getdate()) order by fch desc) as precio,\n" +
                 "(select top 1 iva from ["+base+"].[dbo].[Precios] where codprd=prd.cod and  fch<=convert(int,getdate()) order by fch desc) as iva,\n" +
-                "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=prd.cod and fch<=convert(int,getdate()) order by fch desc) as ieps \n" +
+                "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=prd.cod and fch<=convert(int,getdate()) order by fch desc) as ieps," +
+                "prd.codext as codext \n" +
                 "from ["+base+"].[dbo].[Productos] as prd\n" +
                 "where prd.codbar ='" + barcode + "'");
         if (!r.next()){
             res.put("error","No existe producto!");
             conn.close();
             stmt.close();
-            r.close();
+            
             return res;
         }else{
             res.put("codprd",r.getInt(1));
@@ -264,9 +264,10 @@ public class cgticket {
             res.put("precio",r.getDouble(6));
             res.put("iva",r.getDouble(7));
             res.put("ieps",r.getDouble(8));
+            res.put("codext",r.getString(9));
             conn.close();
             stmt.close();
-            r.close();
+            
             return res;
         }
 
@@ -285,7 +286,6 @@ public class cgticket {
         }
         conn.close();
         stmt.close();
-        r.close();
         return nip;
     }
 
@@ -319,7 +319,6 @@ public class cgticket {
                 }
                 stmt.close();
                 conn.close();
-                r.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -354,7 +353,6 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -394,7 +392,7 @@ public class cgticket {
                 }
             }
             connection.close();
-            r.close();
+            
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -418,7 +416,6 @@ public class cgticket {
         while (r.next()) {
             st.put("tip_cliente", r.getInt("tipval"));
         }
-        r.close();
         conn.close();
         stmt.close();
         return st;
@@ -439,7 +436,6 @@ public class cgticket {
     public boolean guardarnrotrn2 (Context con, String ticket, int venta) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
-
         String base = null;
         try {
             base = cursor.getString("db");
@@ -518,7 +514,6 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -578,7 +573,6 @@ public class cgticket {
 
         stmt.close();
         conn.close();
-        r.close();
         Log.w("combu","true");
         guardarnrotrn2(con,ticket.getString("nrotrn"),venta);
         return true;
@@ -794,7 +788,6 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -825,7 +818,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -849,7 +842,6 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -871,7 +863,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -919,7 +911,6 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -946,7 +937,6 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -974,7 +964,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1002,7 +992,7 @@ public class cgticket {
             }
             conn.close();
             stmt.close();
-            r.close();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1046,7 +1036,7 @@ public class cgticket {
 
             stmt.close();
             conn.close();
-            r.close();
+            
         } catch (SQLException e) {
             e.printStackTrace();
 
@@ -1073,7 +1063,7 @@ public class cgticket {
             stmt.executeUpdate("update ["+base+"].[dbo].[aceites] set web=1 where nrotrn = "+jsonObject.getString("nrotrn")+"");
             stmt.close();
             conn.close();
-            r.close();
+            
             Log.w("combu","true");
             return true;
         } catch (SQLException e) {

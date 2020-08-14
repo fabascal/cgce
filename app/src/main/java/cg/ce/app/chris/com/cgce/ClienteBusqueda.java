@@ -105,7 +105,7 @@ public class ClienteBusqueda extends AppCompatActivity  {
             JSONObject query = new JSONObject();
             try {
                 query.put("nombre", intent.getStringExtra(SearchManager.QUERY));
-                query.put("bandera","Repsol");
+                query.put("bandera","Combu");
 
 
             } catch (JSONException e) {

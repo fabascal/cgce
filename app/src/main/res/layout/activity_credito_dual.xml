@@ -321,7 +321,7 @@
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:id="@+id/imageView_1"
-                android:src="@drawable/dispensariorespol"/>
+                android:src="@drawable/dispensario"/>
             <Spinner
                 android:layout_marginLeft="30dp"
                 android:id="@+id/spn_dispensario_1"
@@ -353,7 +353,7 @@
                     android:layout_width="96dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="left"
-                    android:src="@drawable/rfidrepsol"/>
+                    android:src="@drawable/rfid"/>
 
                 <TextView
                     android:layout_marginTop="0dp"
@@ -388,7 +388,7 @@
                     android:layout_width="96dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="left"
-                    android:src="@drawable/niprepsol"/>
+                    android:src="@drawable/nip"/>
 
                 <TextView
                     android:layout_marginTop="0dp"
@@ -420,7 +420,7 @@
                         android:layout_width="96dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="left"
-                        android:src="@drawable/repsolnombres"/>
+                        android:src="@drawable/combunombres"/>
                     <TextView
                         android:layout_marginTop="0dp"
                         android:id="@+id/cv_textTEXT1"
@@ -440,7 +440,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imbtn_ticket_1"
             android:layout_marginTop="15dp"
-            android:src="@drawable/ticketrepsol"
+            android:src="@drawable/ticket"
             android:background="#00000000"
             android:layout_centerHorizontal="true"
             android:clickable="true"
@@ -465,7 +465,7 @@
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:id="@+id/imageView_2"
-                android:src="@drawable/dispensariorespol"/>
+                android:src="@drawable/dispensario"/>
             <Spinner
                 android:visibility="gone"
                 android:layout_marginLeft="30dp"
@@ -503,7 +503,7 @@
                         android:layout_width="96dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="left"
-                        android:src="@drawable/rfidrepsol" />
+                        android:src="@drawable/rfid" />
 
                     <TextView
                         android:id="@+id/cv_textTag2"
@@ -539,7 +539,7 @@
                         android:layout_width="96dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="left"
-                        android:src="@drawable/niprepsol" />
+                        android:src="@drawable/nip" />
 
                     <TextView
                         android:id="@+id/cv_textNip2"
@@ -574,7 +574,7 @@
                         android:layout_width="96dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="left"
-                        android:src="@drawable/repsolnombres"/>
+                        android:src="@drawable/combunombres"/>
 
                     <TextView
                         android:layout_marginTop="0dp"
@@ -597,7 +597,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imbtn_ticket_2"
             android:layout_marginTop="15dp"
-            android:src="@drawable/ticketrepsol"
+            android:src="@drawable/ticket"
             android:background="#00000000"
             android:layout_centerHorizontal="true"
             android:clickable="true"
@@ -612,7 +612,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
-        android:src="@drawable/ticketrepsol"
+        android:src="@drawable/ticket"
         android:background="#00000000"
         android:clickable="true"
         android:onClick="onClick"/>
@@ -631,7 +631,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/contadorepsol2"
+        android:src="@drawable/contado"
         android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

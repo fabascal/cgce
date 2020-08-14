@@ -82,7 +82,7 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
             //url = new URL (cg.urltimbre(context));
             /*Log.w("Url Timbre", String.valueOf(cg.urltimbre(context)));*/
 
-            switch (2){
+            switch (1){
                 case 1:
                     url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
                     break;

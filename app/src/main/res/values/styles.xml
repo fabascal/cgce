@@ -3,8 +3,8 @@
     <!-- Base application theme.
     Combu-Express-->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/RepsolNaranja</item>
-        <item name="colorPrimaryDark">@color/RepsolNaranjaDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionMenuTextColor">@color/Blanco</item>
         <item name="windowNoTitle">true</item>
@@ -61,8 +61,8 @@
     </style>-->
     <style name="ContentMain" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/RepsolNaranja</item>
-        <item name="colorPrimaryDark">@color/RepsolNaranjaDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionMenuTextColor">@color/Blanco</item>
         <item name="windowNoTitle">false</item>
