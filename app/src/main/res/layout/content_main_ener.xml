@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cg.ce.app.chris.com.cgce.VentaActivity"
+    tools:showIn="@layout/activity_venta_repsol"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/fondorepsolgris">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Ener"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/EnerPrimary"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/CardViewContado"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="8dp"
+        android:layout_marginTop="10dp"
+        app:cardBackgroundColor="#E6E6E6"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <ImageView
+            android:id="@+id/imageviewContado"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="start"
+            android:src="@drawable/contadoener"
+            android:padding="5dp"
+            android:contentDescription="TODO" />
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/cv_textContado"
+            android:text="@string/contado"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            style="@style/VentasTextView"/>
+
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:id="@+id/CardViewCredito"
+        android:visibility="visible"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="8dp"
+        app:cardBackgroundColor="#E6E6E6"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/margintop_ventas"
+        app:layout_constraintRight_toRightOf="@+id/CardViewContado"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewContado">
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/cv_textCredito"
+            android:text="@string/credito"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            style="@style/VentasTextView" />
+        <ImageView
+            android:id="@+id/imageviewCredito"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:src="@drawable/creditoener"/>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:visibility="visible"
+        android:id="@+id/CardViewAceite"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="8dp"
+        app:cardBackgroundColor="#E6E6E6"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintRight_toRightOf="@+id/CardViewTPV"
+        android:layout_marginTop="@dimen/margintop_ventas"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewTPV">
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/cv_textAceite"
+            android:text="@string/aceite"
+            android:textAllCaps="true"
+            android:textColor="@color/RespsolAzul"
+            android:layout_width="140dp"
+            android:textSize="20sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:textStyle="normal|bold" />
+        <ImageView
+            android:id="@+id/imageviewAceite"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:src="@drawable/aceiteener"/>
+    </android.support.v7.widget.CardView>
+
+
+
+    <android.support.v7.widget.CardView
+        android:visibility="gone"
+        android:id="@+id/CardViewTPV"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="8dp"
+        android:layout_below="@id/CardViewCredito"
+        app:cardBackgroundColor="#E6E6E6"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintRight_toRightOf="@+id/CardViewCredito"
+        android:layout_marginTop="@dimen/margintop_ventas"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewCredito">
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/cv_textAnticipo"
+            android:text="@string/tpv"
+            android:layout_width="140dp"
+            android:textSize="20sp"
+            android:textColor="@color/RespsolAzul"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:textStyle="normal|bold" />
+        <ImageView
+            android:id="@+id/imageviewAnticipo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:src="@drawable/tpvsrepsol2"/>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/CardViewServicios"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="8dp"
+        android:layout_below="@id/CardViewTPV"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margintop_ventas"
+        android:visibility="visible"
+        app:cardBackgroundColor="#E6E6E6"
+        app:layout_constraintEnd_toEndOf="@+id/CardViewAceite"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewAceite">
+
+        <TextView
+            android:id="@+id/cv_textServicios"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:layout_marginTop="0dp"
+            android:text="@string/servicios"
+            style="@style/VentasTextView"/>
+
+        <ImageView
+            android:id="@+id/imageviewServicios"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:src="@drawable/serviciosener" />
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:weightSum="6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976">
+
+
+        <TextView
+            android:layout_weight="4"
+            android:id="@+id/error_status"
+            android:layout_width="283dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="TextView"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/tvmsj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="algo" />
+
+
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

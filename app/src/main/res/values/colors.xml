@@ -16,8 +16,10 @@
     <color name="RepsolNaranja">#ff8a03</color>
     <color name="RepsolRojo">#ff1927</color>
     <color name="RepsolNaranjaDark">#ff7103</color>
-    <color name="EnerPrimary">#02d1b7</color>
-    <color name="EnerPrimaryDark">#1a9bdc</color>
+    <color name="EnerPrimaryDark">#02d1b7</color>
+    <color name="EnerPrimary">#1a9bdc</color>
+    <color name="TotalPrimay">#df0c36</color>
+    <color name="TotalPrimaryDark">#9c0825</color>
     <color name="Blanco">#fff</color>
 
     

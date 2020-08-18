@@ -112,13 +112,13 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 flag_brand = "Repsol";
                 break;
             case "Ener":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_ticket);
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_ticket_ener);
                 flag_brand = "Ener";
                 break;
             case "Total":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_ticket);
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_ticket_total);
                 flag_brand = "Total";
                 break;
         }
@@ -280,50 +280,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         return true;
     }
 
-    /*public class PrintReceipe extends AsyncTask<JSONObject, String, Boolean> {
-
-
-        public PrintReceipe() {
-            pdLoading = new ProgressDialog(ActivityTicket.this);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            //this method will be running on UI thread
-            pdLoading.setIndeterminate(true);
-            pdLoading.setCancelable(false);
-            pdLoading.setTitle(flag_brand);
-            pdLoading.setMessage("Imprimiendo ...");
-            pdLoading.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(JSONObject... jsonObjects) {
-            try {
-                if (!runPrintReceiptSequence()) {
-                    updateButtonState(true);
-                }
-            } catch (SQLException | WriterException | InstantiationException | JSONException
-                    | ClassNotFoundException | IllegalAccessException | Epos2Exception e) {
-                new AlertDialog.Builder(ActivityTicket.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok, null).show();
-                e.printStackTrace();
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (pdLoading != null) {
-                pdLoading.dismiss();
-            }
-
-        }
-    }*/
-
     private void updateButtonState(boolean state) {
         state_btn = state;
 
@@ -375,16 +331,21 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     startActivity(intent);
                 }
             }
-        } catch (ClassNotFoundException | SQLException | InstantiationException |
+        } catch ( final ClassNotFoundException | SQLException | InstantiationException |
                 IllegalAccessException | JSONException | Epos2Exception | WriterException e) {
             if (pdLoading != null) {
                 pdLoading.dismiss();
             }
+            runOnUiThread(new Runnable() {
+                public synchronized void run() {
+                    new AlertDialog.Builder(ActivityTicket.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                }
+            });
             e.printStackTrace();
-            new AlertDialog.Builder(ActivityTicket.this)
-                    .setTitle(R.string.error)
-                    .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok, null).show();
+
         }
     }
 
@@ -543,8 +504,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         method = "addText";
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
-
-
         textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + String.valueOf(ticket.getInt("bomba")) + "\n");
         textData.append("FECHA: " + ticket.getString("fecha") + "  HORA: " + ticket.getString("hora") + "\n");
         textData.append("VENDEDOR  : " + String.valueOf(ticket.getString("despachador")).toUpperCase() + "\n");

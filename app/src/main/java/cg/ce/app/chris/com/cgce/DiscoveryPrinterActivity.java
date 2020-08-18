@@ -1,8 +1,14 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,18 +25,21 @@ import com.epson.epos2.discovery.FilterOption;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DiscoveryPrinterActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener{
     private Context mContext = null;
     private ArrayList<HashMap<String, String>> mPrinterList = null;
     private SimpleAdapter mPrinterListAdapter = null;
     private FilterOption mFilterOption = null;
+    private static final int REQUEST_PERMISSION = 100;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery_printer);
+        requestRuntimePermission();
         mContext = this;
 
         Button button = (Button)findViewById(R.id.btnRestart);
@@ -142,4 +151,49 @@ public class DiscoveryPrinterActivity extends Activity implements View.OnClickLi
             });
         }
     };
+    private void requestRuntimePermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
+        int permissionStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        List<String> requestPermissions = new ArrayList<>();
+
+        if (permissionStorage == PackageManager.PERMISSION_DENIED) {
+            requestPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (permissionLocation == PackageManager.PERMISSION_DENIED) {
+            requestPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
+        if (!requestPermissions.isEmpty()) {
+            ActivityCompat.requestPermissions(this, requestPermissions.toArray(new String[requestPermissions.size()]), REQUEST_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode != REQUEST_PERMISSION || grantResults.length == 0) {
+            return;
+        }
+
+        List<String> requestPermissions = new ArrayList<>();
+
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+            if (permissions[i].equals(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+        }
+
+        if (!requestPermissions.isEmpty()) {
+            ActivityCompat.requestPermissions(this, requestPermissions.toArray(new String[requestPermissions.size()]), REQUEST_PERMISSION);
+        }
+    }
 }

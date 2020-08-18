@@ -21,15 +21,23 @@
         <item name="windowActionBar">true</item>
     </style>-->
     <!-- Base application theme.
-    Ener
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    Ener-->
+    <style name="Ener" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/EnerPrimary</item>
         <item name="colorPrimaryDark">@color/EnerPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">true</item>
-    </style>-->
+    </style>
+    <style name="Total" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/TotalPrimay</item>
+        <item name="colorPrimaryDark">@color/TotalPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+    </style>
 
     <style name="CombuExpress" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/md_indigo_500</item>
@@ -74,6 +82,24 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/RepsolNaranja</item>
         <item name="colorPrimaryDark">@color/RepsolNaranjaDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionMenuTextColor">@color/Blanco</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+    </style>
+    <style name="ContentMainEner" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/EnerPrimary</item>
+        <item name="colorPrimaryDark">@color/EnerPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionMenuTextColor">@color/Blanco</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+    </style>
+    <style name="ContentMainTotal" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/TotalPrimay</item>
+        <item name="colorPrimaryDark">@color/TotalPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionMenuTextColor">@color/Blanco</item>
         <item name="windowNoTitle">true</item>

@@ -49,12 +49,12 @@ public class ContadoActivity extends AppCompatActivity {
                 setContentView(R.layout.activity_contado_repsol);
                 break;
             case "Ener":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_contado);
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_contado_ener);
                 break;
             case "Total":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_contado);
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_contado_total);
                 break;
         }
         if (tablet.esTablet(getApplicationContext())){

@@ -59,10 +59,10 @@ public class Splashscreen extends Activity {
                 setContentView(R.layout.activity_splashscreen_repsol);
                 break;
             case "Ener":
-                setContentView(R.layout.activity_splashscreen);
+                setContentView(R.layout.activity_splashscreen_ener);
                 break;
             case "Total":
-                setContentView(R.layout.activity_splashscreen);
+                setContentView(R.layout.activity_splashscreen_total);
                 break;
         }
         if (tablet.esTablet(getApplicationContext())){

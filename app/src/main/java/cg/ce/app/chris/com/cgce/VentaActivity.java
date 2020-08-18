@@ -66,12 +66,12 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                 setContentView(R.layout.activity_venta_repsol);
                 break;
             case "Ener":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_venta);
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_venta_ener);
                 break;
             case "Total":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_venta);
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_venta_total);
                 break;
         }
         if (tablet.esTablet(getApplicationContext())){

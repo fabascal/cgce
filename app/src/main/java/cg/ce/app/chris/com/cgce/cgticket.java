@@ -1345,7 +1345,8 @@ public class cgticket {
         Log.w("res impreso",String.valueOf(res));
         return res;
     }
-    public JSONObject estacion_domicilio (Context con) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
+    public JSONObject estacion_domicilio (Context con) throws ClassNotFoundException, SQLException,
+            InstantiationException, JSONException, IllegalAccessException {
         ResultSet rs;
         JSONObject domicilio = new JSONObject();
         DataBaseCG cg = new DataBaseCG();
