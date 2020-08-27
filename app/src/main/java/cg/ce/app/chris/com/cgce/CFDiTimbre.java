@@ -32,7 +32,7 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
     public static final int CONNECTION_TIMEOUT = 30000;
     public static final int READ_TIMEOUT = 30000;
     cgticket cg = new cgticket();
-    String usocfdi,categoria,id_cliente,id_domicilio,id_formpago,numcuenta,id_producto,cveest,ticket,fecha_ticket,producto,bomba,preunitario,mtogto,importe,copia,comentarios,nip;
+    String bandera,usocfdi,categoria,id_cliente,id_domicilio,id_formpago,numcuenta,id_producto,cveest,ticket,fecha_ticket,producto,bomba,preunitario,mtogto,importe,copia,comentarios,nip;
     public CfdiResultListener delegate = null;
     Context  context;
 
@@ -59,6 +59,7 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
             this.copia=String.valueOf(jsonObject.getString("copia"));
             this.comentarios=String.valueOf(jsonObject.getString("comentario"));
             this.nip=cg.nip_desp(context);
+            this.bandera=String.valueOf(jsonObject.getString("bandera"));
         } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -82,14 +83,20 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
             //url = new URL (cg.urltimbre(context));
             /*Log.w("Url Timbre", String.valueOf(cg.urltimbre(context)));*/
 
-            switch (1){
-                case 1:
+            switch (bandera){
+                case "Combu-Express":
                     url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
                     break;
-                case 2 :
+                case "Repsol" :
                     url = new URL("http://factura.combuexpress.mx/cerepsol/timbrarws1.3.php");
                     break;
-                case 3:
+                case "Ener":
+                    url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
+                    break;
+                case "Total":
+                    url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
+                    break;
+                case "3":
                     url = new URL("http://factura.combuexpress.mx/cerepsol/timbrarws1.3-fast.php");
                     break;
             }

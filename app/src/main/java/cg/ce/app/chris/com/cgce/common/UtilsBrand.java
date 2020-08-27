@@ -25,4 +25,5 @@ public class UtilsBrand extends Application {
         result.put(context.getResources().getString(R.string.BrandImage),context.getResources().getDrawable(R.drawable.logo_impresion));
         return result;
     }
+
 }

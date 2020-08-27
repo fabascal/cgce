@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 
@@ -49,36 +50,13 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     public static final String MSJ="msj";
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
+    LogCE logCE = new LogCE();
 
-    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
-        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
-            case "Combu-Express":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_venta);
-                break;
-            case "Repsol":
-                setTheme(R.style.ContentMainRepsol);
-                setContentView(R.layout.activity_venta_repsol);
-                break;
-            case "Ener":
-                setTheme(R.style.ContentMainEner);
-                setContentView(R.layout.activity_venta_ener);
-                break;
-            case "Total":
-                setTheme(R.style.ContentMainTotal);
-                setContentView(R.layout.activity_venta_total);
-                break;
-        }
-        if (tablet.esTablet(getApplicationContext())){
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+        BrandSharedPreferences();
         Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -90,28 +68,19 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         CardViewTPV =  findViewById(R.id.CardViewTPV);
         cardViewAceite =  findViewById(R.id.CardViewAceite);
         error_status = findViewById(R.id.error_status);
-
-
-
         cardViewContado.setOnClickListener(this);
         cardViewCredito.setOnClickListener(this);
         CardViewServicios.setOnClickListener(this);
         CardViewTPV.setOnClickListener(this);
         cardViewAceite.setOnClickListener(this);
-
         msj=findViewById(R.id.tvmsj);
         Intent intent= getIntent();
         msj.setText(intent.getStringExtra(MSJ));
 
-
-
-
         if (intent.hasExtra("Error_Status")) {
-
                 error_status.setVisibility(View.VISIBLE);
                 //warning.setVisibility(View.VISIBLE);
                 error_status.setText(intent.getStringExtra("Error_Status"));
-
         }
 
         if (DEVELOPER_MODE) {
@@ -128,7 +97,6 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -233,6 +201,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                                     .setTitle(R.string.error)
                                     .setMessage(String.valueOf(e))
                                     .setPositiveButton(R.string.btn_ok,null).show();
+                            logCE.EscirbirLog2(getApplicationContext(),"VentaActivity_CallJarreo - " + e);
                             e.printStackTrace();
                         }
                         if(bdnipmanager != null) {
@@ -289,6 +258,33 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
 
     public void doNegativeClick(){
         Toast.makeText(this, "Ha pulsado Cancelar", Toast.LENGTH_SHORT).show();
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_venta);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_venta_repsol);
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_venta_ener);
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_venta_total);
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
 }

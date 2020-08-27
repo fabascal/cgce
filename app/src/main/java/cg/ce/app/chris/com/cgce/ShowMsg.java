@@ -13,7 +13,9 @@ import com.epson.epos2.Epos2Exception;
  */
 
 public class ShowMsg {
+
     public static void showException(Exception e, String method, Context context) {
+
         String msg = "";
         if (e instanceof Epos2Exception) {
             msg = String.format(
@@ -26,6 +28,7 @@ public class ShowMsg {
         else {
             msg = e.toString();
         }
+
         show(msg, context);
     }
 
@@ -53,11 +56,13 @@ public class ShowMsg {
     }
 
     private static void show(final String msg, final Context context) {
+        final LogCE logCE = new LogCE();
         Activity activity = (Activity)context;
 
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                logCE.EscirbirLog2(context,"Epson Printer - " + msg);
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                 alertDialog.setMessage(msg);

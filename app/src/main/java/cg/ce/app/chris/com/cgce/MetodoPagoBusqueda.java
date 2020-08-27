@@ -2,7 +2,9 @@ package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -52,17 +54,14 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
     public static final int READ_TIMEOUT = 25000;
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
+    String Bandera;
+    LogCE logCE = new LogCE();
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_metodo_pago_busqueda);
-        if (tablet.esTablet(getApplicationContext())){
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+        BrandSharedPreferences();
         sensores.bluetooth();
         sensores.wifi(this,true);
         et_correo2 = (EditText)findViewById(R.id.et_correo2);
@@ -131,6 +130,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
 
             } catch (JSONException e) {
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_onCreate - " + e);
                 e.printStackTrace();
             }
         }
@@ -150,10 +154,9 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
                             .setPositiveButton(R.string.btn_ok,null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_onClick - " + e);
                     e.printStackTrace();
                 }
-                //String res = timbre.getCFDi(cfdi_envio);
-                //Log.w("ws_res",res);
                 intent=new Intent(getApplicationContext(),EmisionCfdi.class);
                 intent.putExtra("json",cfdi_envio.toString());
                 break;
@@ -174,6 +177,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
             ticket = cgticket_obj.consulta_servicio(getApplicationContext(),bomba);
             nip = cgticket_obj.nip_desp(getApplicationContext());
         } catch (SQLException  e) {
+            new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_getJson - " + e);
             e.printStackTrace();
         }
         JSONObject jsoncfdi = new JSONObject();
@@ -210,6 +218,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
             jsoncfdi.put("copia",et_correo2.getText());
             jsoncfdi.put("comentario",comentario.getText());
         } catch (JSONException e) {
+            new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_getJson - " + e);
             e.printStackTrace();
         }
         return jsoncfdi;
@@ -227,6 +240,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
             try {
                 this.searchQuery=searchQuery.getString("id_cliente");
             } catch (JSONException e) {
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
                 e.printStackTrace();
             }
         }
@@ -253,6 +271,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
                 e.printStackTrace();
                 return e.toString();
             }
@@ -282,6 +305,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e1))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e1);
                 e1.printStackTrace();
                 return e1.toString();
             }
@@ -311,6 +339,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 }
 
             } catch (IOException e) {
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
                 e.printStackTrace();
                 return e.toString();
             } finally {
@@ -355,8 +388,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
                 } catch (JSONException e) {
                     // You to understand what actually error is and handle it appropriately
-                    Log.w("ERR",e.toString());
-                    Log.w("ERR",result.toString());
+                    new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
 
                 }
 
@@ -399,6 +435,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e);
                 e.printStackTrace();
                 return e.toString();
             }
@@ -417,7 +458,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 // add parameter to our above url
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("searchQuery", "1")
-                        .appendQueryParameter("searchBandera","Combu");
+                        .appendQueryParameter("searchBandera",Bandera);
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = conn.getOutputStream();
@@ -430,6 +471,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e1))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e1);
                 e1.printStackTrace();
                 return e1.toString();
             }
@@ -459,6 +505,11 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 }
 
             } catch (IOException e) {
+                new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e);
                 e.printStackTrace();
                 return e.toString();
             } finally {
@@ -503,14 +554,47 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
                 } catch (JSONException e) {
                     // You to understand what actually error is and handle it appropriately
-                    Log.w("ERR",e.toString());
-                    Log.w("ERR",result.toString());
-
+                    new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e);
                 }
 
             }
 
         }
 
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.ContentMainSearch);
+                setContentView(R.layout.activity_metodo_pago_busqueda);
+                Bandera="Combu-Express";
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainSearchRepsol);
+                setContentView(R.layout.activity_metodo_pago_busqueda);
+                Bandera = "Repsol";
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainSearchEner);
+                setContentView(R.layout.activity_metodo_pago_busqueda);
+                Bandera = "Ener";
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainSearchTotal);
+                setContentView(R.layout.activity_metodo_pago_busqueda);
+                Bandera = "Total";
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 }

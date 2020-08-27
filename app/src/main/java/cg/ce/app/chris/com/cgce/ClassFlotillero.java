@@ -162,7 +162,7 @@ public class ClassFlotillero extends AsyncTask<JSONObject, String, Boolean> {
                 return false;
             }
 
-        } catch (IOException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+        } catch (IOException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException | JSONException e) {
             e.printStackTrace();
             pdialog.dismiss();
             return false;

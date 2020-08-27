@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +29,8 @@ import java.text.DecimalFormat;
 
 
 public class EmisionCfdi extends AppCompatActivity implements View.OnClickListener,CfdiResultListener {
-    TextView tvrazon, tvrfc, tvdomicilio, tvcolonia, tvestado, tvciudad, tvcp, tvfolio, tvvendedor, tvprecio, tvvolumen, tvimporte, tvmetodo, tvcuenta, tvproducto;
+    TextView tvrazon, tvrfc, tvdomicilio, tvcolonia, tvestado, tvciudad, tvcp, tvfolio, tvvendedor,
+            tvprecio, tvvolumen, tvimporte, tvmetodo, tvcuenta, tvproducto;
     Button btnwebservice;
     JSONObject cfdienvio = new JSONObject();
     private Printer mPrinter = null;
@@ -44,19 +47,15 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
     ResultSet rs;
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
+    String Bandera;
+    LogCE logCE = new LogCE();
 
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_emision_cfdi);
-        if (tablet.esTablet(getApplicationContext())){
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
+        BrandSharedPreferences();
         sensores.bluetooth();
         sensores.wifi(this,true);
         tvrazon = (TextView) findViewById(R.id.tvrazon);
@@ -78,7 +77,6 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
         activity = this;
 
         try {
-
             //json con datos de Control-Gas
             //JSONObject ticket = cgticket_obj.consulta_servicio(getApplicationContext());
             cfdienvio = new JSONObject(getIntent().getStringExtra("json"));
@@ -101,6 +99,11 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
             }
             tvcuenta.setText("Cuenta         : " + cfdienvio.getString("numcuenta"));
         } catch (JSONException e) {
+            new AlertDialog.Builder(EmisionCfdi.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            logCE.EscirbirLog2(getApplicationContext(),"EmisionCfdi_onCreate - " + e);
         }
         btnwebservice = (Button) findViewById(R.id.btnwebservice);
         btnwebservice.setOnClickListener(this);
@@ -117,17 +120,25 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
                 validar=cgticket_obj.consulta_credito(getApplicationContext(),cfdienvio.getInt("cg_cliente"));
                 Log.w("validar",validar.toString());
             }
-        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException |JSONException  e) {
+            new AlertDialog.Builder(EmisionCfdi.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            logCE.EscirbirLog2(getApplicationContext(),"EmisionCfdi_onClick - " + e);
             e.printStackTrace();
         }
         switch (view.getId()) {
             case R.id.btnwebservice:
                 sensores.bluetooth();
                 try {
-                    Log.w("copia",cfdienvio.getString("copia"));
+                    cfdienvio.put("bandera",Bandera);
                 } catch (JSONException e) {
+                    new AlertDialog.Builder(EmisionCfdi.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"EmisionCfdi_onClick - " + e);
                     e.printStackTrace();
                 }
                 CFDiTimbre timbre = new CFDiTimbre(EmisionCfdi.this, cfdienvio);
@@ -154,12 +165,6 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(this,res.getString("mensaje"),Toast.LENGTH_LONG).show();
             }else {
                 JSONObject sello_cfd, fecha_timbre, uuid, certificado_sat, version, sello_sat;
-                //sello_cfd = new JSONObject(res.getString("selloCFD"));
-                //fecha_timbre = new JSONObject(res.getString("FechaTimbrado"));
-                //uuid = new JSONObject(res.getString("UUID"));
-                //certificado_sat = new JSONObject(res.getString("noCertificadoSAT"));
-                //version = new JSONObject(res.getString("version"));
-                //sello_sat = new JSONObject(res.getString("selloSAT"));
                 Log.w("res2", res.toString());
                 if(res.has("factura")) {
                     cfdienvio.put("folio", res.getString("factura"));
@@ -212,14 +217,43 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
             Intent intent = new Intent(EmisionCfdi.this,VentaActivity.class);
             startActivity(intent);
         } catch (JSONException e) {
-            try {
-                for (int j=0;j<3;j++) {
-                    Toast.makeText(this, String.valueOf(jsonrespuesta.getString("0")), Toast.LENGTH_LONG).show();
-                }
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
+            new AlertDialog.Builder(EmisionCfdi.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            logCE.EscirbirLog2(getApplicationContext(),"EmisionCfdi_processFinish - " + e);
             e.printStackTrace();
+        }
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.ContentMainSearch);
+                setContentView(R.layout.activity_emision_cfdi);
+                Bandera="Combu-Express";
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainSearchRepsol);
+                setContentView(R.layout.activity_emision_cfdi);
+                Bandera = "Repsol";
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainSearchEner);
+                setContentView(R.layout.activity_emision_cfdi);
+                Bandera = "Ener";
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainSearchTotal);
+                setContentView(R.layout.activity_emision_cfdi);
+                Bandera = "Total";
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 }

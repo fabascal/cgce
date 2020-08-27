@@ -56,11 +56,15 @@
     <ImageView
         android:id="@+id/ivBrandImage"
         android:layout_marginTop="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/total"
         app:layout_constraintTop_toBottomOf="@id/tvCfdiURL"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_actualizar"/>
 
 
     <Button

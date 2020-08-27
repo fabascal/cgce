@@ -6,10 +6,12 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -47,20 +50,16 @@ public class ClienteBusqueda extends AppCompatActivity  {
     String bomba;
     Sensores sensores=new Sensores();
     ValidateTablet tablet = new ValidateTablet();
-
     SearchView searchView = null;
-
+    private final static String NO_DATA = "No existen clientes con el criterio establecido.";
+    private String Bandera;
+    LogCE logCE = new LogCE();
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cliente_busqueda);
-        if (tablet.esTablet(getApplicationContext())){
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+        BrandSharedPreferences();
         sensores.bluetooth();
         sensores.wifi(this,true);
         Bundle bundle = getIntent().getExtras();
@@ -68,9 +67,6 @@ public class ClienteBusqueda extends AppCompatActivity  {
         {
             bomba=bundle.getString("bomba");
         }
-
-
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,10 +101,13 @@ public class ClienteBusqueda extends AppCompatActivity  {
             JSONObject query = new JSONObject();
             try {
                 query.put("nombre", intent.getStringExtra(SearchManager.QUERY));
-                query.put("bandera","Combu");
-
-
+                query.put("bandera",Bandera);
             } catch (JSONException e) {
+                new AlertDialog.Builder(ClienteBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_onNewIntent - " + e);
                 e.printStackTrace();
             }
             if (searchView != null) {
@@ -132,6 +131,11 @@ public class ClienteBusqueda extends AppCompatActivity  {
                 this.searchQuery=searchQuery1.getString("nombre");
                 this.searchBandera=searchQuery1.getString("bandera");
             } catch (JSONException e) {
+                new AlertDialog.Builder(ClienteBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_AsyncFetch - " + e);
                 e.printStackTrace();
             }
 
@@ -157,6 +161,11 @@ public class ClienteBusqueda extends AppCompatActivity  {
 
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(ClienteBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_AsyncFetch - " + e);
                 e.printStackTrace();
                 return e.toString();
             }
@@ -188,6 +197,11 @@ public class ClienteBusqueda extends AppCompatActivity  {
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(ClienteBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e1))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_AsyncFetch - " + e1);
                 e1.printStackTrace();
                 return e1.toString();
             }
@@ -217,6 +231,11 @@ public class ClienteBusqueda extends AppCompatActivity  {
                 }
 
             } catch (IOException e) {
+                new AlertDialog.Builder(ClienteBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_AsyncFetch - " + e);
                 e.printStackTrace();
                 return e.toString();
             } finally {
@@ -235,7 +254,11 @@ public class ClienteBusqueda extends AppCompatActivity  {
 
             pdLoading.dismiss();
             if(result.equals("no rows")) {
-                Toast.makeText(ClienteBusqueda.this, "No Results found for entered query", Toast.LENGTH_LONG).show();
+
+                new AlertDialog.Builder(ClienteBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(NO_DATA)
+                        .setPositiveButton(R.string.btn_ok,null).show();
             }else{
 
                 try {
@@ -264,14 +287,48 @@ public class ClienteBusqueda extends AppCompatActivity  {
 
                 } catch (JSONException e) {
                     // You to understand what actually error is and handle it appropriately
-                    Log.w("ERR",e.toString());
-                    Log.w("ERR",result.toString());
-
+                    new AlertDialog.Builder(ClienteBusqueda.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_AsyncFetch - " + e);
                 }
 
             }
 
         }
 
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.ContentMainSearch);
+                setContentView(R.layout.activity_cliente_busqueda);
+                Bandera="Combu-Express";
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainSearchRepsol);
+                setContentView(R.layout.activity_cliente_busqueda);
+                Bandera = "Repsol";
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainSearchEner);
+                setContentView(R.layout.activity_cliente_busqueda);
+                Bandera = "Ener";
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainSearchTotal);
+                setContentView(R.layout.activity_cliente_busqueda);
+                Bandera = "Total";
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 }

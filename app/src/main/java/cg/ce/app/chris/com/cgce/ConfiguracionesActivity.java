@@ -1,5 +1,6 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ public class ConfiguracionesActivity extends AppCompatActivity implements View.O
     JSONObject cursor=null;
     ValidateTablet tablet = new ValidateTablet();
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

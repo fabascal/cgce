@@ -36,10 +36,14 @@ public class MarcaActivity extends AppCompatActivity implements View.OnClickList
     Button btn_actualizar;
     cgticket cg = new cgticket();
     JSONObject jsActivity = new JSONObject();
-    private final String COMBU_URL="combuurl";
-    private final String REPSOL_URL="repsolurl";
-    private final String ENER_URL="enerurl";
-    private final String TOTAL_URL="totalurl";
+    private final String COMBU_URL = "http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php";
+    private final String REPSOL_URL = "http://factura.combuexpress.mx/cerepsol/timbrarws1.3.php";
+    private final String ENER_URL = "http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php";
+    private final String TOTAL_URL = "http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php";
+    private final int IMG_SQUARE_WIDTH =400;
+    private final int IMG_SQUARE_HEIGHT =400;
+    private final int IMG_RECTANGLE_WIDTH=800;
+    private final int IMG_RECTANGLE_HEIGHT=400;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -135,24 +139,36 @@ public class MarcaActivity extends AppCompatActivity implements View.OnClickList
                     jsActivity.put(getResources().getString(R.string.BrandImage),R.drawable.logo_impresion);
                     tvCfdiURL.setText(COMBU_URL);
                     ivBrandImage.setImageResource(R.drawable.logo_impresion);
+                    ivBrandImage.getLayoutParams().height=IMG_RECTANGLE_HEIGHT;
+                    ivBrandImage.getLayoutParams().width=IMG_RECTANGLE_WIDTH;
+                    ivBrandImage.requestLayout();
                     break;
                 case "Repsol":
                     jsActivity.put(getResources().getString(R.string.CfdiURL),REPSOL_URL);
                     jsActivity.put(getResources().getString(R.string.BrandImage),R.drawable.logo_impresion_repsol);
                     tvCfdiURL.setText(REPSOL_URL);
                     ivBrandImage.setImageResource(R.drawable.logo_impresion_repsol);
+                    ivBrandImage.getLayoutParams().height=IMG_SQUARE_HEIGHT;
+                    ivBrandImage.getLayoutParams().width=IMG_SQUARE_WIDTH;
+                    ivBrandImage.requestLayout();
                     break;
                 case "Ener":
                     jsActivity.put(getResources().getString(R.string.CfdiURL),ENER_URL);
                     jsActivity.put(getResources().getString(R.string.BrandImage),R.drawable.logo_impresion_ener);
                     tvCfdiURL.setText(ENER_URL);
                     ivBrandImage.setImageResource(R.drawable.logo_impresion_ener);
+                    ivBrandImage.getLayoutParams().height=IMG_SQUARE_HEIGHT;
+                    ivBrandImage.getLayoutParams().width=IMG_SQUARE_WIDTH;
+                    ivBrandImage.requestLayout();
                     break;
                 case "Total":
                     jsActivity.put(getResources().getString(R.string.CfdiURL),TOTAL_URL);
-                    jsActivity.put(getResources().getString(R.string.BrandImage),R.drawable.logo_impresion_total);
+                    jsActivity.put(getResources().getString(R.string.BrandImage),R.drawable.total);
                     tvCfdiURL.setText(TOTAL_URL);
-                    ivBrandImage.setImageResource(R.drawable.logo_impresion_total);
+                    ivBrandImage.setImageResource(R.drawable.total);
+                    ivBrandImage.getLayoutParams().height=IMG_SQUARE_HEIGHT;
+                    ivBrandImage.getLayoutParams().width=IMG_SQUARE_WIDTH;
+                    ivBrandImage.requestLayout();
                     break;
             }
         } catch (JSONException e) {

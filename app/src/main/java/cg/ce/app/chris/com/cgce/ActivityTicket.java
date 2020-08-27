@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -78,7 +79,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     int tiptrn;
     Integer flag = 0;
     String event;
-    boolean state_btn, state_error = false;
+    boolean state_btn, state_error = false, flag_TicketImpreso;
     /*Elementos de formato*/
     DecimalFormat formateador2 = new DecimalFormat("###,###.##");
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
@@ -90,7 +91,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     private static final int DISCONNECT_INTERVAL = 500;//millseconds
     /*Elemento Progress para imprimir*/
     ProgressDialog pdLoading;
-
+    Drawable image;
+    LogCE logCE = new LogCE();
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -105,21 +107,25 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 setTheme(R.style.AppTheme);
                 setContentView(R.layout.activity_ticket);
                 flag_brand = "Combu-Express";
+                image = getDrawable(R.drawable.logo_impresion);
                 break;
             case "Repsol":
                 setTheme(R.style.ContentMainRepsol);
                 setContentView(R.layout.activity_ticket_repsol);
                 flag_brand = "Repsol";
+                image = getDrawable(R.drawable.isologo_repsol);
                 break;
             case "Ener":
                 setTheme(R.style.ContentMainEner);
                 setContentView(R.layout.activity_ticket_ener);
                 flag_brand = "Ener";
+                image = getDrawable(R.drawable.logo_impresion_ener);
                 break;
             case "Total":
                 setTheme(R.style.ContentMainTotal);
                 setContentView(R.layout.activity_ticket_total);
                 flag_brand = "Total";
+                image = getDrawable(R.drawable.total);
                 break;
         }
         if (tablet.esTablet(getApplicationContext())) {
@@ -162,6 +168,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                         .setTitle(R.string.error)
                         .setMessage(String.valueOf(e))
                         .setPositiveButton(R.string.btn_ok, null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_OnCreate - " + e);
                 e.printStackTrace();
             }
         }
@@ -177,6 +184,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
                             .setPositiveButton(R.string.btn_ok, null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_OnCreate - " + e);
                     e.printStackTrace();
                 }
             }
@@ -229,6 +237,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 pdLoading = new ProgressDialog(ActivityTicket.this);
                 pdLoading.setMessage("Imprimiendo..."); // Setting Message
                 pdLoading.setTitle(flag_brand); // Setting Title
+                pdLoading.setIcon(image);
                 pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
                 pdLoading.show(); // Display Progress Dialog
                 pdLoading.setCancelable(false);
@@ -273,6 +282,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         try {
             mPrinter = new Printer(mPrinter.TM_M30, mPrinter.MODEL_ANK, mContext);
         } catch (Exception e) {
+            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_initializeObject - " + e);
             ShowMsg.showException(e, "Printer", mContext);
             return false;
         }
@@ -280,9 +290,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         return true;
     }
 
-    private void updateButtonState(boolean state) {
+    private void updateButtonState(final boolean state) {
         state_btn = state;
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -319,7 +328,20 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             int impreso = cg.cant_impreso(getApplicationContext(), ticket.getString("nrotrn"));
             if (impreso == 10) {
                 Log.w("ticket con tiptrn", ticket.toString());
-                cg.guardarnrotrn(getApplicationContext(), ticket, 1);
+                runOnUiThread(new Runnable() {
+                    public synchronized void run() {
+                        try {
+                            cg.guardarnrotrn(getApplicationContext(), ticket, 1);
+                        } catch (ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException | JSONException e) {
+                            new AlertDialog.Builder(ActivityTicket.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             }
             if (!runPrintReceiptSequence()) {
                 updateButtonState(true);
@@ -331,21 +353,23 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     startActivity(intent);
                 }
             }
+            cg.actualizar_cant_impreso(getApplicationContext(),ticket.getString("nrotrn"));
         } catch ( final ClassNotFoundException | SQLException | InstantiationException |
                 IllegalAccessException | JSONException | Epos2Exception | WriterException e) {
             if (pdLoading != null) {
                 pdLoading.dismiss();
             }
+            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_PrintReceip - " + e);
             runOnUiThread(new Runnable() {
                 public synchronized void run() {
                     new AlertDialog.Builder(ActivityTicket.this)
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
                             .setPositiveButton(R.string.btn_ok, null).show();
+                    updateButtonState(true);
                 }
             });
             e.printStackTrace();
-
         }
     }
 
@@ -393,16 +417,12 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? 380 : 380;
-
         if (mPrinter == null) {
             return false;
         }
-
-
         JSONObject datos_domicilio = cg.estacion_domicilio(mContext);
         JSONObject vehiculo = new JSONObject();
         String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
-
         Log.w("ticket", ticket.getString("nrotrn"));
         String metodoPago = "";
         ticket.put("impreso", cg.cant_impreso(getApplicationContext(), ticket.getString("nrotrn")));
@@ -410,10 +430,18 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             titulo = "O R I G I N A L";
             metodoPago = ticket.getString("rut");
             folio_impreso = ticket.getString("nrotrn") + "0";
+            if ( spn_metodo.getSelectedItem().toString().equals("T. Credito") ||
+                    spn_metodo.getSelectedItem().toString().equals("T. Debito")){
+                flag_TicketImpreso= false;
+            }else {
+                flag_TicketImpreso=true;
+            }
+
         } else if (ticket.getInt("impreso") == 1) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
             metodoPago = cg.get_rut(mContext, ticket);
+            flag_TicketImpreso = true;
         }
         Log.w("ticket", ticket.toString());
         if (ticket.getInt("codcli") != 0) {
@@ -433,7 +461,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             venta = "CONTADO" + " " + tpv;
         }
         method = "addTextAlign";
-
         mPrinter.addTextAlign(Printer.ALIGN_CENTER);
         method = "addImage";
         mPrinter.addImage(logoData, 0, 0,
@@ -529,21 +556,10 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
 
-        //textData.append("POR DISPOSICION DEL SAT SI REQUIERE FACTURA DEBERA SOLICITARLA DENTRO DE LAS 24 HRS POSTERIORES AL DIA DE CONSUMO\n");
         method = "addText";
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
-        /*if (ticket.getInt("impreso")==0 || ticket.getInt("impreso")==10) {
-            method = "addBarcode";
-            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-            mPrinter.addBarcode(String.valueOf(folio_impreso),
-                    Printer.BARCODE_CODE39,
-                    Printer.HRI_BELOW,
-                    Printer.FONT_A,
-                    barcodeWidth,
-                    barcodeHeight);
-            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-        }*/
+
         if (ticket.getInt("impreso") == 0 || ticket.getInt("impreso") == 10) {
             Bitmap qrrespol = null;
             QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket, datos_domicilio),
@@ -563,35 +579,118 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     Printer.COMPRESS_AUTO);
         }
         textData.append("\n");
-        /*Bitmap qrrespol=null;
-        QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket,datos_domicilio),
-                null,
-                Contents.Type.TEXT,
-                BarcodeFormat.QR_CODE.toString(),
-                smallerDimension);
-        try {
-            qrrespol = qrCodeEncoder1.encodeAsBitmap();
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
-        mPrinter.addImage (qrrespol, 0, 0,
-                qrrespol.getWidth(),
-                qrrespol.getHeight(),
-                Printer.COLOR_1,
-                Printer.MODE_MONO,
-                Printer.HALFTONE_DITHER,
-                Printer.PARAM_DEFAULT,
-                Printer.COMPRESS_AUTO);
-
-         */
-        textData.append("\n");
         mPrinter.addText(textData.toString());
         ValidacionFlotillero vf = new ValidacionFlotillero();
         Integer sorteo = vf.validar_sorteo(mContext);
         String inicio = vf.sorteo_inicio(mContext);
         String fin = vf.sorteo_fin(mContext);
 
+
+        /*funcion para imprimir copias*/
+        Log.w("flag impreso", String.valueOf(flag_TicketImpreso));
+        if (!flag_TicketImpreso){
+            mPrinter.addCut(Printer.CUT_FEED);
+            method = "addTextAlign";
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            method = "addImage";
+            mPrinter.addImage(logoData, 0, 0,
+                    logoData.getWidth(),
+                    logoData.getHeight(),
+                    Printer.COLOR_1,
+                    Printer.MODE_MONO,
+                    Printer.HALFTONE_DITHER,
+                    Printer.PARAM_DEFAULT,
+                    Printer.COMPRESS_AUTO);
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            //textData.append("REPSOL"+"\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+           /* textData.append("\n");*/
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append(ticket.getString("cveest") + "\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+            textData.append(datos_domicilio.getString("estacion") + "\n");
+            textData.append(datos_domicilio.getString("calle") + " " + datos_domicilio.getString("exterior") + " " + datos_domicilio.getString("interior") + "\n");
+            textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " + datos_domicilio.getString("cp") + "\n");
+            textData.append(datos_domicilio.getString("localidad") + ", " + datos_domicilio.getString("municipio") + "\n");
+            textData.append(datos_domicilio.getString("rfc") + "\n");
+            //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
+            textData.append("\n");
+            textData.append("Regimen Fiscal" + "\n");
+            textData.append(datos_domicilio.getString("regimen") + "\n");
+            textData.append("\n");
+            textData.append("Lugar de Expedicion" + "\n");
+            textData.append(datos_domicilio.getString("municipio") + " " + datos_domicilio.getString("estado") + "\n");
+            textData.append("\n");
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append("***** " + "C O P I A" + " *****" + "\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+            textData.append("\n");
+            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
+            textData.append(cliente + "\n");
+            textData.append(metodoPago + "\n");
+            //textData.append("\n");
+            if (ticket.has("codcli")) {
+                if (vehiculo.has("rsp")) {
+                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                }
+                if (vehiculo.has("nroeco")) {
+                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+                }
+                if (vehiculo.has("placa")) {
+                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+                }
+                if (vehiculo.has("ultodm")) {
+                    textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
+                }
+                textData.append("------------------------------\n");
+            }
+            method = "addText";
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append("TICKET    : " + "C O P I A" + "   BOMBA : " + String.valueOf(ticket.getInt("bomba")) + "\n");
+            textData.append("FECHA: " + ticket.getString("fecha") + "  HORA: " + ticket.getString("hora") + "\n");
+            textData.append("VENDEDOR  : " + String.valueOf(ticket.getString("despachador")).toUpperCase() + "\n");
+            textData.append("PRECIO    : $ " + String.format("%.2f", Double.valueOf(formateador2.format(ticket.getDouble("precio")))) + "\n");
+            textData.append("VOLUMEN   : " + String.format("%.4f", Double.valueOf(formateador4.format(ticket.getDouble("cantidad")))) + " LITROS " + String.valueOf(ticket.getString("producto")).toUpperCase() + "\n");
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append("IMPORTE   : $ " + formateador2.format(ticket.getDouble("total")) + "\n");
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
+            textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble("total"))), true) + "\n");
+            //textData.append("\n");
+            textData.append("\n");
+            textData.append("------------------------------\n");
+            textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
+            textData.append("________________________________\n");
+            textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
+            textData.append("|      combuexpress.com.mx      |\n");
+            textData.append("________________________________\n");
+            method = "addText";
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            method = "addText";
+            mPrinter.addText(textData.toString());
+            textData.delete(0, textData.length());
+            textData.append("\n");
+            mPrinter.addText(textData.toString());
+        }
+        /*funcion para los sorteos*/
         if (ticket.getInt("impreso") == 0 || ticket.getInt("impreso") == 10) {
             if (sorteo > 0) {
                 if (ticket.getDouble("total") >= 200) {
@@ -667,16 +766,12 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     textData.append("VIGENCIA DEL " + inicio + " \n");
                     textData.append("AL " + fin + "\n");
                     textData.append("\n");
-                    //textData.append("PROMOCION 2:\n");
-                    //textData.append("VIGENCIA 00 de MES al 00 de MES,\n");
-                    //textData.append("entrega del 50% de los incentivos\n");
-                    //textData.append("00 de MES de 2019\n");
                 }
             }
         }
 
 
-        mPrinter.addText(textData.toString());
+        /*mPrinter.addText(textData.toString());*/
 
         method = "addCut";
         mPrinter.addCut(Printer.CUT_FEED);
@@ -725,6 +820,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             }
             flag = 1;
             mPrinter.clearCommandBuffer();
+            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_printData - " + e);
             ShowMsg.showException(e, "sendData", getApplicationContext());
             try {
                 mPrinter.disconnect();
@@ -750,6 +846,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             mPrinter.connect(target, Printer.PARAM_DEFAULT);
         } catch (final Epos2Exception e) {
             state_error = true;
+            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_connectPrinter - " + e);
             runOnUiThread(new Runnable() {
                 public synchronized void run() {
                     ShowMsg.showException(e, "connect", mContext);
@@ -802,6 +899,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     } else {
                         runOnUiThread(new Runnable() {
                             public synchronized void run() {
+                                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_disconnectPrinter - " + e);
                                 ShowMsg.showException(e, "disconnect", mContext);
                             }
                         });
@@ -810,6 +908,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 } else {
                     runOnUiThread(new Runnable() {
                         public synchronized void run() {
+                            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_disconnectPrinter - " + e);
                             ShowMsg.showException(e, "disconnect", mContext);
                         }
                     });

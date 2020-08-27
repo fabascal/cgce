@@ -2,10 +2,13 @@ package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,17 +46,14 @@ public class DomicilioBusqueda extends AppCompatActivity {
     String bomba;
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
+    String Bandera;
+    LogCE logCE = new LogCE();
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_domicilio_busqueda);
-        if (tablet.esTablet(getApplicationContext())){
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+        BrandSharedPreferences();
         sensores.bluetooth();
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null)
@@ -61,7 +61,6 @@ public class DomicilioBusqueda extends AppCompatActivity {
             //cliente_domicilio-search_fa.php
             try {
                 JSONObject cfdi_data = new JSONObject(getIntent().getStringExtra("cliente"));
-                cfdi_data.put("bandera","Combu");
                 tv_cliente_cfdi = (TextView)findViewById(R.id.tv_cliente_cfdi);
                 tv_rfc_cfdi = (TextView)findViewById(R.id.tv_rfc_cfdi);
                 tv_correo_cfdi = (TextView)findViewById(R.id.tv_correo_cfdi);
@@ -69,11 +68,16 @@ public class DomicilioBusqueda extends AppCompatActivity {
                 tv_rfc_cfdi.setText(cfdi_data.getString("rfc"));
                 tv_correo_cfdi.setText(cfdi_data.getString("correo"));
                 DomicilioBusqueda.mMyAppsBundle.putString("key",cfdi_data.getString("id_cliente"));
-
                 bomba = cfdi_data.getString("bomba");
+                cfdi_data.put("bandera",Bandera);
                 //new AsyncFetch(query).execute();
                 new AsyncFetch(cfdi_data).execute();
             } catch (JSONException e) {
+                new AlertDialog.Builder(DomicilioBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"DomicilioBusqueda_onCreate - " + e);
                 e.printStackTrace();
             }
         }
@@ -92,6 +96,11 @@ public class DomicilioBusqueda extends AppCompatActivity {
                 this.searchQuery=searchQuery.getString("id_cliente");
                 this.searchBandera=searchQuery.getString("bandera");
             } catch (JSONException e) {
+                new AlertDialog.Builder(DomicilioBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"DomicilioBusqueda_AsyncFetch - " + e);
                 e.printStackTrace();
             }
         }
@@ -112,12 +121,15 @@ public class DomicilioBusqueda extends AppCompatActivity {
         @Override
         protected String doInBackground(JSONObject... jsonObjects) {
             try {
-
                 // Enter URL address where your php file resides
                 url = new URL("http://factura.combuexpress.mx/kioscoce/cliente_domicilio-search_fa2.php");
-
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(DomicilioBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"DomicilioBusqueda_AsyncFetch - " + e);
                 e.printStackTrace();
                 return e.toString();
             }
@@ -149,27 +161,27 @@ public class DomicilioBusqueda extends AppCompatActivity {
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
+                new AlertDialog.Builder(DomicilioBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e1))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"DomicilioBusqueda_AsyncFetch - " + e1);
                 e1.printStackTrace();
                 return e1.toString();
             }
 
             try {
-
                 int response_code = conn.getResponseCode();
-
                 // Check if successful connection made
                 if (response_code == HttpURLConnection.HTTP_OK) {
-
                     // Read data sent from server
                     InputStream input = conn.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                     StringBuilder result = new StringBuilder();
                     String line;
-
                     while ((line = reader.readLine()) != null) {
                         result.append(line);
                     }
-
                     // Pass data to onPostExecute method
                     return (result.toString());
 
@@ -178,6 +190,11 @@ public class DomicilioBusqueda extends AppCompatActivity {
                 }
 
             } catch (IOException e) {
+                new AlertDialog.Builder(DomicilioBusqueda.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"DomicilioBusqueda_AsyncFetch - " + e);
                 e.printStackTrace();
                 return e.toString();
             } finally {
@@ -231,14 +248,47 @@ public class DomicilioBusqueda extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     // You to understand what actually error is and handle it appropriately
-                    Log.w("ERR",e.toString());
-                    Log.w("ERR",result.toString());
-
+                    new AlertDialog.Builder(DomicilioBusqueda.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    logCE.EscirbirLog2(getApplicationContext(),"DomicilioBusqueda_AsyncFetch - " + e);
                 }
 
             }
 
         }
 
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.ContentMainSearch);
+                setContentView(R.layout.activity_domicilio_busqueda);
+                Bandera="Combu-Express";
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainSearchRepsol);
+                setContentView(R.layout.activity_domicilio_busqueda);
+                Bandera = "Repsol";
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainSearchEner);
+                setContentView(R.layout.activity_domicilio_busqueda);
+                Bandera = "Ener";
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainSearchTotal);
+                setContentView(R.layout.activity_domicilio_busqueda);
+                Bandera = "Total";
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 }

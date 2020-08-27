@@ -2,6 +2,7 @@ package cg.ce.app.chris.com.cgce;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class AdapterClienteDomicilio extends RecyclerView.Adapter {
     List<DataClienteDomicilio> data= Collections.emptyList();
     DataCliente current;
     int currentPos=0;
+    LogCE logCE = new LogCE();
     // create constructor to initialize context and data sent from MainActivity
     public AdapterClienteDomicilio(Context context, List<DataClienteDomicilio> data){
         this.context=context;
@@ -108,6 +110,11 @@ public class AdapterClienteDomicilio extends RecyclerView.Adapter {
                 cfdi_domicilio_data.put("bomba",data.get(getAdapterPosition()).bomba);
 
             } catch (JSONException e) {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(context,"AdapterCliente_onClick - " + e);
                 e.printStackTrace();
             }
             Intent i = new Intent(context, MetodoPagoBusqueda.class);
@@ -115,6 +122,11 @@ public class AdapterClienteDomicilio extends RecyclerView.Adapter {
             try {
                 i.putExtra("id_domicilio",cfdi_domicilio_data.getString("id_domicilio"));
             } catch (JSONException e) {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(context,"AdapterCliente_onClick - " + e);
                 e.printStackTrace();
             }
             context.startActivity(i);

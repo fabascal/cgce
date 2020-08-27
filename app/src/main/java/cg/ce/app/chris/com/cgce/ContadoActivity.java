@@ -33,35 +33,13 @@ public class ContadoActivity extends AppCompatActivity {
     PreparedStatement stmt;
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
+    LogCE logCE = new LogCE();
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
-        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
-            case "Combu-Express":
-                setTheme(R.style.AppTheme);
-                setContentView(R.layout.activity_contado);
-                break;
-            case "Repsol":
-                setTheme(R.style.ContentMainRepsol);
-                setContentView(R.layout.activity_contado_repsol);
-                break;
-            case "Ener":
-                setTheme(R.style.ContentMainEner);
-                setContentView(R.layout.activity_contado_ener);
-                break;
-            case "Total":
-                setTheme(R.style.ContentMainTotal);
-                setContentView(R.layout.activity_contado_total);
-                break;
-        }
-        if (tablet.esTablet(getApplicationContext())){
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+        BrandSharedPreferences();
         sensores.bluetooth();
         sensores.wifi(this,true);
         imbtn_cfdi = (ImageButton) findViewById(R.id.imbtn_cfdi);
@@ -95,7 +73,7 @@ public class ContadoActivity extends AppCompatActivity {
                     .setTitle(R.string.error)
                     .setMessage(String.valueOf(e))
                     .setPositiveButton(R.string.btn_ok,null).show();
-
+            logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_OnCreate - " + e);
             e.printStackTrace();
         }
     }
@@ -135,5 +113,32 @@ public class ContadoActivity extends AppCompatActivity {
                 transaction.commit();
             }
         });
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_contado);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_contado_repsol);
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_contado_ener);
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_contado_total);
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 }

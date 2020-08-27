@@ -1,5 +1,6 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -19,6 +20,7 @@ public class MacActivity extends AppCompatActivity {
     Context context;
     ValidateTablet tablet = new ValidateTablet();
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

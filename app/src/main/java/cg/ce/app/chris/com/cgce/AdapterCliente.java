@@ -1,8 +1,10 @@
 package cg.ce.app.chris.com.cgce;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ public class AdapterCliente extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private LayoutInflater inflater;
     List<DataCliente> data= Collections.emptyList();
+    LogCE logCE = new LogCE();
 
 
     // create constructor to initialize context and data sent from MainActivity
@@ -89,6 +92,11 @@ public class AdapterCliente extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 cfdi_data.put("id_cliente",data.get(getAdapterPosition()).id_cliente);
                 cfdi_data.put("bomba",data.get(getAdapterPosition()).bomba);
             } catch (JSONException e) {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(context,"AdapterCliente_onClick - " + e);
                 e.printStackTrace();
             }
             Intent i = new Intent(context, DomicilioBusqueda.class);
