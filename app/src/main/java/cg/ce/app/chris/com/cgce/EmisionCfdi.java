@@ -162,7 +162,11 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
             JSONObject res ;
             res=new JSONObject(String.valueOf(jsonrespuesta.getString("0")));
             if (res.has("mensaje")){
-                Toast.makeText(this,res.getString("mensaje"),Toast.LENGTH_LONG).show();
+                new AlertDialog.Builder(EmisionCfdi.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(res.getString("mensaje")))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+                logCE.EscirbirLog2(getApplicationContext(),"EmisionCfdi_processFinish - " + res.getString("mensaje"));
             }else {
                 JSONObject sello_cfd, fecha_timbre, uuid, certificado_sat, version, sello_sat;
                 Log.w("res2", res.toString());
@@ -211,11 +215,12 @@ public class EmisionCfdi extends AppCompatActivity implements View.OnClickListen
                 }if(res.has("descripcion")) {
                     cfdienvio.put("descripcion", res.getString("descripcion"));
                 }
-                    new ClassImpresionCFDi(EmisionCfdi.this, getApplicationContext(), btnwebservice, cfdienvio).execute();
+                new ClassImpresionCFDi(EmisionCfdi.this, getApplicationContext(), btnwebservice, cfdienvio).execute();
+                Intent intent = new Intent(EmisionCfdi.this,VentaActivity.class);
+                startActivity(intent);
             }
 
-            Intent intent = new Intent(EmisionCfdi.this,VentaActivity.class);
-            startActivity(intent);
+
         } catch (JSONException e) {
             new AlertDialog.Builder(EmisionCfdi.this)
                     .setTitle(R.string.error)

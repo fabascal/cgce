@@ -5,82 +5,136 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/creditometodo"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_height="wrap_content"
     tools:context="cg.ce.app.chris.com.cgce.CreditoMetodo"
-    android:background="@drawable/fondogris">
+    android:background="@color/TRANSPARENT">
 
     <android.support.v7.widget.CardView
         android:id="@+id/CardViewRFID"
         android:layout_gravity="center_horizontal"
         android:layout_width="260dp"
         android:layout_height="90dp"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="12dp"
         android:layout_marginTop="8dp"
         app:cardBackgroundColor="#E6E6E6"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/imageviewTag"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:src="@drawable/rfid"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageviewTag"
-            android:layout_width="96dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:src="@drawable/rfid"/>
-
-        <TextView
-            android:layout_marginTop="0dp"
-            android:id="@+id/cv_textTag"
-            android:text="@string/nfc"
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
-            android:textStyle="normal|bold"
-            android:textSize="20sp" />
-
+            <TextView
+                android:layout_marginTop="0dp"
+                android:id="@+id/cv_textRFID"
+                android:text="@string/nfc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="normal|bold"
+                android:textSize="25sp"
+                style="@style/repsoldatacliente"
+                app:layout_constraintStart_toEndOf="@id/imageviewTag"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="25dp"/>
+        </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:visibility="gone"
-        android:id="@+id/CardViewQR"
+        android:visibility="visible"
+        android:id="@+id/CardViewNIP"
         app:layout_constraintTop_toBottomOf="@+id/CardViewRFID"
         android:layout_gravity="center_horizontal"
         android:layout_width="260dp"
         android:layout_height="90dp"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="8dp"
-        android:layout_marginTop="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="12dp"
+        android:layout_marginTop="12dp"
         app:cardBackgroundColor="#E6E6E6"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_below="@+id/CardViewRFID"
         android:layout_alignLeft="@+id/CardViewRFID"
         android:layout_alignStart="@+id/CardViewRFID">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/imageviewNip"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:src="@drawable/nip"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageviewQR"
-            android:layout_width="96dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:src="@drawable/qr_code"/>
-
-        <TextView
-            android:layout_marginTop="0dp"
-            android:id="@+id/cv_textQR"
-            android:text="@string/qr"
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
-            android:textStyle="normal|bold"
-            android:textSize="20sp" />
-
+            <TextView
+                android:id="@+id/cv_textNIP"
+                style="@style/repsoldatacliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:layout_marginTop="0dp"
+                android:text="@string/nip"
+                android:textSize="30sp"
+                android:textStyle="normal|bold"
+                app:layout_constraintStart_toEndOf="@id/imageviewNip"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="25dp"/>
+        </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-
+    <android.support.v7.widget.CardView
+        android:visibility="visible"
+        android:id="@+id/CardViewNOMBRE"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewNIP"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="90dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="12dp"
+        android:layout_marginTop="12dp"
+        app:cardBackgroundColor="#E6E6E6"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_below="@+id/CardViewNIP"
+        android:layout_alignLeft="@+id/CardViewNIP"
+        android:layout_alignStart="@+id/CardViewNIP">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/imageviewNombre"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:src="@drawable/combunombres"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <TextView
+                android:layout_marginTop="0dp"
+                android:id="@+id/cv_textNOMBRE"
+                android:text="@string/nombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:textStyle="normal|bold"
+                android:textSize="30sp"
+                android:layout_marginStart="25dp"
+                style="@style/repsoldatacliente"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageviewNombre"/>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>

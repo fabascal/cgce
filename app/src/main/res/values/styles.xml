@@ -10,6 +10,9 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">true</item>
     </style>
+    <style name="AppThemeCredito" parent="AppTheme">
+        <item name="windowNoTitle">false</item>
+    </style>
     <!--
     Repsol
     <style name="AppTheme" parent="Theme.AppCompat.Light">

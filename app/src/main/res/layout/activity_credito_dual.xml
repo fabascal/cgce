@@ -108,9 +108,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
-
-
     <TextView
         android:visibility="gone"
         android:paddingTop="25dp"

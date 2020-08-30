@@ -67,7 +67,8 @@ import cg.ce.app.chris.com.cgce.listeners.StringListener;
 import cg.ce.app.chris.com.cgce.socket.SGPMGateway;
 
 
-public class AceiteActivity extends AppCompatActivity implements View.OnClickListener, StringListener, ReceiveListener,AceiteCantidad.AceiteCantidadListener {
+public class AceiteActivity extends AppCompatActivity implements View.OnClickListener,
+        StringListener, ReceiveListener,AceiteCantidad.AceiteCantidadListener {
     Integer flag=0,flag_Gateway_printer=0;
     private static final int REQUEST_PERMISSION = 100;
     private static final int DISCONNECT_INTERVAL = 500;//millseconds

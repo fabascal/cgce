@@ -2004,7 +2004,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             e.printStackTrace();
                         }
                     }
-                    if (!ultnrotrn.equals(nrotrn)) {
+                    if (ultnrotrn.equals(nrotrn)) {
                         JSONObject codcli=null;
                         //obtenemos el codigo del cliente
                         if(!tgl_area.isChecked()) {

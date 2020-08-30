@@ -57,13 +57,12 @@ public class ShowMsg {
 
     private static void show(final String msg, final Context context) {
         final LogCE logCE = new LogCE();
-        Activity activity = (Activity)context;
+        final Activity activity = (Activity)context;
 
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 logCE.EscirbirLog2(context,"Epson Printer - " + msg);
-
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                 alertDialog.setMessage(msg);
                 alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

@@ -349,11 +349,12 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     pdLoading.dismiss();
                 }
                 if (!state_error) {
+                    cg.actualizar_cant_impreso(getApplicationContext(), ticket.getString("nrotrn"));
                     Intent intent = new Intent(ActivityTicket.this, VentaActivity.class);
                     startActivity(intent);
                 }
             }
-            cg.actualizar_cant_impreso(getApplicationContext(),ticket.getString("nrotrn"));
+
         } catch ( final ClassNotFoundException | SQLException | InstantiationException |
                 IllegalAccessException | JSONException | Epos2Exception | WriterException e) {
             if (pdLoading != null) {
@@ -384,7 +385,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             flag = 1;
             return false;
         }
-
         return true;
     }
 
@@ -800,7 +800,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         return qr;
     }
 
-    private boolean printData()  {
+    private boolean printData() {
         if (mPrinter == null) {
             flag = 1;
             return false;
@@ -815,6 +815,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         try {
             mPrinter.sendData(Printer.PARAM_DEFAULT);
         } catch (Exception e) {
+            flag=1;
             if (pdLoading != null) {
                 pdLoading.dismiss();
             }
@@ -832,7 +833,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             }
             return false;
         }
-
         return true;
     }
 
@@ -846,6 +846,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             mPrinter.connect(target, Printer.PARAM_DEFAULT);
         } catch (final Epos2Exception e) {
             state_error = true;
+            flag=1;
             logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_connectPrinter - " + e);
             runOnUiThread(new Runnable() {
                 public synchronized void run() {
@@ -965,6 +966,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_0) {
             msg += getString(R.string.handlingmsg_err_battery_real_end);
         }
+
 
         return msg;
     }

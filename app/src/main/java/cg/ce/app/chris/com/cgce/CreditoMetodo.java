@@ -16,9 +16,9 @@ public class CreditoMetodo extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credito_metodo);
-        qr = (CardView) findViewById(R.id.CardViewQR);
+        /*qr = (CardView) findViewById(R.id.CardViewQR);*/
         rfid = (CardView) findViewById(R.id.CardViewRFID);
-        qr.setOnClickListener(this);
+        /*qr.setOnClickListener(this);*/
         rfid.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
         if(bundle.getString("bomba")!= null)
@@ -38,9 +38,9 @@ public class CreditoMetodo extends AppCompatActivity implements View.OnClickList
                 Log.w("bomba",bomba);
                 intent.putExtra("bomba", bomba);
                 break;
-            case R.id.CardViewQR:
+            /*case R.id.CardViewQR:
                 Toast.makeText(this,"QR",Toast.LENGTH_SHORT).show();
-                break;
+                break;*/
         }
         if (intent!=null){
             intent.putExtra("bomba", bomba);

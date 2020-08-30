@@ -73,10 +73,9 @@ android {
 }
 
 
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation files('libs/jtds-1.2.7.jar')
+    implementation files('libs/jtds-1.3.1.jar')
     implementation files('libs/mysql-connector-java-5.1.24-bin.jar')
     implementation files('libs/mail.jar')
     implementation files('libs/activation.jar')
@@ -88,14 +87,11 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:cardview-v7:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:2.0.0-rc1'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
     implementation 'com.google.zxing:core:3.4.0'
     implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     testImplementation 'junit:junit:4.12'
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
-
-
-
 
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {

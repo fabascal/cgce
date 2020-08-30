@@ -41,7 +41,7 @@ import cg.ce.app.chris.com.cgce.dialogos.Fragment1;
 public class VentaActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     SharedPreferences sharedPreferences;
-    CardView cardViewContado,cardViewCredito,CardViewServicios,CardViewTPV,cardViewAceite;
+    CardView cardViewContado,cardViewCredito,CardViewServicios,CardViewTPV,cardViewAceite,Credito;
     Cursor c;
     EditText contrasena_input;
     TextView msj,error_status;
@@ -67,12 +67,14 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         CardViewServicios =  findViewById(R.id.CardViewServicios);
         CardViewTPV =  findViewById(R.id.CardViewTPV);
         cardViewAceite =  findViewById(R.id.CardViewAceite);
+        Credito = findViewById(R.id.Credito);
         error_status = findViewById(R.id.error_status);
         cardViewContado.setOnClickListener(this);
         cardViewCredito.setOnClickListener(this);
         CardViewServicios.setOnClickListener(this);
         CardViewTPV.setOnClickListener(this);
         cardViewAceite.setOnClickListener(this);
+        Credito.setOnClickListener(this);
         msj=findViewById(R.id.tvmsj);
         Intent intent= getIntent();
         msj.setText(intent.getStringExtra(MSJ));
@@ -248,7 +250,9 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
             case R.id.CardViewAceite:
                 intent = new Intent(this,AceiteVenta.class);
                 break;
-
+            case R.id.Credito:
+                intent = new Intent(this, Credito.class);
+                break;
         }
         if (intent!=null){
         startActivity(intent);

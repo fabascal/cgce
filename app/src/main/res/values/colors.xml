@@ -21,6 +21,7 @@
     <color name="TotalPrimay">#df0c36</color>
     <color name="TotalPrimaryDark">#9c0825</color>
     <color name="Blanco">#fff</color>
+    <color name="FabBorder">#FF6274D5</color>
 
     
 </resources>
