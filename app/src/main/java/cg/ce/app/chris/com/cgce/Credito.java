@@ -6,21 +6,28 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +50,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener {
     JSONArray Logicos = new JSONArray();
     final static String POSICION = "Posicion";
     final static String POSICIONES = "Posiciones";
+    final static String METODO = "Metodo";
+    final static String KET_RFID = "Rfid";
+    final static String KET_NIP = "Nip";
+    final static String KET_NOMBRE = "Nombre";
     CardView CardViewRFID, CardViewNIP, CardViewNOMBRE;
+    Boolean hasMetodo = false;
+    ViewFlipper viewFlipper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +64,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener {
         BrandSharedPreferences();
         spn_posicion = findViewById(R.id.spn_posicion);
         FillPosicion();
+        viewFlipper = findViewById(R.id.viewFlipper);
         CardViewRFID = findViewById(R.id.CardViewRFID);
         CardViewNIP = findViewById(R.id.CardViewNIP);
         CardViewNOMBRE = findViewById(R.id.CardViewNOMBRE);
@@ -147,10 +161,15 @@ public class Credito extends AppCompatActivity implements View.OnClickListener {
         JSONArray Validar = Posiciones.getJSONArray(POSICIONES);
         for ( int Posicion = 0; Posicion < Validar.length(); Posicion ++){
             if (Validar.getJSONObject(Posicion).getString(POSICION)==spn_posicion.getSelectedItem().toString()) {
+                if(Validar.getJSONObject(Posicion).has(METODO)){
+                    hasMetodo=true;
+                }
+                CoreScreen();
                 Log.w("Bomba", Validar.getJSONObject(Posicion).getString(POSICION));
             }
         }
     }
+    /*Llenado inicial del Json, se ejecuta una ves en el oncreate*/
     public void FillPosicion(){
         ResultSet rs;
         Cursor c;
@@ -191,11 +210,45 @@ public class Credito extends AppCompatActivity implements View.OnClickListener {
             e.printStackTrace();
         }
     }
+    private void ValidatePosicion() throws JSONException {
+        JSONArray Validar = Posiciones.getJSONArray(POSICIONES);
+        for ( int Posicion = 0; Posicion < Validar.length(); Posicion ++){
+            if (Validar.getJSONObject(Posicion).getString(POSICION)==spn_posicion.getSelectedItem().toString()) {
+                if(Validar.getJSONObject(Posicion).has(METODO)){
+                    hasMetodo=true;
+                }
+                CoreScreen();
+                Log.w("Bomba", Validar.getJSONObject(Posicion).getString(POSICION));
+            }
+        }
+    }
+    private void CoreScreen() throws JSONException {
+        JSONArray Validar = Posiciones.getJSONArray(POSICIONES);
+        hasMetodo = Validar.getJSONObject(spn_posicion.getSelectedItemPosition()).has(METODO);
+        if(hasMetodo){
+            Log.w("Metodo","entro");
+            viewFlipper.setDisplayedChild(1);
+        }else {
+            viewFlipper.setDisplayedChild(0);
+        }
+    }
+
+    private void UpdatePosiciones(String key, String data) throws JSONException {
+        JSONArray Validar = Posiciones.getJSONArray(POSICIONES);
+        int index = spn_posicion.getSelectedItemPosition();
+        Validar.getJSONObject(index).put(key,data);
+        Log.w("validar",String.valueOf(Validar));
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.CardViewRFID:
+                try {
+                    UpdatePosiciones(METODO, KET_RFID);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Toast.makeText(this,"RFID",Toast.LENGTH_LONG).show();
                 break;
             case R.id.CardViewNIP:
