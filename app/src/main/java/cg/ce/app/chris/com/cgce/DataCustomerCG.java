@@ -10,4 +10,5 @@ public class DataCustomerCG {
     public String den_vehicle;
     public int tar;
     public int nroveh;
+    public int tagadi;
 }

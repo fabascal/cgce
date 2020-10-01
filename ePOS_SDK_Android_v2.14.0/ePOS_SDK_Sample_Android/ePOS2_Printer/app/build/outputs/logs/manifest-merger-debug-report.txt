@@ -1,18 +1,37 @@
 -- Merging decision tree log ---
 manifest
 ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+MERGED from [com.android.support:appcompat-v7:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\fb0e7c60eec11475c037e2836eb3a1c4\appcompat-v7-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-fragment:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\3c751dad0a946c1afc2f0e82180bc238\support-fragment-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:animated-vector-drawable:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\7388ee259444e36f0724970c47c2d596\animated-vector-drawable-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\595600b6ebd5eb42949473fedd64d910\support-core-ui-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\47989ae7628c72184014d77896478c27\support-core-utils-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\936f3e7818453678f4e5903475ef53a3\support-vector-drawable-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\cbbd512011cfd96f5a9f93e7995b86d8\support-compat-27.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\dda3fbc64b29cf690216f337bc58ec4c\livedata-core-1.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\2d83aa17362795e30f5ffb9ba9a700fc\viewmodel-1.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\221e784dd3940577f71b524955a9d156\runtime-1.1.0\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\0bba5566df70173770edc14814cfa611\runtime-1.1.0\AndroidManifest.xml:17:1-22:12
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
 	package
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:3:5-38
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
+		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+	android:versionCode
+		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:1-58:12
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:2:11-69
-	android:versionCode
-		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
-		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 uses-permission#android.permission.BLUETOOTH
 ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:5:5-67
 	android:name
@@ -37,10 +56,10 @@ application
 ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:11:5-56:19
 	android:label
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:14:9-41
-	android:allowBackup
-		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:12:9-35
 	android:icon
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:13:9-43
+	android:allowBackup
+		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:12:9-35
 	android:theme
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:15:9-40
 activity#com.epson.epos2_printer.SettingActivity
@@ -87,7 +106,7 @@ ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:36:13-46
 	android:name
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:35:13-41
-intent-filter#android.hardware.usb.action.USB_ACCESSORY_ATTACHED+android.hardware.usb.action.USB_DEVICE_ATTACHED+android.intent.action.MAIN+android.intent.category.LAUNCHER
+intent-filter#action:name:android.hardware.usb.action.USB_ACCESSORY_ATTACHED+action:name:android.hardware.usb.action.USB_DEVICE_ATTACHED+action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
 ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:38:13-44:29
 action#android.hardware.usb.action.USB_DEVICE_ATTACHED
 ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:17-90
@@ -127,20 +146,37 @@ ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\
 		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:52:13-46
 uses-sdk
 INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
-MERGED from [com.android.support:appcompat-v7:27.1.0] C:\Users\fabas\.android\build-cache\c6d7a35cff5aa5f2406c94dd10d824718b3b5c16\output\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:support-fragment:27.1.0] C:\Users\fabas\.android\build-cache\25a5846aaa0506193e51b619b5f1787b475afbac\output\AndroidManifest.xml:20:5-44
-MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\fabas\.android\build-cache\234b63fb4402c9e7ec47a75623cd20ee530931ab\output\AndroidManifest.xml:20:5-44
-MERGED from [android.arch.core:runtime:1.1.0] C:\Users\fabas\.android\build-cache\10343f694cf25b3c691c985d6f0dad37e5034ee8\output\AndroidManifest.xml:20:5-44
-MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\fabas\.android\build-cache\c6eeee20078e663028daf6cf68456bef57a76238\output\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:animated-vector-drawable:27.1.0] C:\Users\fabas\.android\build-cache\847d7afa0454a5ec0706272cc976f7dbe21bd462\output\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:support-vector-drawable:27.1.0] C:\Users\fabas\.android\build-cache\247f9510366893d6b68f43fdbb422a1e3502ee16\output\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:support-core-ui:27.1.0] C:\Users\fabas\.android\build-cache\2b32d031caf56f44f1746bc50a7ff02d63392236\output\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:support-core-utils:27.1.0] C:\Users\fabas\.android\build-cache\393a9ec7a89230eb97b8331c4ba767801e73e72c\output\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:support-compat:27.1.0] C:\Users\fabas\.android\build-cache\520e89ae3c26e64f5dbeb586c988112b52658b86\output\AndroidManifest.xml:20:5-44
-MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\fabas\.android\build-cache\78bff91c6fee26fa873558af1495d34a83e97b8d\output\AndroidManifest.xml:20:5-44
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+MERGED from [com.android.support:appcompat-v7:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\fb0e7c60eec11475c037e2836eb3a1c4\appcompat-v7-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\fb0e7c60eec11475c037e2836eb3a1c4\appcompat-v7-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\3c751dad0a946c1afc2f0e82180bc238\support-fragment-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\3c751dad0a946c1afc2f0e82180bc238\support-fragment-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\7388ee259444e36f0724970c47c2d596\animated-vector-drawable-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\7388ee259444e36f0724970c47c2d596\animated-vector-drawable-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\595600b6ebd5eb42949473fedd64d910\support-core-ui-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\595600b6ebd5eb42949473fedd64d910\support-core-ui-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\47989ae7628c72184014d77896478c27\support-core-utils-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\47989ae7628c72184014d77896478c27\support-core-utils-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\936f3e7818453678f4e5903475ef53a3\support-vector-drawable-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\936f3e7818453678f4e5903475ef53a3\support-vector-drawable-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\cbbd512011cfd96f5a9f93e7995b86d8\support-compat-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\cbbd512011cfd96f5a9f93e7995b86d8\support-compat-27.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\dda3fbc64b29cf690216f337bc58ec4c\livedata-core-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\dda3fbc64b29cf690216f337bc58ec4c\livedata-core-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\2d83aa17362795e30f5ffb9ba9a700fc\viewmodel-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\2d83aa17362795e30f5ffb9ba9a700fc\viewmodel-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\221e784dd3940577f71b524955a9d156\runtime-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\221e784dd3940577f71b524955a9d156\runtime-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\0bba5566df70173770edc14814cfa611\runtime-1.1.0\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\fabas\.gradle\caches\transforms-2\files-2.1\0bba5566df70173770edc14814cfa611\runtime-1.1.0\AndroidManifest.xml:20:5-44
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 	android:targetSdkVersion
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml
 		INJECTED from D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml

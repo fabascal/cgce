@@ -267,13 +267,7 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                 String nrotrn= null;
                 try {
                     nrotrn = vf.validar_utlimo_nrotrn(RfidCredito.this,bomba);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
                 odm= String.valueOf(et_odm.getText());
@@ -283,18 +277,15 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                     JSONObject codcli= null;
                     try {
                         codcli = vf.get_codcli(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (ClassNotFoundException | SQLException | InstantiationException |
+                            IllegalAccessException | JSONException e) {
                         e.printStackTrace();
                     }
                     try {
                         //realizamos el update para asignar el ticket al cliente de credito
-                        ticket.update_codcli(RfidCredito.this, nrotrn, codcli.getString("cliente"), codcli.getString("vehiculo"),odm,codcli.getString("tar"));
+                        ticket.update_codcli(RfidCredito.this, nrotrn,
+                                codcli.getString("cliente"), codcli.getString("vehiculo"),
+                                odm,codcli.getString("tar"));
                         //validar que el ticket no haya sido impreso
 
 
@@ -498,9 +489,9 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
 
                 try {
                     ValidacionFlotillero vf = new ValidacionFlotillero();
-                    int estacion=vf.validar_estacion(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
-                    int dia=vf.carga_dia(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
-                    int hora=vf.validar_hora(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
+                    int estacion=0; //vf.validar_estacion(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
+                    int dia=0; /*vf.carga_dia(RfidCredito.this,bin2hex(myTag.getId()),"nfc");*/
+                    int hora=0;//vf.validar_hora(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
                     int monto=vf.validar_monto(RfidCredito.this,bin2hex(myTag.getId()),"nfc");
                     ult_nrotrn=vf.validar_utlimo_nrotrn(RfidCredito.this,bomba);
                     String producto = vf.validar_producto(RfidCredito.this,bin2hex(myTag.getId()),"nfc");

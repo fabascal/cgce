@@ -112,7 +112,8 @@ public class DataBaseCG {
 
         return conn;
     }
-    public Connection odbc_cecg_app(Context con) throws JSONException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
+    public Connection odbc_cecg_app(Context con) throws JSONException, ClassNotFoundException,
+            InstantiationException, IllegalAccessException, SQLException {
         context = con;
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -149,19 +150,16 @@ public class DataBaseCG {
         Connection connect;
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
-
         String direccion=null;
         String puerto=null;
         String user=null;
         String base=null;
         String pass = null;
-
         direccion = cursor.getString("ip");
         puerto = cursor.getString("puerto");
         user = cursor.getString("userdb");
         base = cursor.getString("db");
         pass = cursor.getString("passdb");
-
         connect = CONN(user, pass, base, direccion, Integer.valueOf(puerto));
         return connect;
     }

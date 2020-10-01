@@ -6,38 +6,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Credito"
-    android:background="@drawable/fondogris"
+    android:windowSoftInputMode="adjustPan|adjustResize"
+    android:background="@drawable/fondorepsolgris"
     android:id="@+id/MainLayout">
 
     <LinearLayout
         android:id="@+id/ll_posicion"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:gravity="center_horizontal"
-        android:weightSum="2">
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <LinearLayout
-            android:gravity="center_horizontal"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+
+            <ImageButton
+                android:id="@+id/imageView_1"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:id="@+id/imageView_1"
+                android:contentDescription="@string/bomba"
                 android:scaleType="fitXY"
-                android:src="@drawable/dispensario"/>
+                android:adjustViewBounds="true"
+                android:onClick="MethodCleanData"
+                android:background="@drawable/dispensario" />
         </LinearLayout>
+
         <LinearLayout
-            android:gravity="center_horizontal"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+
             <Spinner
                 android:id="@+id/spn_posicion"
                 android:layout_width="80dp"
@@ -50,17 +57,40 @@
         android:id="@+id/viewFlipper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:animateFirstView="false"
+
         app:layout_constraintTop_toBottomOf="@id/ll_posicion"
-        app:layout_constraintBottom_toTopOf="@id/btncredito"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <include android:id="@+id/metodo" layout="@layout/activity_credito_metodo"/>
-        <include android:id="@+id/metodorfid" layout="@layout/activity_credito_metodo_rfid"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right"
+        android:paddingBottom="8dp">
+        <include
+            android:id="@+id/metodo"
+            layout="@layout/activity_credito_metodo" />
+        <include
+            android:id="@+id/metodorfid"
+            layout="@layout/activity_credito_metodo_rfid" />
+        <include
+            android:id="@+id/metodonip"
+            layout="@layout/activity_credito_metodo_nip" />
+        <include
+            android:id="@+id/metodonombre"
+            layout="@layout/activity_credito_metodo_nombre" />
+        <include
+            android:id="@+id/metodonombrevehiculo"
+            layout="@layout/activity_credito_metodo_nombrevehiculo" />
+        <include
+            android:id="@+id/metodoimpresion"
+            layout="@layout/activity_credito_impresion" />
     </ViewFlipper>
-
-
     <ImageButton
         android:id="@+id/btncredito"
+        android:contentDescription="@string/impresora"
         android:onClick="BtnCredito"
         android:layout_width="125dp"
         android:layout_height="125dp"
@@ -68,8 +98,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/printbtn_pressed"
-        android:layout_marginBottom="4dp"/>
+        android:background="@color/TRANSPARENT"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone"/>
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -77,12 +110,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/ic_gaspump"
         app:fabSize="normal"
-        android:backgroundTint="@color/Blanco"
+        android:backgroundTint="@color/colorPrimary"
         app:backgroundTint="@color/colorPrimaryDark"
-        android:tint="@color/colorPrimary"
+        android:tint="@color/Blanco"
         app:borderWidth="2dp"
+        android:onClick="ImpresionContado"
         app:elevation="2dp"
         app:pressedTranslationZ="12dp"/>
-
 
 </android.support.constraint.ConstraintLayout>

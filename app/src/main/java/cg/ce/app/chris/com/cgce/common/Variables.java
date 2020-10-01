@@ -1,0 +1,46 @@
+package cg.ce.app.chris.com.cgce.common;
+
+public class Variables {
+    public final static String POSICION = "Posicion";
+    public final static String POSICIONES = "Posiciones";
+    public final static String METODO = "Metodo";
+    public final static String KEY_TAG = "Tag";
+    public final static String KEY_RFID = "Rfid";
+    public final static String KEY_NIP = "Nip";
+    public final static String KEY_NOMBRE = "Nombre";
+    public final static String KEY_CLIENTE = "Cliente";
+    public final static String KEY_RFC = "RFC";
+    public final static String KEY_CODCLI = "CodCli";
+    public final static String KEY_CLIENTE_VEHICULO_DEN = "Vehiculo";
+    public final static String KEY_CLIENTE_VEHICULO_TAR = "Tar";
+    public final static String KEY_CLIENTE_VEHICULO_NROVEH = "Nroveh";
+    public final static String KEY_CLIENTE_VEHICULO_TAGADI = "Tagadi";
+    public final static String KEY_CLIENTE_VEHICULO_PLACA = "Placa";
+    public final static String KEY_CLIENTE_VEHICULO_CHOFER = "Chofer";
+    public final static String KEY_ULT_NROTRN = "UltNrotrn";
+    public final static String KEY_TICKET = "Ticket";
+    public final static String KEY_TICKET_NROTRN = "Nrotrn";
+    public final static String KEY_TICKET_CANTIDAD = "Cantidad";
+    public final static String KEY_TICKET_PRECIO = "Precio";
+    public final static String KEY_TICKET_TOTAL = "Total";
+    public final static String KEY_TICKET_PRODUCTO = "Producto";
+    public final static String KEY_TICKET_BOMBA = "Bomba";
+    public final static String KEY_TICKET_DESPACHADOR = "Despachador";
+    public final static String KEY_TICKET_FECHA = "Fecha";
+    public final static String KEY_TICKET_ID_PRODUCTO = "Id_Producto";
+    public final static String KEY_TICKET_CVEEST = "Cveest";
+    public final static String KEY_TICKET_CODCLI = "Codcli";
+    public final static String KEY_TICKET_DENCLI = "Dencli";
+    public final static String KEY_TICKET_HORA = "Hora";
+    public final static String KEY_TICKET_CODGAS = "Codgas";
+    public final static String KEY_TICKET_CODPRD = "Codprd";
+    public final static String KEY_TICKET_NROVEH = "Nroveh";
+    public final static String KEY_ODM = "Odm";
+    public final static String KEY_TICKET_FCHCOR = "Fchcor";
+    public final static String KEY_TICKET_NROTUR = "Nrotur";
+    public final static String KEY_TICKET_NROCTE = "Nrocte";
+    public final static String KEY_TICKET_IVA = "Iva";
+    public final static String KEY_TICKET_IEPS = "Ieps";
+    public final static String KEY_TICKET_CLIENTE_TIPVAL = "Tipval";
+    public final static String KEY_IMPRESO = "Impreso";
+}

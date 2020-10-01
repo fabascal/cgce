@@ -16,8 +16,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+
+import cg.ce.app.chris.com.cgce.common.Variables;
 
 /**
  * Created by chris on 28/04/17.
@@ -25,14 +30,16 @@ import java.util.Date;
 
 public class ValidacionFlotillero {
     DataBaseCG cg = new DataBaseCG();
+    Variables variables = new Variables();
 
     int []dias={1,2,4,8,16,32,64};
     //la funcion validar_via ayuda a la funcion carga_dia para realizar las validaciones de dia en el flotillero
-    public int carga_dia(Context context,String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    /*public int carga_dia(Context context,String tag, String metodo) throws ClassNotFoundException,
+            SQLException, InstantiationException, IllegalAccessException {
         int resultado=0;
         Date date = new Date();
         int dia=date.getDay();
-        String  dias_permitidos=validar_dia(context,tag,metodo);
+        JSONObject  dias_permitidos=validar_dia(context,tag,metodo);
         int m=0;
         for (int i=0;i<dias_permitidos.length();i++) {
             Log.w("dias_permitido",String.valueOf(dias_permitidos.substring(m, i + 1)));
@@ -41,96 +48,124 @@ public class ValidacionFlotillero {
                 dia=7;
             }
             if (dia == Integer.parseInt(dias_permitidos.substring(m, i + 1))){
-                Log.w("ok","ok");
                 resultado=1;
             }
-            m++;
         }
         return resultado;
-    }
-    public String  validar_dia(Context context, String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    }*/
+    public JSONObject validar_dia(Context context, String tag, String metodo)
+            throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         int diacar=0;
         ResultSet r;
-        String dias_validos="";
+        JSONObject res = new JSONObject();
+        ArrayList<Integer>dias_carga = new ArrayList<>() ;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            if (metodo=="nfc") {
-                query = "select diacar from ClientesVehiculos where tag= '" + tag + "'";
-            }else if (metodo=="nip"){
-                query = "select diacar from ClientesVehiculos where tag= '" + tag + "'";
-            }else if(metodo=="nombre"){
-                query = "select diacar from ClientesVehiculos where tar= '" + tag + "'";
-            }
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                diacar= r.getInt("diacar");
-            }
-
-            int validador=0;
-            for (int i=dias.length;i!=0;i--){
-                validador+=dias[i-1];
-                if (diacar>=validador){
-                    dias_validos+=String.valueOf(i);
-                }else{
-                    validador-=dias[i-1];
-                }
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Statement stmt = connection.createStatement();
+        String query="";
+        if (metodo==variables.KEY_RFID) {
+            query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
+                    "datepart(WEEKDAY,getdate()) as dia, cv.est as est,\n" +
+                    "(select cod from Gasolineras where codest=0 and cod !=0) as cveest,\n" +
+                    "cv.hraini as hraini,cv.hrafin as hrafin,cv.hraini2 as hraini2,\n" +
+                    "cv.hrafin2 as hrafin2,cv.hraini3 as hraini3,cv.hrafin3 as hrafin3," +
+                    "cv.codprd as codprd,\n" +
+                    "(select den from Productos where cod=codprd) as combustible\n" +
+                    "from ClientesVehiculos as cv where cv.tag= '"+ tag +"'";
+            /*query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
+                    "datepart(WEEKDAY,getdate()) as dia,\n" +
+                    "(select cod from Gasolineras where codest=0 and cod !=0) as cveest\n" +
+                    "from ClientesVehiculos as cv where cv.tag= '"+ tag +"'";*/
+        }else if (metodo==variables.KEY_NIP){
+            query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
+                    "datepart(WEEKDAY,getdate()) as dia, cv.est as est,\n" +
+                    "(select cod from Gasolineras where codest=0 and cod !=0) as cveest,\n" +
+                    "cv.hraini as hraini,cv.hrafin as hrafin,cv.hraini2 as hraini2,\n" +
+                    "cv.hrafin2 as hrafin2,cv.hraini3 as hraini3,cv.hrafin3 as hrafin3,\n" +
+                    "cv.codprd as codprd,\n" +
+                    "(select den from Productos where cod=codprd) as combustible\n" +
+                    "from ClientesVehiculos as cv where cv.tag= '"+ tag +"'";
+        }else if(metodo==variables.KEY_NOMBRE){
+            query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
+                    "datepart(WEEKDAY,getdate()) as dia, cv.est as est,\n" +
+                    "(select cod from Gasolineras where codest=0 and cod !=0) as cveest,\n" +
+                    "cv.hraini as hraini,cv.hrafin as hrafin,cv.hraini2 as hraini2,\n" +
+                    "cv.hrafin2 as hrafin2,cv.hraini3 as hraini3,cv.hrafin3 as hrafin3,\n" +
+                    "cv.codprd as codprd,\n" +
+                    "(select den from Productos where cod=codprd) as combustible\n" +
+                    "from ClientesVehiculos as cv where cv.tar= '"+ tag +"'";
         }
-
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            diacar= r.getInt("diacar");
+            res.put("Dia",r.getString("dia"));
+            res.put("Fecha",r.getDate("fecha"));
+            res.put("EstPermitida", r.getString("codgas"));
+            res.put("EstLocal",r.getString("cveest"));
+            res.put("Est",r.getString("est"));
+            res.put("hraini", r.getInt("hraini"));
+            res.put("hrafin", r.getInt("hrafin"));
+            res.put("hraini2", r.getInt("hraini2"));
+            res.put("hrafin2", r.getInt("hrafin2"));
+            res.put("hraini3", r.getInt("hraini3"));
+            res.put("hrafin3", r.getInt("hrafin3"));
+            res.put("HoraActual",Integer.valueOf(hora_actual()));
+            res.put("CodPrd",r.getInt("codprd"));
+            res.put("Combustible",r.getString("combustible"));
         }
-        Log.w("dias",String.valueOf(dias_validos));
-        return dias_validos;
+        Log.w("diacar",String.valueOf(diacar));
+        int validador=0;
+        for (int i=dias.length;i!=0;i--){
+            validador+=dias[i-1];
+            if (diacar>=validador){
+                dias_carga.add(i);
+            }else{
+                validador-=dias[i-1];
+            }
+        }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
+        Collections.sort(dias_carga);
+        res.put("PermisoEstacion",res.getString("EstPermitida").equals(res.getString("EstLocal")));
+        res.put("Array",dias_carga);
+        return res;
     }
 
     //la funcion cveest_app ayuda a la funcion validar_estacion para realizar las validaciones de estacion en el flotillero
-    public int validar_estacion(Context context, String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public boolean validar_estacion(Context context, String tag, String metodo) throws ClassNotFoundException,
+            SQLException, InstantiationException, IllegalAccessException {
         ResultSet r;
-        int resultado=0;
+        boolean resultado=false;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            Log.w("estacion metodo" , metodo);
-            if (metodo =="nfc") {
-                query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv left outer join Gasolineras as g on g.cod=cv.codgas where cv.tag= '" + tag + "'";
-            }else if (metodo == "nip"){
-                query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv left outer join Gasolineras as g on g.cod=cv.codgas where cv.tag= '" + tag + "'";
-            }else if ( metodo == "nombre"){
-                query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv left outer join Gasolineras as g on g.cod=cv.codgas where cv.tar= '" + tag + "'";
-            }
-            Log.w("query estacion", query);
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                int codgas= r.getInt("codgas");
-                int cveest = r.getInt("cveest");
-                if (codgas==0){
-                    resultado=1;
-                }else if (cveest==codgas) {
-                        resultado=1;
-                }
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Statement stmt = connection.createStatement();
+        String query="";
+        Log.w("estacion metodo" , metodo);
+        if (metodo ==variables.KEY_RFID) {
+            query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv " +
+                    "left outer join Gasolineras as g on g.cod=cv.codgas where cv.tag= '" + tag + "'";
+        }else if (metodo == variables.KEY_NIP){
+            query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv " +
+                    "left outer join Gasolineras as g on g.cod=cv.codgas where cv.tag= '" + tag + "'";
+        }else if ( metodo == variables.KEY_NOMBRE){
+            query = "select cv.codgas as codgas,g.cod as cveest from ClientesVehiculos as cv " +
+                    "left outer join Gasolineras as g on g.cod=cv.codgas where cv.tar= '" + tag + "'";
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Log.w("query estacion", query);
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            int codgas= r.getInt("codgas");
+            int cveest = r.getInt("cveest");
+            if (codgas==0){
+                resultado=true;
+            }else if (cveest==codgas) {
+                    resultado=true;
+            }
         }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
         return resultado;
     }
     public String sorteo_inicio (Context context) throws SQLException, ClassNotFoundException, InstantiationException, JSONException, IllegalAccessException {
@@ -284,122 +319,108 @@ public class ValidacionFlotillero {
         }
         return -1;
     }
-    public int validar_estado(Context context, String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public int validar_estado(Context context, String tag, String metodo)
+            throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         ResultSet r;
         int resultado=0;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            Log.w("estacion metodo" , metodo);
-            if (metodo =="nfc") {
-                query = "select est from ClientesVehiculos where tag = '" + tag + "'";
-            }else if (metodo =="nip"){
-                query = "select est from ClientesVehiculos where tag = '" + tag + "'";
-            }else if (metodo == "nombre"){
-                query = "select est from ClientesVehiculos where tar = '" + tag + "'";
-            }
-            Log.w("query estacion", query);
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                int est= r.getInt("est");
 
-                if (est==1){
-                    resultado=1;
-                }else {
-                    resultado=0;
-                }
+        Statement stmt = connection.createStatement();
+        String query="";
+        Log.w("estacion metodo" , metodo);
+        if (metodo =="nfc") {
+            query = "select est from ClientesVehiculos where tag = '" + tag + "'";
+        }else if (metodo =="nip"){
+            query = "select est from ClientesVehiculos where tag = '" + tag + "'";
+        }else if (metodo == "nombre"){
+            query = "select est from ClientesVehiculos where tar = '" + tag + "'";
+        }
+        Log.w("query estacion", query);
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            int est= r.getInt("est");
+
+            if (est==1){
+                resultado=1;
+            }else {
+                resultado=0;
             }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
         return resultado;
     }
-    public String cveest_app(Context context) throws ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
+    public String cveest_app(Context context) throws ClassNotFoundException, SQLException,
+            InstantiationException, JSONException, IllegalAccessException {
         ResultSet r;
         String resultado="";
         Connection connection=cg.odbc_cecg_app(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query = "select cveest from datos_factura ";
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                resultado= r.getString("cveest");
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Statement stmt = connection.createStatement();
+        String query = "select cveest from datos_factura ";
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            resultado= r.getString("cveest");
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
         return resultado;
     }
 
     //la funcion hora_actual ayuda a la funcion validar_hora para realizar las validaciones de hora en el flotillero
-    public int validar_hora(Context context,String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public boolean validar_hora(Context context,String tag, String metodo)
+            throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         cgticket CGticket = new cgticket();
         ResultSet r;
-        int resultado=0;
+        boolean resultado=false;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            if (metodo=="nfc") {
-                query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tag= '" + tag + "'";
-            }else if(metodo=="nip"){
-                query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tag= '" + tag + "'";
-            }else if(metodo =="nombre"){
-                query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tar= '" + tag + "'";
-            }
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                String hraini= CGticket.hora(r.getString("hraini"));
-                String hrafin= CGticket.hora(r.getString("hrafin"));
-                String hraini2= CGticket.hora(r.getString("hraini2"));
-                String hrafin2= CGticket.hora(r.getString("hrafin2"));
-                String hraini3= CGticket.hora(r.getString("hraini3"));
-                String hrafin3= CGticket.hora(r.getString("hrafin3"));
-                Log.w("hra",hraini);
-                Log.w("hra",hraini2);
-                Log.w("hra",hraini3);
-                Log.w("hra",hrafin);
-                Log.w("hra",hraini2);
-                Log.w("hra",hraini3);
-                if (hraini.equals("00:-1") && hraini2.equals("00:-1") && hraini3.equals("00:-1") && hrafin.equals("00:-1") && hrafin2.equals("00:-1") && hrafin3.equals("00:-1")){
-                    resultado=1;
-                }else {
-                    String hora_actual=hora_actual();
-                    if (Integer.valueOf(hora_actual)>=Integer.valueOf(hraini.replace(":","").replace("-","")) && Integer.valueOf(hora_actual)<=Integer.valueOf(hrafin.replace(":","").replace("-","")) || Integer.valueOf(hora_actual)>=Integer.valueOf(hraini2.replace(":","").replace("-","")) && Integer.valueOf(hora_actual)<=Integer.valueOf(hrafin2.replace(":","").replace("-","")) || Integer.valueOf(hora_actual)>=Integer.valueOf(hraini3.replace(":","").replace("-","")) && Integer.valueOf(hora_actual)<=Integer.valueOf(hrafin3.replace(":","").replace("-",""))) {
-                        resultado = 1;
-                    }else{
-                        resultado =0;
-                    }
+        Statement stmt = connection.createStatement();
+        String query="";
+        if (metodo==variables.KEY_RFID) {
+            query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tag= '" + tag + "'";
+        }else if(metodo==variables.KEY_NIP){
+            query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tag= '" + tag + "'";
+        }else if(metodo ==variables.KEY_NOMBRE){
+            query = "select hraini,hrafin,hraini2,hrafin2,hraini3,hrafin3 from ClientesVehiculos where tar= '" + tag + "'";
+        }
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            String hraini= CGticket.hora(r.getString("hraini"));
+            String hrafin= CGticket.hora(r.getString("hrafin"));
+            String hraini2= CGticket.hora(r.getString("hraini2"));
+            String hrafin2= CGticket.hora(r.getString("hrafin2"));
+            String hraini3= CGticket.hora(r.getString("hraini3"));
+            String hrafin3= CGticket.hora(r.getString("hrafin3"));
+            Log.w("hra",hraini);
+            Log.w("hra",hraini2);
+            Log.w("hra",hraini3);
+            Log.w("hra",hrafin);
+            Log.w("hra",hraini2);
+            Log.w("hra",hraini3);
+            if (hraini.equals("00:-1") && hraini2.equals("00:-1") && hraini3.equals("00:-1")
+                    && hrafin.equals("00:-1") && hrafin2.equals("00:-1") && hrafin3.equals("00:-1")){
+                resultado = true;
+            }else {
+                String hora_actual=hora_actual();
+                if (Integer.valueOf(hora_actual)>=Integer.valueOf(hraini.replace(":","").replace("-","")) &&
+                        Integer.valueOf(hora_actual)<=Integer.valueOf(hrafin.replace(":","").replace("-","")) ||
+                        Integer.valueOf(hora_actual)>=Integer.valueOf(hraini2.replace(":","").replace("-","")) &&
+                                Integer.valueOf(hora_actual)<=Integer.valueOf(hrafin2.replace(":","").replace("-","")) ||
+                        Integer.valueOf(hora_actual)>=Integer.valueOf(hraini3.replace(":","").replace("-","")) &&
+                                Integer.valueOf(hora_actual)<=Integer.valueOf(hrafin3.replace(":","").replace("-",""))) {
+                    resultado = true;
+                }else{
+                    resultado = false;
                 }
             }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
         return resultado;
     }
     public String hora_actual(){
@@ -509,7 +530,8 @@ public class ValidacionFlotillero {
 
     //la funcion validar_ultimo_nrotrn sirve para obtener el ultimo servicio de la bomba, lo obiente antes de iniciar a sutir
     //es un candado para validar que el servicio que vamos a escribir sea el ultimo.
-    public String validar_utlimo_nrotrn(Context context,String bomba) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public String validar_utlimo_nrotrn(Context context,String bomba) throws ClassNotFoundException,
+            SQLException, InstantiationException, IllegalAccessException {
         String resultado="";
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
@@ -523,17 +545,13 @@ public class ValidacionFlotillero {
         connection.close();
         r.close();
         stmt.close();
-
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection.close();
         return resultado;
     }
 
     //la funcion get_codcli regresa el codigo que se actualizara en el servicio
-    public JSONObject get_codcli(Context context,String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public JSONObject get_codcli(Context context,String tag, String metodo)
+            throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
         JSONObject resultado=new JSONObject();
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
@@ -555,13 +573,9 @@ public class ValidacionFlotillero {
         }
         r = stmt.executeQuery(query);
         while (r.next()) {
-            try {
-                resultado.put("cliente",r.getInt("cliente"));
-                resultado.put("vehiculo",r.getInt("vehiculo"));
-                resultado.put("tar",r.getInt("tar"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            resultado.put("cliente",r.getInt("cliente"));
+            resultado.put("vehiculo",r.getInt("vehiculo"));
+            resultado.put("tar",r.getInt("tar"));
         }
         connection.close();
         r.close();
@@ -571,16 +585,15 @@ public class ValidacionFlotillero {
     }
 
     //funcion para obtener datos del cliente
-    public JSONObject get_vehiculo(Context context,String tag) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
+    public JSONObject get_vehiculo(Context context,String tag) throws ClassNotFoundException,
+            SQLException, InstantiationException, IllegalAccessException, JSONException {
         JSONObject resultado = new JSONObject();
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
-
         Statement stmt = connection.createStatement();
         String query = "select plc,rsp,nroeco,ultodm from ClientesVehiculos where tag='"+tag+"'";
         r = stmt.executeQuery(query);
         while (r.next()) {
-
             if ( r.getString("plc").length()<=0) {
                 resultado.put("placa","S/P");
             }else {
@@ -605,7 +618,6 @@ public class ValidacionFlotillero {
             Log.w("conductor1",resultado.getString("rsp"));
             Log.w("eco1",resultado.getString("nroeco"));
             Log.w("km1",resultado.getString("ultodm"));
-
         }
         connection.close();
         r.close();

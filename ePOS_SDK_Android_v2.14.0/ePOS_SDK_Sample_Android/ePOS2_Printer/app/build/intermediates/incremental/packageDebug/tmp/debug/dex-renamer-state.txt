@@ -1,0 +1,4 @@
+#Wed Sep 09 13:05:24 CDT 2020
+base.0=D\:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\dex\\debug\\out\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

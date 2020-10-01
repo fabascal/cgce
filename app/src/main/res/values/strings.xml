@@ -154,4 +154,23 @@
     <string name="CfdiURL">CfdiURL</string>
     <string name="brand_activity">Marca</string>
     <string name="BrandImage">BrandImage</string>
+    <string name="codcli">Codcli</string>
+    <string name="placa">Placa</string>
+    <string name="vehiculo">Vehiculo</string>
+    <string name="chofer">Chofer</string>
+    <string name="EsperaServicio">Servicio aun no esta listo, favor de esperar un momento.</string>
+    <string name="Dias">Dias</string>
+    <string name="lunes">L</string>
+    <string name="martes">M</string>
+    <string name="miercoles">M</string>
+    <string name="jueves">J</string>
+    <string name="viernes">V</string>
+    <string name="sabado">S</string>
+    <string name="domingo">D</string>
+    <string name="Estacion">Estacion</string>
+    <string name="Hora">Hora</string>
+    <string name="Habilitado">Habilitado</string>
+    <string name="Inhabilitado">Inhabilitado</string>
+    <string name="HoraCero">00:00-00:00</string>
+    <string name="Producto">Producto</string>
 </resources>

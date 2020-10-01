@@ -32,8 +32,6 @@ public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHol
         MyHolder holder=new MyHolder(view);
         return holder;
     }
-    // create constructor to get widget reference
-
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -48,7 +46,6 @@ public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemCount() {
         return data.size();
     }
-
 
     class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView codcli;
@@ -77,7 +74,14 @@ public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHol
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            ((ActivityCreditoDual)context).AdapterClickCustomerCG(CustomerCG_data);
+            ClearListDataCustomerCG();
+            ((Credito)context).AdapterClickCustomerCG(CustomerCG_data, true);
+
         }
+    }
+    public void ClearListDataCustomerCG(){
+        int size = data.size();
+        data.clear();
+        notifyItemRangeRemoved(0, size);
     }
 }

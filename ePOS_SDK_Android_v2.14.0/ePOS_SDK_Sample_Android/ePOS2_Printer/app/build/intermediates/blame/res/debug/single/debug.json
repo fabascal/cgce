@@ -1,0 +1,74 @@
+[
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\xml_accessory_filter.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\xml\\accessory_filter.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_singlemonitor.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_singlemonitor.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\drawable-nodpi_wmark.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\drawable-nodpi\\wmark.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_firmwareupdate.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_firmwareupdate.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\drawable-nodpi_store.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\drawable-nodpi\\store.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-mdpi_ic_launcher.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_list_at.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\list_at.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_setting.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_setting.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_monitor.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_monitor.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_multiplemonitor.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_multiplemonitor.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_discovery.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_discovery.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\drawable-nodpi_coffee.png.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\drawable-nodpi\\coffee.png"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\xml_device_filter.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\xml\\device_filter.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_printersetting.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_printersetting.xml"
+    },
+    {
+        "merged": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_main.xml.flat",
+        "source": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\src\\main\\res\\layout\\activity_main.xml"
+    }
+]

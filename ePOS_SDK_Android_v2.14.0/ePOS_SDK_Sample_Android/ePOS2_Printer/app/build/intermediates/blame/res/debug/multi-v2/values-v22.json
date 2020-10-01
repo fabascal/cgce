@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v22\\values-v22.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\fabas\\.gradle\\caches\\transforms-2\\files-2.1\\fb0e7c60eec11475c037e2836eb3a1c4\\appcompat-v7-27.1.0\\res\\values-v22\\values-v22.xml",
+                    "from": {
+                        "startLines": "2,3,4,9",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,130,217,553",
+                        "endLines": "2,3,8,13",
+                        "endColumns": "74,86,12,12",
+                        "endOffsets": "125,212,548,896"
+                    }
+                }
+            ]
+        }
+    ]
+}

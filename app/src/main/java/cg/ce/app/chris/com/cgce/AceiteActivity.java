@@ -99,8 +99,6 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     ValidateTablet tablet = new ValidateTablet();
     LinearLayout imageView;
     ProgressDialog progress;
-
-
     private Printer mPrinter = null;
 
 

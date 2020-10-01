@@ -54,7 +54,16 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Credito"></activity>
+        <activity android:name=".Credito"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" />
+        </activity>
         <activity
             android:name=".ActivityTicket"
             android:theme="@style/ContentMain" />

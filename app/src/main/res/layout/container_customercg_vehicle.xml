@@ -4,28 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <android.support.constraint.Guideline
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".2"
-        android:id="@+id/guideline"/>
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline"
-        app:layout_constraintBottom_toBottomOf="@id/rl"
-        android:src="@drawable/customer_vehicle"/>
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/rl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
@@ -34,16 +19,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
-                style="@style/repsoltexto"
-                android:textSize="25sp"
+                android:textColor="@color/RespsolAzul"
+                android:textSize="20sp"
                 android:id="@+id/plc"
                 android:layout_weight="1"
                 android:text="JFL6752"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:textSize="25sp"
-                style="@style/repsoltexto"
+                android:textSize="20sp"
+                android:textColor="@color/RespsolAzul"
                 android:layout_weight="1"
                 android:id="@+id/den_vehicle"
                 android:text="FORD FIESTA"
@@ -52,8 +37,8 @@
         </LinearLayout>
 
         <TextView
-            android:textSize="20sp"
-            style="@style/repsoltexto"
+            android:textSize="16sp"
+            android:textColor="@color/RespsolAzul"
             android:id="@+id/rsp"
             android:text="FELIX ABASCAL"
             android:layout_width="match_parent"

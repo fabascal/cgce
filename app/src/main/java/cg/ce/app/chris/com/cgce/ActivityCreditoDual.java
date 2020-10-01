@@ -2283,10 +2283,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
 
                     if (!tgl_area.isChecked()){
                         activo=vf.validar_estado(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
-                        estacion=vf.validar_estacion(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
+                        estacion=0;//vf.validar_estacion(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                         cargas_turno=vf.validar_cargas_turno(ActivityCreditoDual.this,jsonObject_1.getString("metodo"),jsonObject_1.getString("id_tag"));
-                        dia=vf.carga_dia(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
-                        hora=vf.validar_hora(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
+                        dia=0 ; /*vf.carga_dia(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);*/
+                        hora=0;//vf.validar_hora(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                         monto=vf.validar_monto(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                         bomba=jsonObject_1.getString("bomba");
                         ult_nrotrn = vf.validar_utlimo_nrotrn(ActivityCreditoDual.this, jsonObject_1.getString("bomba"));
@@ -2295,10 +2295,10 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                         producto = vf.validar_producto(ActivityCreditoDual.this,jsonObject_1.getString("id_tag"),metodo);
                     }else{
                         activo=vf.validar_estado(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
-                        estacion=vf.validar_estacion(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
+                        estacion=0;//vf.validar_estacion(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
                         cargas_turno=vf.validar_cargas_turno(ActivityCreditoDual.this,jsonObject_2.getString("metodo"),jsonObject_2.getString("id_tag"));
-                        dia=vf.carga_dia(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
-                        hora=vf.validar_hora(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
+                        dia= 0; /*vf.carga_dia(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);*/
+                        hora=0;//vf.validar_hora(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
                         monto=vf.validar_monto(ActivityCreditoDual.this,jsonObject_2.getString("id_tag"),metodo);
                         bomba=jsonObject_2.getString("bomba");
                         ult_nrotrn = vf.validar_utlimo_nrotrn(ActivityCreditoDual.this, jsonObject_2.getString("bomba"));

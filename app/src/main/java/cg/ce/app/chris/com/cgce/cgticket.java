@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
 
 /**
@@ -29,6 +30,7 @@ public class cgticket {
     Connection connect;
     JSONObject cursor = null;
     LogCE logCE = new LogCE();
+    Variables variables = new Variables();
 
     public JSONObject consulta_servicio(Context con,String bomba) throws SQLException,
             IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
@@ -47,7 +49,7 @@ public class cgticket {
         Statement stmt = conn.createStatement();
         r = stmt.executeQuery("SELECT top 1 desp.nrotrn,desp.can,desp.mto,desp.pre,prod.den,desp.nrobom,resp.den,\n" +
                 "Convert(VARCHAR(10), cast(cast(desp.fchtrn-1 as int) as datetime) , 111),desp.codprd,gas.cveest,desp.mtogto,desp.codcli,\n" +
-                "cli.den,desp.hratrn,desp.codgas,desp.codprd,desp.nroveh,desp.odm,desp.fchcor,desp.nrotur,desp.nrocte,\n" +
+                "cli.den,desp.hratrn,desp.codgas,desp.codprd,desp.nroveh,desp.odm,desp.fchcor,desp.nrotur,desp.nrocte,cli.tipval,\n" +
                 "(select top 1 pre from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc),\n" +
                 "(select top 1 iva from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) ,\n" +
                 "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) \n" +
@@ -57,38 +59,39 @@ public class cgticket {
                 "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                 "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                 "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                /*"where desp.nrotrn='39788310' order by desp.nrotrn desc");*/
+                /*"where desp.nrotrn='39875970' order by desp.nrotrn desc");*/
         if (!r.next()) {
         }
         float a = r.getFloat(11);
         if (a<0){
             a=a*-1;
         }
-        st.put("nrotrn",r.getInt(1));
-        st.put("cantidad",(r.getFloat(3)+a)/r.getFloat(4));
-        st.put("precio",r.getFloat(4));
-        st.put("total",String.format("%.2f",r.getFloat(3)+a));
-        st.put("producto",r.getString(5));
-        st.put("bomba",r.getInt(6));
-        st.put("despachador",nombre_depsachador(con));
-        st.put("fecha",r.getString(8));
-        st.put("id_producto",r.getInt(9));
-        st.put("cveest",r.getString(10));
-        st.put("mtogto",r.getFloat(11));
-        st.put("codcli",r.getInt(12));
-        st.put("dencli",r.getString(13));
-        st.put("hora",hora(String.valueOf(r.getInt(14))));
-        st.put("codgas",r.getInt(15));
-        st.put("codprd",r.getInt(16));
-        st.put("nroveh",r.getInt(17));
-        st.put("odm",r.getString(18));
-        st.put("fchcor",r.getString(19));
-        st.put("nrotur",r.getString(20));
-        st.put("nrocte",r.getString(21));
-        st.put("mtogto",0);
-        st.put("logusu",1);
-        st.put("iva", r.getDouble(23));
-        st.put("ieps", r.getDouble(24));
+        st.put(variables.KEY_TICKET_NROTRN,r.getInt(1));
+        st.put(variables.KEY_TICKET_CANTIDAD,(r.getFloat(3)+a)/r.getFloat(4));
+        st.put(variables.KEY_TICKET_PRECIO,r.getFloat(4));
+        st.put(variables.KEY_TICKET_TOTAL,String.format("%.2f",r.getFloat(3)+a));
+        st.put(variables.KEY_TICKET_PRODUCTO,r.getString(5));
+        st.put(variables.KEY_TICKET_BOMBA,r.getInt(6));
+        st.put(variables.KEY_TICKET_DESPACHADOR,nombre_depsachador(con));
+        st.put(variables.KEY_TICKET_FECHA,r.getString(8));
+        st.put(variables.KEY_TICKET_ID_PRODUCTO,r.getInt(9));
+        st.put(variables.KEY_TICKET_CVEEST,r.getString(10));
+        /*st.put("mtogto",r.getFloat(11));*/
+        st.put(variables.KEY_TICKET_CODCLI,r.getInt(12));
+        st.put(variables.KEY_TICKET_DENCLI,r.getString(13));
+        st.put(variables.KEY_TICKET_HORA,hora(String.valueOf(r.getInt(14))));
+        st.put(variables.KEY_TICKET_CODGAS,r.getInt(15));
+        st.put(variables.KEY_TICKET_CODPRD,r.getInt(16));
+        st.put(variables.KEY_TICKET_NROVEH,r.getInt(17));
+        st.put(variables.KEY_ODM,r.getString(18));
+        st.put(variables.KEY_TICKET_FCHCOR,r.getString(19));
+        st.put(variables.KEY_TICKET_NROTUR,r.getString(20));
+        st.put(variables.KEY_TICKET_NROCTE,r.getString(21));
+        st.put(variables.KEY_TICKET_CLIENTE_TIPVAL,r.getInt(22));
+        /*st.put("mtogto",0);
+        st.put("logusu",1);*/
+        st.put(variables.KEY_TICKET_IVA, r.getDouble(24));
+        st.put(variables.KEY_TICKET_IEPS, r.getDouble(25));
         conn.close();
         stmt.close();
         return st;
@@ -357,7 +360,6 @@ public class cgticket {
         }else if (hora.length()==3){
             hora="0"+hora;
         }
-        Log.w("hora",hora);
         String hora_impresa;
         hora_impresa=hora.substring(0,2)+":"+hora.substring(2,4);
         return hora_impresa;
@@ -452,29 +454,27 @@ public class cgticket {
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cg(con);
         Statement stmt = conn.createStatement();
-        String ticket2=ticket.getString("nrotrn")+"0";
+        String ticket2=ticket.getString(variables.KEY_TICKET_NROTRN)+"0";
         if (ticket.has("rut")){
-            Log.w("query tiptrn","update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+"," +
-                    " rut="+ ticket.getString("rut") +", tiptrn= "+ ticket.getInt("tiptrn") +
-                    " where nrotrn = "+ticket.getString("nrotrn")+"");
             if(ticket.getString("rut").substring(0,1).equals("6")){
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codres='"+
                         getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+
-                        ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                        ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
             }else{
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+"," +
                         "codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', " +
-                        "tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString("nrotrn")+"");
+                        "tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
             }
 
         }else{
             System.out.println("identificacion es credito");
-            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+" where nrotrn = "+ticket.getString("nrotrn")+"");
+            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+", " +
+                    "codres='"+getCodDespCG(con)+"' where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
         }
         stmt.close();
         conn.close();
         Log.w("combu","true");
-        guardarnrotrn2(con,ticket.getString("nrotrn"),venta);
+        guardarnrotrn2(con,ticket.getString(variables.KEY_TICKET_NROTRN),venta);
         return true; }
     public boolean guardarnrotrn_old (Context con,String ticket,int venta) throws
             ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
@@ -543,9 +543,7 @@ public class cgticket {
     public boolean update_codcli (Context con,String ticket,String cliente,String vehiculo,
                                   String odm,String tar) throws ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException, JSONException {
-        if(odm.equals(null)){
-            odm="0";
-        }
+
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String base = null;
@@ -582,7 +580,7 @@ public class cgticket {
         String res="";
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cg(con);
-        String query = "select rut as rut from Despachos where nrotrn ='"+jsonObject.getString("nrotrn")+"'";
+        String query = "select rut as rut from Despachos where nrotrn ='"+jsonObject.getString(variables.KEY_TICKET_NROTRN)+"'";
         Statement stmt = conn.createStatement();
         r=stmt.executeQuery(query);
         if (r.next()) {
@@ -1036,6 +1034,35 @@ public class cgticket {
         rs.close();
         return domicilio;
     }
+    //funcion para obtener los datos del vehiculo y del cliente mediante un nip//
+    public List<DataCustomerCG> GetCustomerNipCG(Context context, String nip)
+            throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+        List<DataCustomerCG> dataCustomerCGS = new ArrayList<>();
+        ResultSet rs;
+        DataBaseCG cg = new DataBaseCG();
+        Connection conn = cg.odbc_cg(context);
+        String query = "select v.rsp as rsp, v.plc as plc, v.den as den_vehicle, v.tar as tar, " +
+                "v.nroveh as nroveh, c.cod as codcli, c.den as den, c.rfc as rfc " +
+                "from ClientesVehiculos as v left outer join Clientes as c on c.cod=v.codcli " +
+                "where v.tag='" + nip + "'";
+        Statement stmt = conn.createStatement();
+        rs = stmt.executeQuery(query);
+        while (rs.next()){
+            DataCustomerCG data = new DataCustomerCG();
+            data.codcli = rs.getString("codcli");
+            data.den = rs.getString("den");
+            data.rfc = rs.getString("rfc");
+            data.rsp = rs.getString("rsp");
+            data.plc = rs.getString("plc");
+            data.den_vehicle = rs.getString("den_vehicle");
+            data.tar = rs.getInt("tar");
+            data.nroveh = rs.getInt("nroveh");
+            dataCustomerCGS.add(data);
+        }
+        conn.close();
+        stmt.close();
+        return dataCustomerCGS;
+    }
     //funcion para obtener los datos de los clientes mediante una parte de su nombre
     public List<DataCustomerCG> getCustomerCG(Context context, String nombre) throws
             ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
@@ -1053,16 +1080,20 @@ public class cgticket {
             data.rfc = rs.getString("rfc");
             dataCustomerCGS.add(data);
         }
+        conn.close();
+        stmt.close();
         return dataCustomerCGS;
     }
     //Funcion para obtener los vehiculos mediante el codigo de cliente
     public List<DataCustomerCG> getCustomerVehicleCG(Context context, String codcli) throws
-            ClassNotFoundException, SQLException, InstantiationException, JSONException, IllegalAccessException {
+            ClassNotFoundException, SQLException, InstantiationException, JSONException,
+            IllegalAccessException {
         List<DataCustomerCG> dataCustomerCGS = new ArrayList<>();
         ResultSet rs;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cg(context);
-        String query = "select rsp as rsp,plc as plc,den as den,tar as tar,nroveh as nroveh from ClientesVehiculos where codcli="+codcli+" order by nroveh";
+        String query = "select rsp as rsp,plc as plc,den as den,tar as tar,nroveh as nroveh, " +
+                "tagadi as tagadi from ClientesVehiculos where codcli="+codcli+" order by nroveh";
         Statement stmt = conn.createStatement();
         rs = stmt.executeQuery(query);
         while (rs.next()){
@@ -1072,9 +1103,19 @@ public class cgticket {
             data.den_vehicle = rs.getString("den");
             data.tar = rs.getInt("tar");
             data.nroveh = rs.getInt("nroveh");
+            Log.w("Data-Query1", rs.getString("tagadi")  );
+            if (rs.getString("tagadi")==null || rs.getString("tagadi").equals("")){
+                data.tagadi = 0 ;
+            }else {
+                data.tagadi = rs.getInt("tagadi");
+            }
             dataCustomerCGS.add(data);
-            Log.i("vehicle_db", String.valueOf(data.den_vehicle));
+
         }
+        conn.close();
+        stmt.close();
+        Log.w("query",query);
+        Log.w("Data-Query2", String.valueOf(dataCustomerCGS.get(0).tagadi));
         return dataCustomerCGS;
     }
     //funcion para obtener las tpv de la estacion

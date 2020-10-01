@@ -25,7 +25,6 @@ public class AdapterCustomerVehicleCG extends RecyclerView.Adapter<RecyclerView.
         inflater= LayoutInflater.from(context);
         this.data=data;
     }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view=inflater.inflate(R.layout.container_customercg_vehicle, parent,false);
@@ -72,10 +71,13 @@ public class AdapterCustomerVehicleCG extends RecyclerView.Adapter<RecyclerView.
                 CustomerCG_data.put("vehiculo", data.get(getAdapterPosition()).den_vehicle);
                 CustomerCG_data.put("rsp", data.get(getAdapterPosition()).rsp);
                 CustomerCG_data.put("nroveh", data.get(getAdapterPosition()).nroveh);
+                CustomerCG_data.put("tagadi", data.get(getAdapterPosition()).tagadi);
+                CustomerCG_data.put("placa", data.get(getAdapterPosition()).plc);
+                CustomerCG_data.put("chofer", data.get(getAdapterPosition()).rsp);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            ((ActivityCreditoDual)context).AdapterClickCustomerVehicleCG(CustomerCG_data);
+            ((Credito)context).AdapterClickCustomerVehicleCG(CustomerCG_data);
         }
     }
 }

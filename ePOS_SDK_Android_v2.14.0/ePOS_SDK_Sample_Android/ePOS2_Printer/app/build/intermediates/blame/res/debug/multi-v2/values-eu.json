@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-eu\\values-eu.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\fabas\\.gradle\\caches\\transforms-2\\files-2.1\\fb0e7c60eec11475c037e2836eb3a1c4\\appcompat-v7-27.1.0\\res\\values-eu\\values-eu.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,214,312,422,508,614,738,825,909,991,1100,1210,1309,1418,1524,1635,1806,1905",
+                        "endColumns": "108,97,109,85,105,123,86,83,81,108,109,98,108,105,110,170,98,81",
+                        "endOffsets": "209,307,417,503,609,733,820,904,986,1095,1205,1304,1413,1519,1630,1801,1900,1982"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\fabas\\.gradle\\caches\\transforms-2\\files-2.1\\cbbd512011cfd96f5a9f93e7995b86d8\\support-compat-27.1.0\\res\\values-eu\\values-eu.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "20",
+                        "startColumns": "4",
+                        "startOffsets": "1987",
+                        "endColumns": "100",
+                        "endOffsets": "2083"
+                    }
+                }
+            ]
+        }
+    ]
+}

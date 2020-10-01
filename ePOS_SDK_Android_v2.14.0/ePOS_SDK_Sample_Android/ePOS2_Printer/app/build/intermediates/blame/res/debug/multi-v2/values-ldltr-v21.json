@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\AndroidStudio\\AndroidStudioProjects\\cgce\\ePOS_SDK_Android_v2.14.0\\ePOS_SDK_Sample_Android\\ePOS2_Printer\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-ldltr-v21\\values-ldltr-v21.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\fabas\\.gradle\\caches\\transforms-2\\files-2.1\\fb0e7c60eec11475c037e2836eb3a1c4\\appcompat-v7-27.1.0\\res\\values-ldltr-v21\\values-ldltr-v21.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "112",
+                        "endOffsets": "163"
+                    }
+                }
+            ]
+        }
+    ]
+}
