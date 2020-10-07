@@ -1,6 +1,7 @@
 package cg.ce.app.chris.com.cgce;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -8,10 +9,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,8 +37,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import cg.ce.app.chris.com.cgce.Fragments.JarreoFullScreenFragment;
+import cg.ce.app.chris.com.cgce.common.RequestPermission;
 import cg.ce.app.chris.com.cgce.dialogos.Fragment1;
 
 
@@ -51,6 +58,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
     LogCE logCE = new LogCE();
+    RequestPermission requestPermission = new RequestPermission();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +67,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         BrandSharedPreferences();
         Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        requestPermission.requestRuntimePermission(this);
         sensores.bluetooth();
         sensores.wifi(this,true);
         cardViewContado = findViewById(R.id.CardViewContado);
@@ -221,6 +229,38 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                 })
                 .setNegativeButton(R.string.cancelar,null).show();
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode != requestPermission.REQUEST_PERMISSION || grantResults.length == 0) {
+            return;
+        }
+
+        List<String> requestPermissions = new ArrayList<>();
+
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+            if (permissions[i].equals(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+            if (permissions[i].equals(Manifest.permission.CAMERA)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+            if (permissions[i].equals(Manifest.permission.BLUETOOTH)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+        }
+
+        if (!requestPermissions.isEmpty()) {
+            ActivityCompat.requestPermissions(this, requestPermissions.toArray(new String[requestPermissions.size()]), requestPermission.REQUEST_PERMISSION);
+        }
     }
 
 

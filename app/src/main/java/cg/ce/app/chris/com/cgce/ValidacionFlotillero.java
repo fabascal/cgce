@@ -71,10 +71,6 @@ public class ValidacionFlotillero {
                     "cv.codprd as codprd,\n" +
                     "(select den from Productos where cod=codprd) as combustible\n" +
                     "from ClientesVehiculos as cv where cv.tag= '"+ tag +"'";
-            /*query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
-                    "datepart(WEEKDAY,getdate()) as dia,\n" +
-                    "(select cod from Gasolineras where codest=0 and cod !=0) as cveest\n" +
-                    "from ClientesVehiculos as cv where cv.tag= '"+ tag +"'";*/
         }else if (metodo==variables.KEY_NIP){
             query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
                     "datepart(WEEKDAY,getdate()) as dia, cv.est as est,\n" +

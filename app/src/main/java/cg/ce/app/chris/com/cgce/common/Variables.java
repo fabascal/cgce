@@ -43,4 +43,6 @@ public class Variables {
     public final static String KEY_TICKET_IEPS = "Ieps";
     public final static String KEY_TICKET_CLIENTE_TIPVAL = "Tipval";
     public final static String KEY_IMPRESO = "Impreso";
+    public final static String KEY_TIPTRN = "Tiptrn";
+    public final static String KEY_RUT = "Rut";
 }

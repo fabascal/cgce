@@ -52,14 +52,15 @@ public class cgticket {
                 "cli.den,desp.hratrn,desp.codgas,desp.codprd,desp.nroveh,desp.odm,desp.fchcor,desp.nrotur,desp.nrocte,cli.tipval,\n" +
                 "(select top 1 pre from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc),\n" +
                 "(select top 1 iva from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) ,\n" +
-                "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) \n" +
+                "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc), " +
+                "desp.rut as rut  \n" +
                 "FROM ["+base+"].[dbo].[Despachos] as desp\n" +
                 "left outer join ["+base+"].[dbo].[Productos] as prod on prod.cod=desp.codprd \n" +
                 "left outer join ["+base+"].[dbo].[Responsables] as resp on resp.cod=desp.codres \n" +
                 "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                 "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                 "where desp.nrobom ="+bomba+" order by desp.nrotrn desc");
-                /*"where desp.nrotrn='39875970' order by desp.nrotrn desc");*/
+                /*"where desp.nrotrn='40022970' order by desp.nrotrn desc");*/
         if (!r.next()) {
         }
         float a = r.getFloat(11);
@@ -88,6 +89,7 @@ public class cgticket {
         st.put(variables.KEY_TICKET_NROTUR,r.getString(20));
         st.put(variables.KEY_TICKET_NROCTE,r.getString(21));
         st.put(variables.KEY_TICKET_CLIENTE_TIPVAL,r.getInt(22));
+        st.put(variables.KEY_RUT,r.getString("rut"));
         /*st.put("mtogto",0);
         st.put("logusu",1);*/
         st.put(variables.KEY_TICKET_IVA, r.getDouble(24));
@@ -145,7 +147,8 @@ public class cgticket {
                 "cli.den as cli_den,desp.hratrn as hratrn,desp.codgas as codgas,desp.nroveh as nroveh,desp.odm as odm,desp.fchcor as fchcor,desp.nrotur as nrotur,desp.nrocte as nrocte,\n" +
                 "(select top 1 pre as precio from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as precio,\n" +
                 "(select top 1 iva as iva from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as iva,\n" +
-                "(select top 1 preiie as preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as ieps \n" +
+                "(select top 1 preiie as preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) as ieps ," +
+                "desp.rut as rut\n" +
                 "FROM ["+base+"].[dbo].[Despachos] as desp\n" +
                 "left outer join ["+base+"].[dbo].[Productos] as prod on prod.cod=desp.codprd \n" +
                 "left outer join ["+base+"].[dbo].[Responsables] as resp on resp.cod=desp.codres \n" +
@@ -178,6 +181,7 @@ public class cgticket {
         st.put("nrocte",r.getString("nrocte"));
         st.put("mtogto",0);
         st.put("logusu",1);
+        st.put(variables.KEY_RUT,r.getString("rut"));
         while (r.next()){
             qty+= r.getInt("can");
             total += r.getDouble("mto");
@@ -455,15 +459,15 @@ public class cgticket {
         Connection conn = dbcg.odbc_cg(con);
         Statement stmt = conn.createStatement();
         String ticket2=ticket.getString(variables.KEY_TICKET_NROTRN)+"0";
-        if (ticket.has("rut")){
-            if(ticket.getString("rut").substring(0,1).equals("6")){
+        if (ticket.has(variables.KEY_RUT)){
+            if(ticket.getString(variables.KEY_RUT).substring(0,1).equals("6")){
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codres='"+
-                        getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', tiptrn= "+
-                        ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
+                        getCodDespCG(con)+"' , rut='"+ ticket.getString(variables.KEY_RUT) +"', tiptrn= "+
+                        ticket.getInt(variables.KEY_TIPTRN) +" where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
             }else{
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte="+ticket2+"," +
-                        "codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString("rut") +"', " +
-                        "tiptrn= "+ ticket.getInt("tiptrn") +" where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
+                        "codres='"+getCodDespCG(con)+"' , rut='"+ ticket.getString(variables.KEY_RUT) +"', " +
+                        "tiptrn= "+ ticket.getInt(variables.KEY_TIPTRN) +" where nrotrn = "+ticket.getString(variables.KEY_TICKET_NROTRN)+"");
             }
 
         }else{
@@ -1103,7 +1107,7 @@ public class cgticket {
             data.den_vehicle = rs.getString("den");
             data.tar = rs.getInt("tar");
             data.nroveh = rs.getInt("nroveh");
-            Log.w("Data-Query1", rs.getString("tagadi")  );
+            /*Log.w("Data-Query1", rs.getString("tagadi")  );*/
             if (rs.getString("tagadi")==null || rs.getString("tagadi").equals("")){
                 data.tagadi = 0 ;
             }else {

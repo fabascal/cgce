@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
+            android:id="@+id/icon"
             android:src="@drawable/combuito"
             android:layout_width="50dp"
             android:layout_height="50dp" />
@@ -73,7 +74,7 @@
             android:layout_marginLeft="20dp"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:id="@+id/imageView_1"
+            android:id="@+id/dispensario"
             android:src="@drawable/dispensario"/>
         <Spinner
             android:layout_marginLeft="45dp"

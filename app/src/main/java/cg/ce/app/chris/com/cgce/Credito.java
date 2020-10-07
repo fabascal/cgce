@@ -474,6 +474,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         * 5.- Metodo final, ya con todos los parametros y en espera de impresion
         * 6.-
         * */
+        Log.w(variables.POSICIONES,String.valueOf(Posiciones));
         et_clientecg.setText("");
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         hasMetodo = Validar.getJSONObject(spn_posicion.getSelectedItemPosition()).has(variables.METODO);
@@ -741,6 +742,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
     }
     /*Funcion para el llenado del xml activity_credito_impresion*/
     private void FillScreenFinalData() throws JSONException {
+        ValidacionCarga();
         tv_cliente.setText(GetData(variables.KEY_CLIENTE));
         tv_rfc.setText(GetData(variables.KEY_RFC));
         tv_codcli.setText(GetData(variables.KEY_CODCLI));
@@ -1707,8 +1709,8 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
     }
     private void FillCustomerNFC(String tag){
         try {
-            PutData(variables.KEY_ULT_NROTRN, validacionFlotillero.validar_utlimo_nrotrn(this,
-                    spn_posicion.getSelectedItem().toString()));
+            PutData(variables.KEY_ULT_NROTRN, "1");//validacionFlotillero.validar_utlimo_nrotrn(this,
+                    //spn_posicion.getSelectedItem().toString()));
             JSONObject jsonObject= new JSONObject();
             dataCustomerCG = new ArrayList<>(cgticket_obj.GetCustomerNipCG(
                     this,tag));

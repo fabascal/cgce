@@ -25,6 +25,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -61,6 +62,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
+import cg.ce.app.chris.com.cgce.common.RequestPermission;
+import cg.ce.app.chris.com.cgce.common.Variables;
 
 public class ActivityTicket extends AppCompatActivity implements View.OnClickListener, com.epson.epos2.printer.ReceiveListener {
     /*Elementos Graficos*/
@@ -93,30 +96,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     ProgressDialog pdLoading;
     Drawable image;
     LogCE logCE = new LogCE();
-    final static String KEY_TICKET_NROTRN = "Nrotrn";
-    final static String KEY_TICKET_CANTIDAD = "Cantidad";
-    final static String KEY_TICKET_PRECIO = "Precio";
-    final static String KEY_TICKET_TOTAL = "Total";
-    final static String KEY_TICKET_PRODUCTO = "Producto";
-    final static String KEY_TICKET_BOMBA = "Bomba";
-    final static String KEY_TICKET_DESPACHADOR = "Despachador";
-    final static String KEY_TICKET_FECHA = "Fecha";
-    final static String KEY_TICKET_ID_PRODUCTO = "Id_Producto";
-    final static String KEY_TICKET_CVEEST = "Cveest";
-    final static String KEY_TICKET_CODCLI = "Codcli";
-    final static String KEY_TICKET_DENCLI = "Dencli";
-    final static String KEY_TICKET_HORA = "Hora";
-    final static String KEY_TICKET_CODGAS = "Codgas";
-    final static String KEY_TICKET_CODPRD = "Codprd";
-    final static String KEY_TICKET_NROVEH = "Nroveh";
-    final static String KEY_TICKET_ODM = "Odm";
-    final static String KEY_TICKET_FCHCOR = "Fchcor";
-    final static String KEY_TICKET_NROTUR = "Nrotur";
-    final static String KEY_TICKET_NROCTE = "Nrocte";
-    final static String KEY_TICKET_IVA = "Iva";
-    final static String KEY_TICKET_IEPS = "Ieps";
-    final static String KEY_TICKET_CLIENTE_TIPVAL = "Tipval";
-    final static String KEY_IMPRESO = "Impreso";
+    Variables variables = new Variables();
+    RequestPermission requestPermission = new RequestPermission();
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -126,7 +107,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         sensores.wifi(this, true);
         super.onCreate(savedInstanceState);
         OnCreateScreen();
-        requestRuntimePermission();
+        requestPermission.requestRuntimePermission(this);
         mContext = this;
         nrotrn = findViewById(R.id.nrotrn);
         prd = findViewById(R.id.prd);
@@ -150,13 +131,17 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             try {
                 ticket = cg.consulta_servicio(this, bundle.getString("bomba"));
                 ticket.put("nip", cg.nip_desp(getApplicationContext()));
-                nrotrn.setText(ticket.getString(KEY_TICKET_NROTRN) + "0");
-                prd.setText(ticket.getString(KEY_TICKET_PRODUCTO));
-                cant.setText("LTS " + String.valueOf(formateador4.format(ticket.getDouble(KEY_TICKET_CANTIDAD))));
-                precio.setText("$ " + String.format("%.2f", Double.valueOf(String.valueOf(formateador2.format(ticket.getDouble(KEY_TICKET_PRECIO))))));
-                monto.setText("$ " + String.valueOf(formateador2.format(ticket.getDouble(KEY_TICKET_TOTAL))));
+                nrotrn.setText(ticket.getString(variables.KEY_TICKET_NROTRN) + "0");
+                prd.setText(ticket.getString(variables.KEY_TICKET_PRODUCTO));
+                cant.setText("LTS " + String.valueOf(formateador4.format(ticket.getDouble(
+                        variables.KEY_TICKET_CANTIDAD))));
+                precio.setText("$ " + String.format("%.2f", Double.valueOf(String.valueOf(
+                        formateador2.format(ticket.getDouble(variables.KEY_TICKET_PRECIO))))));
+                monto.setText("$ " + formateador2.format
+                        (ticket.getDouble(variables.KEY_TICKET_TOTAL)));
 
-            } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException e) {
+            } catch (SQLException | IllegalAccessException | InstantiationException |
+                    ClassNotFoundException | JSONException e) {
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
                         .setMessage(String.valueOf(e))
@@ -172,7 +157,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 view_spn_metodo_den();
                 try {
                     fill_spn_metodo_den();
-                } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                } catch (ClassNotFoundException | SQLException | InstantiationException |
+                        JSONException | IllegalAccessException e) {
                     new AlertDialog.Builder(ActivityTicket.this)
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
@@ -245,15 +231,18 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         }
     }
     @Override
-    public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status, final String printJobId) {
+    public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status,
+                             final String printJobId) {
         runOnUiThread(new Runnable() {
             @Override
             public synchronized void run() {
                 Log.w("Code", String.valueOf(code));
                 if (code == 0) {
                     try {
-                        cg.actualizar_cant_impreso(getApplicationContext(), ticket.getString(KEY_TICKET_NROTRN));
-                    } catch (ClassNotFoundException | JSONException | InstantiationException | IllegalAccessException | SQLException e) {
+                        cg.actualizar_cant_impreso(getApplicationContext(),
+                                ticket.getString(variables.KEY_TICKET_NROTRN));
+                    } catch (ClassNotFoundException | JSONException | InstantiationException |
+                            IllegalAccessException | SQLException e) {
                         e.printStackTrace();
                     }
                     Intent intent = new Intent(getApplicationContext(), VentaActivity.class);
@@ -316,16 +305,17 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             tiptrn = 51;
         }
         try {
-            ticket.put("rut", tur);
-            ticket.put("tiptrn", tiptrn);
-            int impreso = cg.cant_impreso(getApplicationContext(), ticket.getString(KEY_TICKET_NROTRN));
+            ticket.put(variables.KEY_RUT, tur);
+            ticket.put(variables.KEY_TIPTRN, tiptrn);
+            int impreso = cg.cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN));
             if (impreso == 10) {
                 Log.w("ticket con tiptrn", ticket.toString());
                 runOnUiThread(new Runnable() {
                     public synchronized void run() {
                         try {
                             cg.guardarnrotrn(getApplicationContext(), ticket, 1);
-                        } catch (ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException | JSONException e) {
+                        } catch (ClassNotFoundException | SQLException | InstantiationException |
+                                IllegalAccessException | JSONException e) {
                             new AlertDialog.Builder(ActivityTicket.this)
                                     .setTitle(R.string.error)
                                     .setMessage(String.valueOf(e))
@@ -342,7 +332,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     pdLoading.dismiss();
                 }
                 if (!state_error) {
-                    cg.actualizar_cant_impreso(getApplicationContext(), ticket.getString(KEY_TICKET_NROTRN));
+                    cg.actualizar_cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN));
                     Intent intent = new Intent(ActivityTicket.this, VentaActivity.class);
                     startActivity(intent);
                 }
@@ -417,11 +407,11 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         JSONObject vehiculo = new JSONObject();
         String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
         String metodoPago = "";
-        ticket.put(KEY_IMPRESO, cg.cant_impreso(getApplicationContext(), ticket.getString(KEY_TICKET_NROTRN)));
-        if (ticket.getInt(KEY_IMPRESO) == 0 || ticket.getInt(KEY_IMPRESO) == 10) {
+        ticket.put(variables.KEY_IMPRESO, cg.cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN)));
+        if (ticket.getInt(variables.KEY_IMPRESO) == 0 || ticket.getInt(variables.KEY_IMPRESO) == 10) {
             titulo = "O R I G I N A L";
-            metodoPago = ticket.getString("rut");
-            folio_impreso = ticket.getString(KEY_TICKET_NROTRN) + "0";
+            metodoPago = ticket.getString(variables.KEY_RUT);
+            folio_impreso = ticket.getString(variables.KEY_TICKET_NROTRN) + "0";
             if ( spn_metodo.getSelectedItem().toString().equals("T. Credito") ||
                     spn_metodo.getSelectedItem().toString().equals("T. Debito")){
                 flag_TicketImpreso= false;
@@ -429,19 +419,19 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 flag_TicketImpreso=true;
             }
 
-        } else if (ticket.getInt(KEY_IMPRESO) == 1) {
+        } else if (ticket.getInt(variables.KEY_IMPRESO) == 1) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
             metodoPago = cg.get_rut(mContext, ticket);
             flag_TicketImpreso = true;
         }
         Log.w("ticket", ticket.toString());
-        if (ticket.getInt(KEY_TICKET_CODCLI) != 0) {
-            vehiculo = cg.get_vehiculo(mContext, ticket.getString(KEY_TICKET_NROTRN), ticket.getString(KEY_TICKET_BOMBA));
-            cliente = ticket.getString(KEY_TICKET_DENCLI);
+        if (ticket.getInt(variables.KEY_TICKET_CODCLI) != 0) {
+            vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));
+            cliente = ticket.getString(variables.KEY_TICKET_DENCLI);
             venta = "CREDITO";
         } else {
-            vehiculo = cg.get_vehiculo(mContext, ticket.getString(KEY_TICKET_NROTRN), ticket.getString(KEY_TICKET_BOMBA));
+            vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));
 
             if (ticket.has("tpv")) {
                 if (ticket.getJSONObject("tpv").has("nombre")) {
@@ -474,7 +464,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         textData.append("\n");
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
-        textData.append(ticket.getString(KEY_TICKET_CVEEST) + "\n");
+        textData.append(ticket.getString(variables.KEY_TICKET_CVEEST) + "\n");
         mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
@@ -522,19 +512,19 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         method = "addText";
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
-        textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + String.valueOf(ticket.getInt(KEY_TICKET_BOMBA)) + "\n");
-        textData.append("FECHA: " + ticket.getString(KEY_TICKET_FECHA) + "  HORA: " + ticket.getString(KEY_TICKET_HORA) + "\n");
-        textData.append("VENDEDOR  : " + String.valueOf(ticket.getString(KEY_TICKET_DESPACHADOR)).toUpperCase() + "\n");
-        textData.append("PRECIO    : $ " + String.format("%.2f", Double.valueOf(formateador2.format(ticket.getDouble(KEY_TICKET_PRECIO)))) + "\n");
-        textData.append("VOLUMEN   : " + String.format("%.4f", Double.valueOf(formateador4.format(ticket.getDouble(KEY_TICKET_CANTIDAD)))) + " LITROS " + String.valueOf(ticket.getString(KEY_TICKET_PRODUCTO)).toUpperCase() + "\n");
+        textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + ticket.getInt(variables.KEY_TICKET_BOMBA) + "\n");
+        textData.append("FECHA: " + ticket.getString(variables.KEY_TICKET_FECHA) + "  HORA: " + ticket.getString(variables.KEY_TICKET_HORA) + "\n");
+        textData.append("VENDEDOR  : " + String.valueOf(ticket.getString(variables.KEY_TICKET_DESPACHADOR)).toUpperCase() + "\n");
+        textData.append("PRECIO    : $ " + String.format("%.2f", Double.valueOf(formateador2.format(ticket.getDouble(variables.KEY_TICKET_PRECIO)))) + "\n");
+        textData.append("VOLUMEN   : " + String.format("%.4f", Double.valueOf(formateador4.format(ticket.getDouble(variables.KEY_TICKET_CANTIDAD)))) + " LITROS " + String.valueOf(ticket.getString(variables.KEY_TICKET_PRODUCTO)).toUpperCase() + "\n");
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
-        textData.append("IMPORTE   : $ " + formateador2.format(ticket.getDouble(KEY_TICKET_TOTAL)) + "\n");
+        textData.append("IMPORTE   : $ " + formateador2.format(ticket.getDouble(variables.KEY_TICKET_TOTAL)) + "\n");
         mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
         mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
-        textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble(KEY_TICKET_TOTAL))), true) + "\n");
+        textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble(variables.KEY_TICKET_TOTAL))), true) + "\n");
         //textData.append("\n");
         textData.append("\n");
         textData.append("------------------------------\n");
@@ -551,7 +541,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
 
-        if (ticket.getInt(KEY_IMPRESO) == 0 || ticket.getInt(KEY_IMPRESO) == 10) {
+        if (ticket.getInt(variables.KEY_IMPRESO) == 0 || ticket.getInt(variables.KEY_IMPRESO) == 10) {
             Bitmap qrrespol = null;
             QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(ticket, datos_domicilio),
                     null,
@@ -603,7 +593,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
            /* textData.append("\n");*/
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
-            textData.append(ticket.getString(KEY_TICKET_CVEEST) + "\n");
+            textData.append(ticket.getString(variables.KEY_TICKET_CVEEST) + "\n");
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
@@ -651,19 +641,19 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             method = "addText";
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
-            textData.append("TICKET    : " + "C O P I A" + "   BOMBA : " + String.valueOf(ticket.getInt(KEY_TICKET_BOMBA)) + "\n");
-            textData.append("FECHA: " + ticket.getString(KEY_TICKET_FECHA) + "  HORA: " + ticket.getString(KEY_TICKET_HORA) + "\n");
-            textData.append("VENDEDOR  : " + String.valueOf(ticket.getString(KEY_TICKET_DESPACHADOR)).toUpperCase() + "\n");
-            textData.append("PRECIO    : $ " + String.format("%.2f", Double.valueOf(formateador2.format(ticket.getDouble(KEY_TICKET_PRECIO)))) + "\n");
-            textData.append("VOLUMEN   : " + String.format("%.4f", Double.valueOf(formateador4.format(ticket.getDouble(KEY_TICKET_CANTIDAD)))) + " LITROS " + String.valueOf(ticket.getString(KEY_TICKET_PRODUCTO)).toUpperCase() + "\n");
+            textData.append("TICKET    : " + "C O P I A" + "   BOMBA : " + String.valueOf(ticket.getInt(variables.KEY_TICKET_BOMBA)) + "\n");
+            textData.append("FECHA: " + ticket.getString(variables.KEY_TICKET_FECHA) + "  HORA: " + ticket.getString(variables.KEY_TICKET_HORA) + "\n");
+            textData.append("VENDEDOR  : " + String.valueOf(ticket.getString(variables.KEY_TICKET_DESPACHADOR)).toUpperCase() + "\n");
+            textData.append("PRECIO    : $ " + String.format("%.2f", Double.valueOf(formateador2.format(ticket.getDouble(variables.KEY_TICKET_PRECIO)))) + "\n");
+            textData.append("VOLUMEN   : " + String.format("%.4f", Double.valueOf(formateador4.format(ticket.getDouble(variables.KEY_TICKET_CANTIDAD)))) + " LITROS " + String.valueOf(ticket.getString(variables.KEY_TICKET_PRODUCTO)).toUpperCase() + "\n");
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
-            textData.append("IMPORTE   : $ " + formateador2.format(ticket.getDouble(KEY_TICKET_TOTAL)) + "\n");
+            textData.append("IMPORTE   : $ " + formateador2.format(ticket.getDouble(variables.KEY_TICKET_TOTAL)) + "\n");
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.TRUE, mPrinter.PARAM_DEFAULT);
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
-            textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble(KEY_TICKET_TOTAL))), true) + "\n");
+            textData.append(letra.Convertir(String.valueOf(formateador21.format(ticket.getDouble(variables.KEY_TICKET_TOTAL))), true) + "\n");
             //textData.append("\n");
             textData.append("\n");
             textData.append("------------------------------\n");
@@ -682,9 +672,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             mPrinter.addText(textData.toString());
         }
         /*funcion para los sorteos*/
-        if (ticket.getInt(KEY_IMPRESO) == 0 || ticket.getInt(KEY_IMPRESO) == 10) {
+        if (ticket.getInt(variables.KEY_IMPRESO) == 0 || ticket.getInt(variables.KEY_IMPRESO) == 10) {
             if (sorteo > 0) {
-                if (ticket.getDouble(KEY_TICKET_TOTAL) >= 200) {
+                if (ticket.getDouble(variables.KEY_TICKET_TOTAL) >= 200) {
                     Bitmap logoviaje = BitmapFactory.decodeResource(getResources(), R.drawable.ganaconcombu);
                     method = "addImage";
                     mPrinter.addImage(logoviaje, 0, 0,
@@ -711,9 +701,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     mPrinter.addTextAlign(Printer.ALIGN_LEFT);
                     textData.append("             ESTACION   :   " + datos_domicilio.getString("estacion") + "\n");
                     textData.append("                FOLIO   :   " + folio_impreso + "\n");
-                    textData.append("                FECHA   :   " + ticket.getString(KEY_TICKET_FECHA) + "\n");
-                    textData.append("                MONTO   :   " + formateador2.format(ticket.getDouble(KEY_TICKET_TOTAL)) + "\n");
-                    textData.append("             PRODUCTO   :   " + ticket.getString(KEY_TICKET_PRODUCTO) + "\n");
+                    textData.append("                FECHA   :   " + ticket.getString(variables.KEY_TICKET_FECHA) + "\n");
+                    textData.append("                MONTO   :   " + formateador2.format(ticket.getDouble(variables.KEY_TICKET_TOTAL)) + "\n");
+                    textData.append("             PRODUCTO   :   " + ticket.getString(variables.KEY_TICKET_PRODUCTO) + "\n");
                     mPrinter.addText(textData.toString());
                     textData.delete(0, textData.length());
                     mPrinter.addTextAlign(Printer.ALIGN_CENTER);
@@ -731,9 +721,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     //QR
 
                     Bitmap qrcfdi = null;
-                    String qr_cadena = "URL: https://ganaconcombu.com?es=" + ticket.getString(KEY_TICKET_CVEEST)
-                            + "&fo=" + String.valueOf(folio_impreso) + "&fe=" + ticket.getString(KEY_TICKET_FECHA)
-                            + "&mo=" + formateador2.format(ticket.getDouble(KEY_TICKET_TOTAL)) + "&pr=" + ticket.getString(KEY_TICKET_CODPRD);
+                    String qr_cadena = "URL: https://ganaconcombu.com?es=" + ticket.getString(variables.KEY_TICKET_CVEEST)
+                            + "&fo=" + String.valueOf(folio_impreso) + "&fe=" + ticket.getString(variables.KEY_TICKET_FECHA)
+                            + "&mo=" + formateador2.format(ticket.getDouble(variables.KEY_TICKET_TOTAL)) + "&pr=" + ticket.getString(variables.KEY_TICKET_CODPRD);
                     QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qr_cadena,
                             null,
                             Contents.Type.TEXT,
@@ -776,10 +766,10 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     }
 
     public String repsolQR(JSONObject jsticket, JSONObject jsdomicilio) throws JSONException {
-        Double ieps = jsticket.getDouble(KEY_TICKET_IEPS);
-        Double iva_factor = jsticket.getDouble(KEY_TICKET_IVA);
-        Double lts = jsticket.getDouble(KEY_TICKET_CANTIDAD);
-        Double pre = jsticket.getDouble(KEY_TICKET_PRECIO);
+        Double ieps = jsticket.getDouble(variables.KEY_TICKET_IEPS);
+        Double iva_factor = jsticket.getDouble(variables.KEY_TICKET_IVA);
+        Double lts = jsticket.getDouble(variables.KEY_TICKET_CANTIDAD);
+        Double pre = jsticket.getDouble(variables.KEY_TICKET_PRECIO);
         Double ivaentre = Double.valueOf("1" + iva_factor);
         Double precioneto = ((Double.valueOf(pre) - ieps) / ivaentre) * 100;
         Double iva = ((precioneto * lts) * iva_factor) / 100;
@@ -789,11 +779,11 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         String inicio = precio_total.substring(0, precio_total.indexOf(substr));
         String fin = precio_total.substring(precio_total.indexOf(substr) + substr.length());
         String precio_impresion = inicio + "." + fin.substring(0, 2);
-        String qr = "COMBUGO|" + jsticket.getString(KEY_TICKET_CVEEST) + "|" +
+        String qr = "COMBUGO|" + jsticket.getString(variables.KEY_TICKET_CVEEST) + "|" +
                 jsdomicilio.getString("estacion") + "|" +
-                jsticket.getString(KEY_TICKET_FECHA) + "|" + jsticket.getString(KEY_TICKET_HORA) +
+                jsticket.getString(variables.KEY_TICKET_FECHA) + "|" + jsticket.getString(variables.KEY_TICKET_HORA) +
                 "|" + precio_impresion + "|" + formateador2.format(iva) + "|" +
-                jsticket.getString(KEY_TICKET_TOTAL) + "|" + jsticket.getString(KEY_TICKET_NROTRN) + "|";
+                jsticket.getString(variables.KEY_TICKET_TOTAL) + "|" + jsticket.getString(variables.KEY_TICKET_NROTRN) + "|";
         return qr;
     }
 
@@ -968,29 +958,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         return msg;
     }
 
-
-    private void requestRuntimePermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return;
-        }
-
-        int permissionStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        List<String> requestPermissions = new ArrayList<>();
-
-        if (permissionStorage == PackageManager.PERMISSION_DENIED) {
-            requestPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (permissionLocation == PackageManager.PERMISSION_DENIED) {
-            requestPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-
-        if (!requestPermissions.isEmpty()) {
-            ActivityCompat.requestPermissions(this, requestPermissions.toArray(new String[requestPermissions.size()]), REQUEST_PERMISSION);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode != REQUEST_PERMISSION || grantResults.length == 0) {
@@ -1005,6 +972,14 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 requestPermissions.add(permissions[i]);
             }
             if (permissions[i].equals(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+            if (permissions[i].equals(Manifest.permission.CAMERA)
+                    && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                requestPermissions.add(permissions[i]);
+            }
+            if (permissions[i].equals(Manifest.permission.BLUETOOTH)
                     && grantResults[i] == PackageManager.PERMISSION_DENIED) {
                 requestPermissions.add(permissions[i]);
             }
