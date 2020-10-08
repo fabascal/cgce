@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -59,6 +61,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     ValidateTablet tablet = new ValidateTablet();
     LogCE logCE = new LogCE();
     RequestPermission requestPermission = new RequestPermission();
+    Drawable icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,22 +103,20 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                     .build());
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_venta);
+        DrawerLayout drawer = findViewById(R.id.activity_venta);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_venta);
+        DrawerLayout drawer = findViewById(R.id.activity_venta);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            //super.onBackPressed();
         }
     }
 
@@ -146,10 +147,9 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Intent intent = null;
+        Intent intent ;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -176,7 +176,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
             startActivity(update);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_venta);
+        DrawerLayout drawer = findViewById(R.id.activity_venta);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -190,10 +190,13 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     public void CallJarreo(MenuItem menuItem){
         /*esta accion muestra un dialogo para corroborar datos*/
         final EditText nipManager = new EditText(this);
+        nipManager.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD | InputType.TYPE_CLASS_NUMBER);
         nipManager.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
         new AlertDialog.Builder(VentaActivity.this)
                 .setTitle(R.string.jarreo)
                 .setMessage(R.string.jarreo_msj)
+                .setIcon(icon)
                 .setView(nipManager)
                 .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -207,6 +210,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                         } catch (SQLException | ClassNotFoundException | InstantiationException | JSONException | IllegalAccessException e) {
                             new AlertDialog.Builder(VentaActivity.this)
                                     .setTitle(R.string.error)
+                                    .setIcon(icon)
                                     .setMessage(String.valueOf(e))
                                     .setPositiveButton(R.string.btn_ok,null).show();
                             logCE.EscirbirLog2(getApplicationContext(),"VentaActivity_CallJarreo - " + e);
@@ -219,10 +223,18 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                                 dialogFragment.show(transaction, String.valueOf(R.string.jarreo));
                             }else {
                                 nipManager.setFocusable(true);
-                                Toast.makeText(getApplicationContext(),R.string.nipWrong,Toast.LENGTH_LONG).show();
+                                new AlertDialog.Builder(VentaActivity.this)
+                                        .setTitle(R.string.error)
+                                        .setIcon(icon)
+                                        .setMessage(R.string.nipWrong)
+                                        .setPositiveButton(R.string.btn_ok,null).show();
                             }
                         }else{
-                            Toast.makeText(getApplicationContext(),R.string.nonipmanager,Toast.LENGTH_LONG).show();
+                            new AlertDialog.Builder(VentaActivity.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(icon)
+                                    .setMessage(R.string.nonipmanager)
+                                    .setPositiveButton(R.string.btn_ok,null).show();
                         }
 
                     }
@@ -301,18 +313,22 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
             case "Combu-Express":
                 setTheme(R.style.AppTheme);
                 setContentView(R.layout.activity_venta);
+                icon = getDrawable(R.drawable.combuito);
                 break;
             case "Repsol":
                 setTheme(R.style.ContentMainRepsol);
                 setContentView(R.layout.activity_venta_repsol);
+                icon = getDrawable(R.drawable.isologo_repsol);
                 break;
             case "Ener":
                 setTheme(R.style.ContentMainEner);
                 setContentView(R.layout.activity_venta_ener);
+                icon = getDrawable(R.drawable.logo_impresion_ener);
                 break;
             case "Total":
                 setTheme(R.style.ContentMainTotal);
                 setContentView(R.layout.activity_venta_total);
+                icon = getDrawable(R.drawable.total);
                 break;
         }
         if (tablet.esTablet(getApplicationContext())){

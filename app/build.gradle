@@ -27,8 +27,8 @@ android {
         applicationId "cg.ce.app.chris.com.cgce"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 3324
-        versionName "3.3.2.4"
+        versionCode 3400
+        versionName "3.4.0.0"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi", "x86"
@@ -93,9 +93,7 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
+
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
     implementation files('libs/ePOS2.jar')
     implementation files('libs/ePOSEasySelect.jar')

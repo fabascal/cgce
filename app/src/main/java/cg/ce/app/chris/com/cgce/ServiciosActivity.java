@@ -1,11 +1,16 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import cg.ce.app.chris.com.cgce.Gmail.GMailSender;
 
@@ -13,16 +18,13 @@ public class ServiciosActivity extends AppCompatActivity implements CinepolisAsy
     Button ventaboleto;
     EditText subject;
     String correo = null;
-
-
-
+    ValidateTablet tablet = new ValidateTablet();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_servicios);
-        ventaboleto = (Button) findViewById(R.id.ventaboleto);
-        subject = (EditText) findViewById(R.id.subject);
+        BrandSharedPreferences();
+        subject = findViewById(R.id.subject);
         ventaboleto.setOnClickListener(ServiciosActivity.this);
     }
 
@@ -397,6 +399,7 @@ public class ServiciosActivity extends AppCompatActivity implements CinepolisAsy
                 bundle.putString("folio","");
                 cinepolisBoleto.setArguments(bundle);
                 cinepolisBoleto.show(getFragmentManager(), "dialog");
+                break;
                 /*
                 if (subject.getText().length()>0){
                     correo=subject.getText().toString();
@@ -415,6 +418,42 @@ public class ServiciosActivity extends AppCompatActivity implements CinepolisAsy
         //Here you will receive the result fired from async class
         //of onPostExecute(result) method.
         Log.w("res1",output);
+
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_servicios);
+                ventaboleto =  findViewById(R.id.ventaboleto);
+                ventaboleto.setBackgroundResource(R.drawable.ticketcinecombu);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_servicios);
+                ventaboleto =  findViewById(R.id.ventaboleto);
+                ventaboleto.setBackgroundResource(R.drawable.ticketcinerepsol);
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_servicios);
+                ventaboleto =  findViewById(R.id.ventaboleto);
+                ventaboleto.setBackgroundResource(R.drawable.ticketcineener);
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_servicios);
+                ventaboleto =    findViewById(R.id.ventaboleto);
+                ventaboleto.setBackgroundResource(R.drawable.ticketcinetotal);
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
     }
 }

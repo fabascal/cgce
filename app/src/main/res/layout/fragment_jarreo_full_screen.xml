@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.JarreoFullScreenFragment"
-    android:background="@drawable/fondogris">
+    android:background="@drawable/fondorepsolgris">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -50,13 +50,14 @@
             app:layout_constraintBottom_toBottomOf="@id/guideline2"
             android:padding="@dimen/common_default_padding">
             <ImageView
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
-                android:id="@+id/imageView_1"
+                android:contentDescription="@string/bomba"
+                android:id="@+id/dispensario"
                 android:src="@drawable/dispensario"/>
             <Spinner
-                android:layout_marginLeft="45dp"
+                android:layout_marginStart="45dp"
                 android:id="@+id/spn_fab_contado"
                 android:layout_width="wrap_content"
                 android:textAlignment="center"
@@ -72,14 +73,15 @@
             app:layout_constraintTop_toBottomOf="@id/ll_bomba"
             android:padding="@dimen/common_default_padding">
             <ImageView
-                android:layout_marginLeft="20dp"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:id="@+id/imageView_2"
-                android:src="@drawable/spn_jarreo"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/jarreo"
+                android:contentDescription="@string/jarreo"
+                android:src="@drawable/jarreocombu"
                 android:layout_gravity="center"/>
             <Spinner
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:id="@+id/spn_tiptrn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,6 +100,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline1"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/title_printerlist"
             android:background="@color/TRANSPARENT"/>
 
     </android.support.constraint.ConstraintLayout>
