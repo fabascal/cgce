@@ -20,6 +20,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,18 +88,10 @@ public class JarreoFullScreenFragment extends DialogFragment {
                     nrotrn = ticket.getString("nrotrn");
                     Log.w("nrotrn",nrotrn);
                     cgticket.setTipTrn(getActivity(),tiptrn,nrotrn);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (java.lang.InstantiationException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (SQLException | IllegalAccessException | java.lang.InstantiationException |
+                        ClassNotFoundException | JSONException | SocketException e) {
                     e.printStackTrace();
                 }
-
                 Toast.makeText(getActivity(),tiptrn +"|"+posicion,Toast.LENGTH_LONG).show();
             }
         });

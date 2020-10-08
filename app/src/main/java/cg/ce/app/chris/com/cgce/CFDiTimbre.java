@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.SQLException;
 
@@ -60,7 +61,8 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
             this.comentarios=String.valueOf(jsonObject.getString("comentario"));
             this.nip=cg.nip_desp(context);
             this.bandera=String.valueOf(jsonObject.getString("bandera"));
-        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
+                IllegalAccessException | SocketException e) {
             e.printStackTrace();
         }
     }

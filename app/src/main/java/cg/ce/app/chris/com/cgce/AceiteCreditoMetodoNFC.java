@@ -45,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.SQLException;
 
@@ -281,7 +282,8 @@ public class AceiteCreditoMetodoNFC extends AppCompatActivity implements View.On
                 img_aceite.setImageBitmap(decodeBase64(jsonproducto.getString("imagen")));
                 img_aceite.setBackgroundColor(Color.TRANSPARENT);
             }
-        }catch(JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e){
+        }catch(JSONException | ClassNotFoundException | SQLException | InstantiationException |
+                IllegalAccessException | SocketException e){
             e.printStackTrace();
         }
     }

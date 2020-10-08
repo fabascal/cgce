@@ -55,6 +55,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -141,7 +142,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                         (ticket.getDouble(variables.KEY_TICKET_TOTAL)));
 
             } catch (SQLException | IllegalAccessException | InstantiationException |
-                    ClassNotFoundException | JSONException e) {
+                    ClassNotFoundException | JSONException | SocketException e) {
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
                         .setMessage(String.valueOf(e))
@@ -315,7 +316,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                         try {
                             cg.guardarnrotrn(getApplicationContext(), ticket, 1);
                         } catch (ClassNotFoundException | SQLException | InstantiationException |
-                                IllegalAccessException | JSONException e) {
+                                IllegalAccessException | JSONException | SocketException e) {
                             new AlertDialog.Builder(ActivityTicket.this)
                                     .setTitle(R.string.error)
                                     .setMessage(String.valueOf(e))

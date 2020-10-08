@@ -439,48 +439,41 @@ public class ValidacionFlotillero {
     //la funcion validsar_monto es para realizar las validaciones de monto en el flotillero
     //si no esta establecido ningun limite regresa "1", si hay alguno establecido
     //valida que el limite sea menor o igual al acumulado, si se cumple regresa "1" si no un "0"
-    public int validar_monto(Context context, String tag, String metodo) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public int validar_monto(Context context, String tag, String metodo) throws
+            ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         int resultado=0;
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            if (metodo=="nfc") {
-                query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tag= '" + tag + "'";
-            }else if(metodo=="nip"){
-                query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tag= '" + tag + "'";
-            }else if(metodo=="nombre"){
-                query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tar= '" + tag + "'";
-            }
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                int carmax= r.getInt("carmax");
-                int candia= r.getInt("candia");
-                int cansem= r.getInt("cansem");
-                int canmes= r.getInt("canmes");
-                int acudia= r.getInt("acudia");
-                int acusem= r.getInt("acusem");
-                int acumes= r.getInt("acumes");
-                if (carmax==0 && candia==0 && cansem==0 && canmes==0){
-                    resultado=1;
-                }else if(candia <= acudia || cansem <= acusem || canmes <= acumes ){
-                    resultado=1;
-                }else{
-                    resultado=0;
-                }
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Statement stmt = connection.createStatement();
+        String query="";
+        if (metodo=="nfc") {
+            query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tag= '" + tag + "'";
+        }else if(metodo=="nip"){
+            query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tag= '" + tag + "'";
+        }else if(metodo=="nombre"){
+            query = "select carmax,candia,cansem,canmes,acudia,acusem,acumes from ClientesVehiculos where tar= '" + tag + "'";
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            int carmax= r.getInt("carmax");
+            int candia= r.getInt("candia");
+            int cansem= r.getInt("cansem");
+            int canmes= r.getInt("canmes");
+            int acudia= r.getInt("acudia");
+            int acusem= r.getInt("acusem");
+            int acumes= r.getInt("acumes");
+            if (carmax==0 && candia==0 && cansem==0 && canmes==0){
+                resultado=1;
+            }else if(candia <= acudia || cansem <= acusem || canmes <= acumes ){
+                resultado=1;
+            }else{
+                resultado=0;
+            }
         }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
         return resultado;
     }
 
@@ -490,37 +483,29 @@ public class ValidacionFlotillero {
         String resultado="TODOS";
         ResultSet r;
         Connection connection= cg.odbc_cg(context);
-        try {
-            Statement stmt = connection.createStatement();
-            String query="";
-            if (metodo=="nfc") {
-                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
-                        "left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
-            }else if(metodo=="nip"){
-                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
-                        "left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
-            }else if(metodo=="nombre"){
-                query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
-                        "left outer join Productos as p on p.cod=cv.codprd where cv.tar='" + tag + "'";
-            }
-            r = stmt.executeQuery(query);
-            while (r.next()) {
-                int cod=r.getInt("cod");
-                if (cod!=0) {
-                    resultado = r.getString("combustible");
-                }
-            }
-            connection.close();
-            r.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Statement stmt = connection.createStatement();
+        String query="";
+        if (metodo=="nfc") {
+            query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
+                    "left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
+        }else if(metodo=="nip"){
+            query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
+                    "left outer join Productos as p on p.cod=cv.codprd where cv.tag='" + tag + "'";
+        }else if(metodo=="nombre"){
+            query = "select p.den as combustible,cv.codprd as cod from ClientesVehiculos as cv " +
+                    "left outer join Productos as p on p.cod=cv.codprd where cv.tar='" + tag + "'";
         }
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        r = stmt.executeQuery(query);
+        while (r.next()) {
+            int cod=r.getInt("cod");
+            if (cod!=0) {
+                resultado = r.getString("combustible");
+            }
         }
+        connection.close();
+        r.close();
+        stmt.close();
+        connection.close();
         return resultado;
     }
 
@@ -622,30 +607,21 @@ public class ValidacionFlotillero {
     }
 
     //funcion que revisa el servidor flotillero
-    public boolean isServerReachable(String serverURL,Context context) {
-
+    public boolean isServerReachable(String serverURL,Context context) throws IOException {
         ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connMan.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnected()) {
-            try {
-                URL urlServer = new URL(serverURL);
-                HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
-                urlConn.setConnectTimeout(3000); //<- 3Seconds Timeout
-                urlConn.connect();
-                if (urlConn.getResponseCode() == 200) {
-                    //Toast.makeText(context, "Server is Available", Toast.LENGTH_LONG).show();
-                    urlConn.disconnect();
-                    return true;
-                } else {
-                    urlConn.disconnect();
-                    //Toast.makeText(context, "Server is not Available", Toast.LENGTH_LONG).show();
-                    return false;
-                }
-            } catch (MalformedURLException e1) {
-                Log.w("error1",e1);
-                return false;
-            } catch (IOException e) {
-                Log.w("error",e);
+            URL urlServer = new URL(serverURL);
+            HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
+            urlConn.setConnectTimeout(3000); //<- 3Seconds Timeout
+            urlConn.connect();
+            if (urlConn.getResponseCode() == 200) {
+                //Toast.makeText(context, "Server is Available", Toast.LENGTH_LONG).show();
+                urlConn.disconnect();
+                return true;
+            } else {
+                urlConn.disconnect();
+                //Toast.makeText(context, "Server is not Available", Toast.LENGTH_LONG).show();
                 return false;
             }
         }

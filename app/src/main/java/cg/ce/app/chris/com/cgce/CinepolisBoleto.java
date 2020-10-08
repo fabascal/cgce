@@ -17,6 +17,7 @@ import com.epson.epos2.printer.Printer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.sql.SQLException;
 
 public class CinepolisBoleto extends DialogFragment implements View.OnClickListener, CinepolisAsyncResponse {
@@ -84,7 +85,7 @@ public class CinepolisBoleto extends DialogFragment implements View.OnClickListe
                     }
                     try {
                         cgticket.guardarnrotrn3(getActivity(),tvfolio.getText().toString(),tvmail.getText().toString(),tvboletos.getText().toString(),tvprecio.getText().toString() ,3);
-                    } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException |JSONException | IllegalAccessException e) {
+                    } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException | SocketException e) {
                         e.printStackTrace();
                     }
                 }

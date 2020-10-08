@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,6 +53,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -100,13 +103,14 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     LinearLayout imageView;
     ProgressDialog progress;
     private Printer mPrinter = null;
+    Drawable icon, logo;
 
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aceite);
+        BrandSharedPreferences();
         /*Funcion para obtener el tamaño del dispositivo y orientar la pantalla*/
         ScreenDevice();
         Bundle bundle = getIntent().getExtras();
@@ -145,6 +149,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             } catch (JSONException e) {
                 new AlertDialog.Builder(AceiteActivity.this)
                         .setTitle(R.string.error)
+                        .setIcon(icon)
                         .setMessage(String.valueOf(e))
                         .setPositiveButton(R.string.btn_ok,null).show();
                 e.printStackTrace();
@@ -174,9 +179,10 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             jsAceiteTicket.put("despachador",cg.nombre_depsachador(this));
             jsAceiteTicket.put("fecha", df.format(Calendar.getInstance().getTime()));
         } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException e) {
+                IllegalAccessException | SocketException e) {
             new AlertDialog.Builder(AceiteActivity.this)
                     .setTitle(R.string.error)
+                    .setIcon(icon)
                     .setMessage(String.valueOf(e))
                     .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
@@ -252,6 +258,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 String e = "No puedes vender mas de 9 productos distintos.";
                 new AlertDialog.Builder(AceiteActivity.this)
                         .setTitle(R.string.error)
+                        .setIcon(icon)
                         .setMessage(String.valueOf(e))
                         .setPositiveButton(R.string.btn_ok,null).show();
             }
@@ -303,6 +310,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 new AlertDialog.Builder(AceiteActivity.this)
                         .setTitle(R.string.error)
                         .setMessage(String.valueOf(e))
+                        .setIcon(icon)
                         .setPositiveButton(R.string.btn_ok,null).show();
                 e.printStackTrace();
             }
@@ -342,6 +350,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                                 {
                                     new AlertDialog.Builder(AceiteActivity.this)
                                             .setTitle(R.string.error)
+                                            .setIcon(icon)
                                             .setMessage(e.toString() )
                                             .setPositiveButton(R.string.btn_ok, null).show();
                                 }
@@ -408,6 +417,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         } catch (JSONException e) {
             new AlertDialog.Builder(AceiteActivity.this)
                     .setTitle(R.string.error)
+                    .setIcon(icon)
                     .setMessage(e.toString() )
                     .setPositiveButton(R.string.btn_ok, null).show();
         }
@@ -437,6 +447,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             progress.dismiss();
             new AlertDialog.Builder(AceiteActivity.this)
                     .setTitle(R.string.error)
+                    .setIcon(icon)
                     .setMessage(output)
                     .setPositiveButton(R.string.btn_ok, null).show();
         }else{
@@ -448,6 +459,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                         + " por un total de $" + ticketPrint.getString("total");
                 new AlertDialog.Builder(AceiteActivity.this)
                         .setTitle(R.string.error)
+                        .setIcon(icon)
                         .setMessage(String.valueOf(e))
                         .setPositiveButton(R.string.btn_ok, null).show();
                 flag_Gateway_printer=1;
@@ -460,6 +472,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                         String dialog = "No se puede modificar las cantidades ya vendidas.";
                         new AlertDialog.Builder(AceiteActivity.this)
                                 .setTitle(R.string.error)
+                                .setIcon(icon)
                                 .setMessage(dialog)
                                 .setPositiveButton(R.string.btn_ok, null).show();
                         return true;
@@ -468,10 +481,11 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-            } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException
-                    | JSONException e) {
+            } catch (SQLException | IllegalAccessException | InstantiationException |
+                    ClassNotFoundException | JSONException | SocketException e) {
                 new AlertDialog.Builder(AceiteActivity.this)
                         .setTitle(R.string.error)
+                        .setIcon(icon)
                         .setMessage(String.valueOf(e))
                         .setPositiveButton(R.string.btn_ok, null).show();
                 e.printStackTrace();
@@ -485,6 +499,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             String dialog = "No se puede regresar a la pantalla anterior sin imprimir.";
             new AlertDialog.Builder(AceiteActivity.this)
                     .setTitle(R.string.error)
+                    .setIcon(icon)
                     .setMessage(dialog)
                     .setPositiveButton(R.string.btn_ok, null).show();
         }else {
@@ -542,7 +557,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         int smallerDimension = width < height ? 380 : 380;
         //Tenemos que crear busqueda de servicio para aceites
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(getResources(), R.drawable.logo_impresion_total);
+        Bitmap logoData = ((BitmapDrawable) logo).getBitmap();
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         if (mPrinter == null) {
@@ -920,5 +935,40 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 }).start();
             }
         });
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_aceite);
+                icon = getDrawable(R.drawable.combuito);
+                logo = getDrawable(R.drawable.logo_impresion);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_aceite_repsol);
+                icon = getDrawable(R.drawable.isologo_repsol);
+                logo = getDrawable(R.drawable.logo_impresion_repsol);
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_aceite_ener);
+                icon = getDrawable(R.drawable.logo_impresion_ener);
+                logo = getDrawable(R.drawable.logo_impresion_ener);
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_aceite_total);
+                icon = getDrawable(R.drawable.total);
+                logo = getDrawable(R.drawable.logo_impresion_total);
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 }

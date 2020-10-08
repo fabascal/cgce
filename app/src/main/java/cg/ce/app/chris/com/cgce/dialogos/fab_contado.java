@@ -36,6 +36,7 @@ import com.google.zxing.WriterException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -226,7 +227,7 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
                         }
                     }).start();
                 } catch (SQLException | IllegalAccessException | java.lang.InstantiationException |
-                        ClassNotFoundException | JSONException e) {
+                        ClassNotFoundException | JSONException | SocketException e) {
                     logCE.EscirbirLog2(mContext,"ActivityTicket_PrintReceip - " + e);
                     ((Activity) mContext).runOnUiThread(new Runnable() {
                         @Override
@@ -285,7 +286,8 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
                                 ticket.put(variables.KEY_RUT,rut);
                                 cg.guardarnrotrn(getActivity(), ticket, 1);
                             } catch (ClassNotFoundException | SQLException |
-                                    java.lang.InstantiationException | IllegalAccessException | JSONException e) {
+                                    java.lang.InstantiationException | IllegalAccessException |
+                                    JSONException | SocketException e) {
                                 e.printStackTrace();
                             }
                         }

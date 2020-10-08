@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +34,7 @@ public class cgticket {
     Variables variables = new Variables();
 
     public JSONObject consulta_servicio(Context con,String bomba) throws SQLException,
-            IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
+            IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException, SocketException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String base;
@@ -122,7 +123,7 @@ public class cgticket {
         return result;
     }
     public JSONObject consulta_servicio_aceite(Context con,String bomba) throws SQLException,
-            IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException {
+            IllegalAccessException, InstantiationException, ClassNotFoundException, JSONException, SocketException {
         String nrotrn_mayor = get_nrotrn_aceite(con, bomba);
         String nrotrn_menor = nrotrn_mayor.substring(0,nrotrn_mayor.length()-1) + "0";
         DataBaseManager manager = new DataBaseManager(con);
@@ -262,7 +263,7 @@ public class cgticket {
         return nip;
     }
     public JSONObject corte_cinepolis(Context context) throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         JSONObject resultado = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -286,7 +287,7 @@ public class cgticket {
         return resultado;
     }
     public JSONObject corte_datos(Context context) throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         JSONObject resultado = new JSONObject();
         DataBaseManager manager = new DataBaseManager(context);
         cursor = manager.cargarcursorodbc2();
@@ -370,7 +371,7 @@ public class cgticket {
     }
     public boolean guardarnrotrn2 (Context con, String ticket, int venta) throws
             ClassNotFoundException, SQLException, InstantiationException, JSONException,
-            IllegalAccessException {
+            IllegalAccessException, SocketException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String base = null;
@@ -390,7 +391,7 @@ public class cgticket {
     }
     public boolean guardarnrotrn3 (Context con, String folio, String correo, String boletos,
                                    String total, int venta) throws ClassNotFoundException,
-            SQLException, InstantiationException, JSONException, IllegalAccessException {
+            SQLException, InstantiationException, JSONException, IllegalAccessException, SocketException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String base = null;
@@ -409,7 +410,7 @@ public class cgticket {
         return true;
     }
     public Integer get_corte(Context con) throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         Integer res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -443,7 +444,7 @@ public class cgticket {
         return true;
     }
     public boolean guardarnrotrn (Context con,JSONObject ticket,int venta) throws
-            ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
+            ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException, SocketException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String query;
@@ -481,7 +482,7 @@ public class cgticket {
         guardarnrotrn2(con,ticket.getString(variables.KEY_TICKET_NROTRN),venta);
         return true; }
     public boolean guardarnrotrn_old (Context con,String ticket,int venta) throws
-            ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException {
+            ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, JSONException, SocketException {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String base = null;
@@ -562,7 +563,7 @@ public class cgticket {
         return true;
     }
     public String nip_desp (Context con) throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         String res="";
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -595,7 +596,7 @@ public class cgticket {
         return res;
     }
     public String getCodDespCG (Context con) throws ClassNotFoundException, SQLException,
-            InstantiationException, IllegalAccessException, JSONException {
+            InstantiationException, IllegalAccessException, JSONException, SocketException {
         String res="";
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cg(con);
@@ -664,7 +665,7 @@ public class cgticket {
         return res;
     }
     public String nombre_depsachador (Context con) throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         String res="DESPACHADOR";
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -682,7 +683,7 @@ public class cgticket {
         return res;
     }
     public int id_depsachador (Context con) throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         int res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);
@@ -699,8 +700,8 @@ public class cgticket {
         stmt.close();
         return res;
     }
-    public String getMacAddress() {
-        try {
+    public String getMacAddress() throws SocketException {
+
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
                 if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
@@ -720,12 +721,11 @@ public class cgticket {
                 }
                 return res1.toString();
             }
-        } catch (Exception ex) {
-        }
+
         return "Device don't have mac address or wi-fi is disabled";
     }
     public Integer get_bomba_libre(Context con, String bomba) throws ClassNotFoundException,
-            SQLException, InstantiationException, JSONException, IllegalAccessException {
+            SQLException, InstantiationException, JSONException, IllegalAccessException, SocketException {
         Integer res=0;
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cecg_app(con);

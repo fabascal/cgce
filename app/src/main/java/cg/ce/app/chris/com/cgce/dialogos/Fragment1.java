@@ -14,6 +14,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -75,7 +76,7 @@ public class Fragment1 extends DialogFragment {
                                 try {
                                     corte_cinepolis();
                                     corte_finalizar();
-                                } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException e) {
+                                } catch (ClassNotFoundException | SQLException | java.lang.InstantiationException | JSONException | IllegalAccessException | SocketException e) {
                                     new android.support.v7.app.AlertDialog.Builder(Fragment1.this.getActivity())
                                             .setTitle(R.string.error)
                                             .setMessage(String.valueOf(e))
@@ -142,7 +143,7 @@ public class Fragment1 extends DialogFragment {
 
         return res;
     }
-    public boolean corte_cinepolis() throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException {
+    public boolean corte_cinepolis() throws ClassNotFoundException, SQLException, java.lang.InstantiationException, JSONException, IllegalAccessException, SocketException {
         JSONObject js = cg.corte_cinepolis(getActivity());
         JSONObject js2 = cg.corte_datos((getActivity()));
         try {

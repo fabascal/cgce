@@ -57,6 +57,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -311,7 +312,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
                         .setPositiveButton(R.string.btn_ok,null).show();
             }
         } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException e) {
+                IllegalAccessException | SocketException e) {
             logCE.EscirbirLog2(getApplicationContext(),"Credito_BtnCredito - " + e);
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
@@ -322,7 +323,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         }
     }
     private void UpdateCodcli() throws JSONException, ClassNotFoundException, SQLException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, SocketException {
         PutTicketData();
         int impreso = cgticket_obj.cant_impreso(this, GetTicketData(variables.KEY_TICKET_NROTRN));
         if (impreso == 10 ) {
@@ -345,7 +346,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
                             cgticket_obj.guardarnrotrn(getApplicationContext(),
                                     Validar.getJSONObject(index).getJSONObject(variables.KEY_TICKET),2);
                         } catch (JSONException | ClassNotFoundException | SQLException |
-                                InstantiationException | IllegalAccessException e) {
+                                InstantiationException | IllegalAccessException | SocketException e) {
                             logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " + e);
                             new AlertDialog.Builder(Credito.this)
                                     .setTitle(R.string.error)
@@ -799,7 +800,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         }
     }
     private void PutTicketData() throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException {
+            InstantiationException, JSONException, IllegalAccessException, SocketException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
         Validar.getJSONObject(index).put(variables.KEY_TICKET,cgticket_obj.consulta_servicio(this,

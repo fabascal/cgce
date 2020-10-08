@@ -44,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -131,7 +132,8 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                         Integer bomba_libre = null;
                         try {
                             bomba_libre = ticket.get_bomba_libre(getApplicationContext(), bomba);
-                        } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException | IllegalAccessException e) {
+                        } catch (ClassNotFoundException | SQLException | InstantiationException |
+                                JSONException | IllegalAccessException | SocketException e) {
                             e.printStackTrace();
                             new AlertDialog.Builder(RfidCredito.this)
                                     .setTitle(R.string.error)
@@ -149,15 +151,8 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                             //if (!runPrintReceiptSequence()) {
                              //   updateButtonState(true);
                             //}
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
+                        } catch (SQLException | IllegalAccessException | InstantiationException |
+                                ClassNotFoundException | JSONException | SocketException e) {
                             e.printStackTrace();
                         }
                         try {
@@ -291,7 +286,7 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
 
                         try {
                             servicio = ticket.consulta_servicio(RfidCredito.this,bomba);
-                        } catch (SQLException e) {
+                        } catch (SQLException | SocketException e) {
                             e.printStackTrace();
                         }
                         try {
@@ -303,7 +298,7 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                         if (impreso.equals(0)) {
                             try {
                                 cgticket_obj.guardarnrotrn(getApplicationContext(), servicio,2);
-                            } catch (JSONException e) {
+                            } catch (JSONException | SocketException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -350,14 +345,19 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                             e.printStackTrace();
                         } catch (InstantiationException e) {
                             e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
+                        } catch (ClassNotFoundException | SocketException e) {
                             e.printStackTrace();
                         }
 
                     }
 
                     //validar que flotillero este activo
-                    Boolean flot_activo = vf.isServerReachable("http://187.210.108.135",getApplicationContext());
+                    Boolean flot_activo = null;
+                    try {
+                        flot_activo = vf.isServerReachable("http://187.210.108.135",getApplicationContext());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Log.w("floot", String.valueOf(flot_activo));
                     if (flot_activo.equals(true)) {
                         ClassFlotillero flot = new ClassFlotillero(RfidCredito.this, servicio);

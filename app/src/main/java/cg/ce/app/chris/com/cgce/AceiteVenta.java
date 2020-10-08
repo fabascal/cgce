@@ -1,7 +1,9 @@
 package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -33,7 +35,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aceite_venta);
+        BrandSharedPreferences();
         if (tablet.esTablet(getApplicationContext())){
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
@@ -95,6 +97,33 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
             intent.putExtra("bomba",spn_dispensarios.getSelectedItem().toString());
             intent.putExtra("tipo_venta",tipo_venta);
             startActivity(intent);
+        }
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        switch (sharedPreferences.getString(getResources().getString(R.string.BrandName),"Combu-Express")){
+            case "Combu-Express":
+                setTheme(R.style.AppTheme);
+                setContentView(R.layout.activity_aceite_venta);
+                break;
+            case "Repsol":
+                setTheme(R.style.ContentMainRepsol);
+                setContentView(R.layout.activity_aceite_venta_repsol);
+                break;
+            case "Ener":
+                setTheme(R.style.ContentMainEner);
+                setContentView(R.layout.activity_aceite_venta_ener);
+                break;
+            case "Total":
+                setTheme(R.style.ContentMainTotal);
+                setContentView(R.layout.activity_aceite_venta_total);
+                break;
+        }
+        if (tablet.esTablet(getApplicationContext())){
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 }

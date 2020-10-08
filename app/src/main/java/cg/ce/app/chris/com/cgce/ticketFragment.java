@@ -34,6 +34,7 @@ import com.google.zxing.WriterException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -119,20 +120,14 @@ public class ticketFragment extends Fragment implements SorteoListener {
                     if (tpv_data!=null) {
                         ticket.put("tpv", tpv_data);
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (java.lang.InstantiationException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (SQLException | JSONException | IllegalAccessException |
+                        java.lang.InstantiationException | ClassNotFoundException | SocketException e) {
                     e.printStackTrace();
                 }
                 try {
                     ticket.put("nip",cgticket_obj.nip_desp(getContext()));
-                } catch (JSONException | ClassNotFoundException | SQLException | java.lang.InstantiationException | IllegalAccessException e) {
+                } catch (JSONException | ClassNotFoundException | SQLException |
+                        java.lang.InstantiationException | IllegalAccessException | SocketException e) {
                     new AlertDialog.Builder(ticketFragment.this.getActivity())
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
@@ -165,7 +160,7 @@ public class ticketFragment extends Fragment implements SorteoListener {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | SocketException e) {
                     e.printStackTrace();
                 }
 
@@ -245,7 +240,7 @@ public class ticketFragment extends Fragment implements SorteoListener {
             e.printStackTrace();
         } catch (java.lang.InstantiationException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SocketException e) {
             e.printStackTrace();
         }
         return ticket;

@@ -62,6 +62,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -2050,7 +2051,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }else{
                                 servicio = ticket.consulta_servicio(ActivityCreditoDual.this, jsonObject_2.getString("bomba"));
                             }
-                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException |JSONException e) {
+                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException | SocketException e) {
                             new AlertDialog.Builder(ActivityCreditoDual.this)
                                     .setTitle(R.string.error)
                                     .setMessage(String.valueOf(e))
@@ -2073,7 +2074,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                                             codcli.getString("cliente"), codcli.getString("vehiculo"),
                                             odm,codcli.getString("tar"));
                                     cgticket_obj.guardarnrotrn(getApplicationContext(), servicio, 2);
-                                } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+                                } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException | SocketException e) {
                                     new AlertDialog.Builder(ActivityCreditoDual.this)
                                             .setTitle(R.string.error)
                                             .setMessage(String.valueOf(e))
@@ -2131,7 +2132,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                             }
                             ticket_otra_bomba=new JSONObject();
 
-                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException  e) {
+                        } catch (SQLException | IllegalAccessException | InstantiationException | ClassNotFoundException | JSONException | SocketException e) {
                             new AlertDialog.Builder(ActivityCreditoDual.this)
                                     .setTitle(R.string.error)
                                     .setMessage(String.valueOf(e))

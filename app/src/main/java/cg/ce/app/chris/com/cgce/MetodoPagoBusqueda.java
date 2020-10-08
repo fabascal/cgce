@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -166,7 +167,8 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
         }
 
     }
-    public JSONObject getJson (JSONObject jsonObject) throws IllegalAccessException, ClassNotFoundException, InstantiationException, JSONException {
+    public JSONObject getJson (JSONObject jsonObject) throws IllegalAccessException,
+            ClassNotFoundException, InstantiationException, JSONException {
         cgticket cgticket_obj = new cgticket();
 
         JSONObject ticket=null;
@@ -176,7 +178,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
             ticket = cgticket_obj.consulta_servicio(getApplicationContext(),bomba);
             nip = cgticket_obj.nip_desp(getApplicationContext());
-        } catch (SQLException  e) {
+        } catch (SQLException | SocketException e) {
             new AlertDialog.Builder(MetodoPagoBusqueda.this)
                     .setTitle(R.string.error)
                     .setMessage(String.valueOf(e))
