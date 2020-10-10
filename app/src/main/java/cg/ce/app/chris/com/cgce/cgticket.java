@@ -271,7 +271,8 @@ public class cgticket {
         Connection conn = dbcg.odbc_cecg_app(context);
         Log.w("si entro","1");
         Statement stmt = conn.createStatement();
-        String query = "select sum(boletos) as boletos, sum(total) as total from despachos where corte="+get_corte(context)+" and folios is not null";
+        String query = "select sum(convert(money,boletos)) as boletos, sum(convert(money,total)) as " +
+                "total from despachos where corte="+get_corte(context)+" and folios is not null";
         r = stmt.executeQuery(query);
         if(!r.next()){
             resultado.put("boletos","0");

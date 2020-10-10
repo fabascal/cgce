@@ -382,7 +382,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
         } else if (FlagImpreso) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
-            metodoPago = ticket.getString(variables.KEY_RUT);
+            if (ticket.has(variables.KEY_RUT)) {
+                metodoPago = ticket.getString(variables.KEY_RUT);
+            }
         }
         vehiculo = cgticket.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), String.valueOf(mSpinner.getSelectedItem()));
         venta = CalculateVenta(ticket.getString(variables.KEY_TICKET_CLIENTE_TIPVAL));
@@ -436,7 +438,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
             textData.append("\n");
             mPrinter.addTextAlign(Printer.ALIGN_LEFT);
-            textData.append(ticket.getString(variables.KEY_TICKET_DENCLI));
+            if (ticket.has(variables.KEY_TICKET_DENCLI)) {
+                textData.append(ticket.getString(variables.KEY_TICKET_DENCLI));
+            }
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
             if (ticket.has(variables.KEY_CODCLI)) {
@@ -559,7 +563,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
             textData.append("\n");
             mPrinter.addTextAlign(Printer.ALIGN_LEFT);
-            textData.append(ticket.getString(variables.KEY_TICKET_DENCLI));
+            if (ticket.has(variables.KEY_TICKET_DENCLI)) {
+                textData.append(ticket.getString(variables.KEY_TICKET_DENCLI));
+            }
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
             //textData.append("\n");

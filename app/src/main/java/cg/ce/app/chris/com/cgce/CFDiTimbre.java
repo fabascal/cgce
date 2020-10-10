@@ -55,7 +55,7 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
             this.producto=String.valueOf(jsonObject.getInt("id_producto"));
             this.bomba=String.valueOf(jsonObject.getInt("bomba"));
             this.preunitario=String.valueOf(jsonObject.getDouble("preunitario"));
-            this.mtogto=String.valueOf(jsonObject.getDouble("mtogto"));
+            /*this.mtogto=String.valueOf(jsonObject.getDouble("mtogto"));*/
             this.importe=String.valueOf(jsonObject.getDouble("importe"));
             this.copia=String.valueOf(jsonObject.getString("copia"));
             this.comentarios=String.valueOf(jsonObject.getString("comentario"));

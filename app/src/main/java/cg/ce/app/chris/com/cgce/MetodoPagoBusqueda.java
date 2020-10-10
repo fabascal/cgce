@@ -40,6 +40,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.common.Variables;
+
 public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClickListener {
     TextView tv_cliente_cfdi,tv_rfc_cfdi,tv_correo_cfdi,tv_calle_cfdi,tv_colonia_cfdi,tv_estado_cfdi,tv_municipio_cfdi,tv_cp_cfdi;
     EditText et_correo2,numcuenta,comentario;
@@ -205,18 +207,18 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
             jsoncfdi.put("usocfdi",usocfdi);
             jsoncfdi.put("formapago",String.valueOf(spn_metodo.getSelectedItem()));
             jsoncfdi.put("numcuenta",numcuenta.getText());
-            jsoncfdi.put("cveest",ticket.getString("cveest"));
-            jsoncfdi.put("ticket",ticket.getInt("nrotrn"));
-            jsoncfdi.put("cg_cliente",ticket.getInt("codcli"));
-            jsoncfdi.put("fecha_ticket",ticket.getString("fecha"));
-            jsoncfdi.put("id_producto",ticket.getInt("id_producto"));
-            jsoncfdi.put("producto",ticket.getString("producto").replace(" ",""));
-            jsoncfdi.put("bomba",ticket.getInt("bomba"));
-            jsoncfdi.put("preunitario",ticket.getDouble("precio"));
-            jsoncfdi.put("importe",ticket.getDouble("total"));
-            jsoncfdi.put("mtogto",ticket.getDouble("mtogto"));
-            jsoncfdi.put("cantidad",ticket.getDouble("cantidad"));
-            jsoncfdi.put("despachador",ticket.getString("despachador"));
+            jsoncfdi.put("cveest",ticket.getString(Variables.KEY_TICKET_CVEEST));
+            jsoncfdi.put("ticket",ticket.getInt(Variables.KEY_TICKET_NROTRN));
+            jsoncfdi.put("cg_cliente",ticket.getInt(Variables.KEY_TICKET_CODCLI));
+            jsoncfdi.put("fecha_ticket",ticket.getString(Variables.KEY_TICKET_FECHA));
+            jsoncfdi.put("id_producto",ticket.getInt(Variables.KEY_TICKET_ID_PRODUCTO));
+            jsoncfdi.put("producto",ticket.getString(Variables.KEY_TICKET_PRODUCTO).replace(" ",""));
+            jsoncfdi.put("bomba",ticket.getInt(Variables.KEY_TICKET_BOMBA));
+            jsoncfdi.put("preunitario",ticket.getDouble(Variables.KEY_TICKET_PRECIO));
+            jsoncfdi.put("importe",ticket.getDouble(Variables.KEY_TICKET_TOTAL));
+            /*jsoncfdi.put("mtogto",ticket.getDouble("mtogto"));*/
+            jsoncfdi.put("cantidad",ticket.getDouble(Variables.KEY_TICKET_CANTIDAD));
+            jsoncfdi.put("despachador",ticket.getString(Variables.KEY_TICKET_DESPACHADOR));
             jsoncfdi.put("copia",et_correo2.getText());
             jsoncfdi.put("comentario",comentario.getText());
         } catch (JSONException e) {
