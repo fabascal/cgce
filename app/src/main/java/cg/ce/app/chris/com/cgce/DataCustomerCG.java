@@ -11,4 +11,5 @@ public class DataCustomerCG {
     public int tar;
     public int nroveh;
     public int tagadi;
+    public int nroeco;
 }

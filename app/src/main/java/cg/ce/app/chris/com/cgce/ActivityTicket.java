@@ -62,6 +62,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.GetTPVs;
+import cg.ce.app.chris.com.cgce.ControlGas.GetTicket;
 import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
 import cg.ce.app.chris.com.cgce.common.RequestPermission;
 import cg.ce.app.chris.com.cgce.common.Variables;
@@ -98,6 +101,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     Drawable image;
     LogCE logCE = new LogCE();
     Variables variables = new Variables();
+    MacActivity mac = new MacActivity();
     RequestPermission requestPermission = new RequestPermission();
 
 
@@ -129,27 +133,44 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         print.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle.getString("bomba") != null) {
-            try {
-                ticket = cg.consulta_servicio(this, bundle.getString("bomba"));
-                ticket.put("nip", cg.nip_desp(getApplicationContext()));
-                nrotrn.setText(ticket.getString(variables.KEY_TICKET_NROTRN) + "0");
-                prd.setText(ticket.getString(variables.KEY_TICKET_PRODUCTO));
-                cant.setText("LTS " + String.valueOf(formateador4.format(ticket.getDouble(
-                        variables.KEY_TICKET_CANTIDAD))));
-                precio.setText("$ " + String.format("%.2f", Double.valueOf(String.valueOf(
-                        formateador2.format(ticket.getDouble(variables.KEY_TICKET_PRECIO))))));
-                monto.setText("$ " + formateador2.format
-                        (ticket.getDouble(variables.KEY_TICKET_TOTAL)));
+            new GetTicket(this, getApplicationContext(), new ControlGasListener() {
+                @Override
+                public void processFinish(JSONObject output) {
+                    try {
+                        if( output.getInt(Variables.CODE_ERROR)==0){
+                            ticket = output;
+                            String textnrotrn =ticket.getString(Variables.KEY_TICKET_NROTRN) + "0";
+                            nrotrn.setText(textnrotrn);
+                            prd.setText(ticket.getString(Variables.KEY_TICKET_PRODUCTO));
+                            String textcant = "LTS " + formateador4.format(ticket.getDouble(
+                                    Variables.KEY_TICKET_CANTIDAD));
+                            cant.setText(textcant);
+                            String textprecio = "$ "+ formateador2.format(ticket.getDouble(Variables.KEY_TICKET_PRECIO));
+                            precio.setText(textprecio);
+                            String textmonto = "$ " + formateador2.format
+                                    (ticket.getDouble(Variables.KEY_TICKET_TOTAL));
+                            monto.setText(textmonto);
+                        }else{
+                            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetTicket - "
+                                    + output.getString(Variables.MESSAGE_ERROR));
+                            new AlertDialog.Builder(ActivityTicket.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(image)
+                                    .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                        }
+                    } catch (JSONException e) {
+                        logCE.EscirbirLog2(getApplicationContext(),String.valueOf(e));
+                        new AlertDialog.Builder(ActivityTicket.this)
+                                .setTitle(R.string.error)
+                                .setIcon(image)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                        e.printStackTrace();
+                    }
 
-            } catch (SQLException | IllegalAccessException | InstantiationException |
-                    ClassNotFoundException | JSONException | SocketException e) {
-                new AlertDialog.Builder(ActivityTicket.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok, null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_OnCreate - " + e);
-                e.printStackTrace();
-            }
+                }
+            }).execute(bundle.getString("bomba"),mac.getMacAddress());
         }
 
         spn_metodo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -184,13 +205,38 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             InstantiationException, JSONException, IllegalAccessException {
         if (spn_metodo.getSelectedItem().toString().equals("T. Credito") || spn_metodo.
                 getSelectedItem().toString().equals("T. Debito")) {
-            tpv = cg.getTPVs(this, "1");
-            ArrayAdapter MonederoAdapter = new ArrayAdapter(this,
-                    android.R.layout.simple_spinner_item, tpv);
-            MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
-            spn_metodo_den.setAdapter(MonederoAdapter);
+            new GetTPVs(this, getApplicationContext(), new ControlGasListener() {
+                @Override
+                public void processFinish(JSONObject output) {
+                    try {
+                        if (output.getInt(Variables.CODE_ERROR)==0){
+                            tpv = (List) output.get(Variables.TPV_LIST);
+                            ArrayAdapter MonederoAdapter = new ArrayAdapter(getApplicationContext(),
+                                    android.R.layout.simple_spinner_item, tpv);
+                            MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
+                            spn_metodo_den.setAdapter(MonederoAdapter);
+                        }else{
+                            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetTPVs - " +
+                                    output.getString(Variables.MESSAGE_ERROR));
+                            new AlertDialog.Builder(ActivityTicket.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                        }
+                    } catch (JSONException e) {
+                        logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetTPVs - " +
+                                e);
+                        new AlertDialog.Builder(ActivityTicket.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                        e.printStackTrace();
+                    }
+                }
+            }).execute("1");
+
         } else if (spn_metodo.getSelectedItem().toString().equals("Monederos")) {
-            tpv = cg.getTPVs(this, "0");
+            tpv = null;
             ArrayAdapter MonederoAdapter = new ArrayAdapter(this,
                     android.R.layout.simple_spinner_item, tpv);
             MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
@@ -411,7 +457,11 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         ticket.put(variables.KEY_IMPRESO, cg.cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN)));
         if (ticket.getInt(variables.KEY_IMPRESO) == 0 || ticket.getInt(variables.KEY_IMPRESO) == 10) {
             titulo = "O R I G I N A L";
-            metodoPago = ticket.getString(variables.KEY_RUT);
+            if (ticket.getInt(Variables.KEY_TICKET_CODCLI)>0){
+                metodoPago = ticket.getString(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN);
+            }else{
+                metodoPago = ticket.getString(variables.KEY_RUT);
+            }
             folio_impreso = ticket.getString(variables.KEY_TICKET_NROTRN) + "0";
             if ( spn_metodo.getSelectedItem().toString().equals("T. Credito") ||
                     spn_metodo.getSelectedItem().toString().equals("T. Debito")){
@@ -423,14 +473,14 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         } else if (ticket.getInt(variables.KEY_IMPRESO) == 1) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
-            metodoPago = cg.get_rut(mContext, ticket);
+            metodoPago = ticket.getString(variables.KEY_RUT);
             flag_TicketImpreso = true;
         }
         Log.w("ticket", ticket.toString());
         if (ticket.getInt(variables.KEY_TICKET_CODCLI) != 0) {
             vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));
             cliente = ticket.getString(variables.KEY_TICKET_DENCLI);
-            venta = "CREDITO";
+            metodoPago = ticket.getString(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN);
         } else {
             vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));
 

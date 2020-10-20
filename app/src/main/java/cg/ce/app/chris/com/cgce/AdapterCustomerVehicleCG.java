@@ -74,6 +74,7 @@ public class AdapterCustomerVehicleCG extends RecyclerView.Adapter<RecyclerView.
                 CustomerCG_data.put("tagadi", data.get(getAdapterPosition()).tagadi);
                 CustomerCG_data.put("placa", data.get(getAdapterPosition()).plc);
                 CustomerCG_data.put("chofer", data.get(getAdapterPosition()).rsp);
+                CustomerCG_data.put("nroeco", data.get(getAdapterPosition()).nroeco);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

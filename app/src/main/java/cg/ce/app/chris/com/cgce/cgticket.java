@@ -549,7 +549,6 @@ public class cgticket {
     public boolean update_codcli (Context con,String ticket,String cliente,String vehiculo,
                                   String odm,String tar) throws ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException, JSONException {
-
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String base = null;
@@ -557,8 +556,8 @@ public class cgticket {
         DataBaseCG dbcg = new DataBaseCG();
         Connection conn = dbcg.odbc_cg(con);
         Statement stmt = conn.createStatement();
-        Log.i("update_cli","update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
-        stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
+        stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", " +
+                "nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
         stmt.close();
         conn.close();
         return true;
@@ -1047,7 +1046,7 @@ public class cgticket {
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cg(context);
         String query = "select v.rsp as rsp, v.plc as plc, v.den as den_vehicle, v.tar as tar, " +
-                "v.nroveh as nroveh, c.cod as codcli, c.den as den, c.rfc as rfc " +
+                "v.nroveh as nroveh, c.cod as codcli, c.den as den, c.rfc as rfc, v.nroeco as nroeco " +
                 "from ClientesVehiculos as v left outer join Clientes as c on c.cod=v.codcli " +
                 "where v.tag='" + nip + "'";
         Statement stmt = conn.createStatement();
@@ -1062,6 +1061,7 @@ public class cgticket {
             data.den_vehicle = rs.getString("den_vehicle");
             data.tar = rs.getInt("tar");
             data.nroveh = rs.getInt("nroveh");
+            data.nroeco = rs.getInt("nroeco");
             dataCustomerCGS.add(data);
         }
         conn.close();
@@ -1098,7 +1098,7 @@ public class cgticket {
         DataBaseCG cg = new DataBaseCG();
         Connection conn = cg.odbc_cg(context);
         String query = "select rsp as rsp,plc as plc,den as den,tar as tar,nroveh as nroveh, " +
-                "tagadi as tagadi from ClientesVehiculos where codcli="+codcli+" order by nroveh";
+                "tagadi as tagadi, nroeco as nroeco from ClientesVehiculos where codcli="+codcli+" order by nroveh";
         Statement stmt = conn.createStatement();
         rs = stmt.executeQuery(query);
         while (rs.next()){
@@ -1108,6 +1108,7 @@ public class cgticket {
             data.den_vehicle = rs.getString("den");
             data.tar = rs.getInt("tar");
             data.nroveh = rs.getInt("nroveh");
+            data.nroeco = rs.getInt("nroeco");
             /*Log.w("Data-Query1", rs.getString("tagadi")  );*/
             if (rs.getString("tagadi")==null || rs.getString("tagadi").equals("")){
                 data.tagadi = 0 ;
@@ -1120,7 +1121,7 @@ public class cgticket {
         conn.close();
         stmt.close();
         Log.w("query",query);
-        Log.w("Data-Query2", String.valueOf(dataCustomerCGS.get(0).tagadi));
+        Log.w("Data-Query2", String.valueOf(dataCustomerCGS.get(0).nroeco));
         return dataCustomerCGS;
     }
     //funcion para obtener las tpv de la estacion

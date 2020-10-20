@@ -64,21 +64,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
+import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerTag;
+import cg.ce.app.chris.com.cgce.ControlGas.GetImpreso;
+import cg.ce.app.chris.com.cgce.ControlGas.GetPumpPosition;
+import cg.ce.app.chris.com.cgce.ControlGas.GetTicket;
+import cg.ce.app.chris.com.cgce.ControlGas.GetVehicleRestrictions;
+import cg.ce.app.chris.com.cgce.ControlGas.UpdateCodcli;
+import cg.ce.app.chris.com.cgce.ControlGas.ValidarUltimoNROTRN;
 import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.close_credito;
 import cg.ce.app.chris.com.cgce.dialogos.fab_contado;
 
-public class Credito extends AppCompatActivity implements View.OnClickListener, com.epson.epos2.printer.ReceiveListener {
+public class Credito extends AppCompatActivity implements View.OnClickListener,
+        com.epson.epos2.printer.ReceiveListener {
     ValidateTablet tablet = new ValidateTablet();
     Spinner spn_posicion;
     Drawable icon;
     String marca;
     ImageButton btn_print, imbtn_clientecg;
     JSONObject Posiciones = new JSONObject();
+    JSONObject dummy = new JSONObject();
     JSONArray Logicos = new JSONArray();
     Variables variables = new Variables();
     final static String ERROR_POSICION_CONTADO = "Todas las posiciones tienen una venta en curso.";
@@ -126,6 +136,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
     IntentFilter writeTagFilters[];
     boolean IsTablet = false;
     boolean writeMode;
+    MacActivity mac = new MacActivity();
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -279,32 +290,34 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
             if (pdLoading != null){
                 pdLoading.dismiss();
             }
-            pdLoading = new ProgressDialog(Credito.this);
+           /* pdLoading = new ProgressDialog(Credito.this);
             pdLoading.setMessage("Actualizando..."); // Setting Message
             pdLoading.setTitle(marca); // Setting Title
             pdLoading.setIcon(icon);
             pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
             pdLoading.show(); // Display Progress Dialog
-            pdLoading.setCancelable(false);
-            UpdateCodcli();
+            pdLoading.setCancelable(false);*/
+
+            /*pdLoading.dismiss();*/
             PutTicketData();
-            pdLoading.dismiss();
             if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN))<Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))){
-                pdLoading = new ProgressDialog(Credito.this);
+                /*pdLoading = new ProgressDialog(Credito.this);
                 pdLoading.setMessage("Imprimiendo..."); // Setting Message
                 pdLoading.setTitle(marca); // Setting Title
                 pdLoading.setIcon(icon);
                 pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
                 pdLoading.show(); // Display Progress Dialog
-                pdLoading.setCancelable(false);
-                new Thread(new Runnable() {
+                pdLoading.setCancelable(false);*/
+                /*new Thread(new Runnable() {
                     public void run() {
                         PrintReceip();
                         pdLoading.dismiss();
                     }
-                }).start();
-            }else{
+                }).start();*/
+                UpdateCodcli();
 
+                PrintReceip();
+            }else{
                 new AlertDialog.Builder(Credito.this)
                         .setTitle(R.string.error)
                         .setIcon(icon)
@@ -312,7 +325,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
                         .setPositiveButton(R.string.btn_ok,null).show();
             }
         } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException | SocketException e) {
+                IllegalAccessException | SocketException | ExecutionException | InterruptedException e) {
             logCE.EscirbirLog2(getApplicationContext(),"Credito_BtnCredito - " + e);
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
@@ -323,20 +336,46 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         }
     }
     private void UpdateCodcli() throws JSONException, ClassNotFoundException, SQLException,
-            InstantiationException, IllegalAccessException, SocketException {
-        PutTicketData();
-        int impreso = cgticket_obj.cant_impreso(this, GetTicketData(variables.KEY_TICKET_NROTRN));
-        if (impreso == 10 ) {
-            cgticket_obj.update_codcli(getApplicationContext(),GetTicketData(variables.KEY_TICKET_NROTRN),
-                    GetData(variables.KEY_CODCLI),GetTicketData(variables.KEY_CLIENTE_VEHICULO_NROVEH),
-                    GetDataODM(),GetData(variables.KEY_CLIENTE_VEHICULO_TAR));
+            InstantiationException, IllegalAccessException, SocketException, ExecutionException, InterruptedException {
+        dummy = new GetImpreso(this, getApplicationContext()).execute(GetTicketData(variables.KEY_TICKET_NROTRN)).get();
+        if (dummy.getInt(Variables.CODE_ERROR)==0){
+            PutData(Variables.KEY_IMPRESO, String.valueOf(dummy.getInt(Variables.KEY_IMPRESO)));
+        }else{
+            logCE.EscirbirLog2(getApplicationContext(),
+                    "Credito_BtnCredito - " + dummy.getString(variables.MESSAGE_ERROR));
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(dummy.getString(variables.MESSAGE_ERROR))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+        }
+        Log.w("impreso a validar",GetData(Variables.KEY_IMPRESO));
+        if (GetData(variables.KEY_IMPRESO).equals("10")){
+            new UpdateCodcli(this, getApplicationContext(), new ControlGasListener() {
+                @Override
+                public void processFinish(JSONObject output) throws JSONException {
+                    if (output.getInt(Variables.CODE_ERROR)==1){
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " +
+                                output.getString(Variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(Variables.MESSAGE_ERROR));
+                    }
+                }
+            }).execute(
+                    GetData(variables.KEY_CODCLI),
+                    GetData(variables.KEY_CLIENTE_VEHICULO_NROVEH),
+                    GetDataODM(),
+                    GetData(variables.KEY_CLIENTE_VEHICULO_TAR),
+                    GetTicketData(variables.KEY_TICKET_NROTRN));
+
         }
     }
     private void PrintReceip()  {
         this.updateButtonState(false);
         try {
-            int impreso = cgticket_obj.cant_impreso(this, GetTicketData(variables.KEY_TICKET_NROTRN));
-            if (impreso == 10 ){
+            if (GetData(variables.KEY_IMPRESO).equals("10")){
                 runOnUiThread(new Runnable() {
                     public synchronized void run() {
                         JSONArray Validar = null;
@@ -424,45 +463,40 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
     }
     /*Llenado inicial del Json, se ejecuta una ves en el oncreate*/
     public void FillPosicion(){
-        ResultSet rs;
-        Cursor c;
-        Connection connect;
-        PreparedStatement stmt;
-        MacActivity mac = new MacActivity();
-        String query = "select p.numero_logico as logico from posicion as p \n" +
-                "left outer join dispensario as disp on disp.id=p.id_dispensario\n" +
-                "left outer join corte as c on c.id_dispensario=disp.id\n" +
-                "left outer join dispositivos as dispo on dispo.id=c.id_dispositivo\n" +
-                "where c.status =0 and dispo.mac_adr='"+mac.getMacAddress()+"'";
-        try {
-            DataBaseCG gc = new DataBaseCG();
-            connect = gc.odbc_cecg_app(getApplicationContext());
-            stmt = connect.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            ArrayList<String> data = new ArrayList<String>();
-            while (rs.next()) {
-                JSONObject Posicion = new JSONObject();
-                String id = rs.getString("logico");
-                data.add(id);
-                Posicion.put(variables.POSICION,rs.getInt("logico"));
-                Logicos.put(Posicion);
-                Posiciones.put(variables.POSICIONES,Logicos);
-            }
-            String[] array = data.toArray(new String[0]);
-            ArrayAdapter NoCoreAdapter = new ArrayAdapter(this,
-                    R.layout.spinner_bombas_credito, data);
-            connect.close();
-            spn_posicion.setAdapter(NoCoreAdapter);
-        } catch (SQLException | IllegalAccessException | ClassNotFoundException | InstantiationException | JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " + e);
-            new AlertDialog.Builder(Credito.this)
-                    .setTitle(R.string.error)
-                    .setIcon(icon)
-                    .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
-            e.printStackTrace();
-        }
+        new GetPumpPosition(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if (output.getInt(variables.CODE_ERROR)==0){
+                        ArrayList<String> data = (ArrayList<String>) output.get(variables.POSICIONES);
+                        ArrayAdapter NoCoreAdapter = new ArrayAdapter(getApplicationContext(),
+                                R.layout.spinner_bombas_credito, data);
+                        spn_posicion.setAdapter(NoCoreAdapter);
+                        for (int i =0 ; i < data.size() ; i++) {
+                            JSONObject Posicion = new JSONObject();
+                            Posicion.put(variables.POSICION,data.get(i));
+                            Logicos.put(Posicion);
+                            Posiciones.put(variables.POSICIONES,Logicos);
+                        }
+                    }else{
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " +
+                                output.getString(variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                } catch (JSONException e) {
+                    logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+            }}).execute(mac.getMacAddress());
     }
     private void CoreScreen() throws JSONException, ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException {
@@ -572,10 +606,36 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
                 break;
         }
     }
-    public void SearchCustomerNip(View v){
+    public void SearchCustomerNip(final View v){
+        new ValidarUltimoNROTRN(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if (output.getInt(variables.CODE_ERROR)==0){
+                        PutData(variables.KEY_ULT_NROTRN,output.getString(variables.KEY_ULT_NROTRN));
+                    }else{
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " +
+                                output.getString(variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                } catch (JSONException e) {
+                    logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+
+            }
+        }).execute(spn_posicion.getSelectedItem().toString());
+
         try {
-            PutData(variables.KEY_ULT_NROTRN, validacionFlotillero.validar_utlimo_nrotrn(this,
-                    spn_posicion.getSelectedItem().toString()));
             JSONObject jsonObject= new JSONObject();
             PutData(variables.KEY_TAG,et_clientecg.getText().toString());
             dataCustomerCG = new ArrayList<>(cgticket_obj.GetCustomerNipCG(
@@ -589,6 +649,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
                 jsonObject.put("nroveh", dataCustomerCG.get(0).nroveh);
                 jsonObject.put("cliente", dataCustomerCG.get(0).den);
                 jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
+                jsonObject.put("nroeco",dataCustomerCG.get(0).nroeco);
                 jsonObject.put("tagadi", "");
                 FillCustomerData(jsonObject);
                 FillCustomerVehicleData(jsonObject);
@@ -743,7 +804,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
     }
     /*Funcion para el llenado del xml activity_credito_impresion*/
     private void FillScreenFinalData() throws JSONException {
-        ValidacionCarga();
+        /*ValidacionCarga();*/
         tv_cliente.setText(GetData(variables.KEY_CLIENTE));
         tv_rfc.setText(GetData(variables.KEY_RFC));
         tv_codcli.setText(GetData(variables.KEY_CODCLI));
@@ -782,6 +843,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
     }
     private void FillCustomerVehicleData(JSONObject data) throws JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+        Log.w("Data", String.valueOf(data));
         int index = spn_posicion.getSelectedItemPosition();
         Validar.getJSONObject(index).put(variables.KEY_CLIENTE_VEHICULO_TAR,data.getString("tar"));
         Validar.getJSONObject(index).put(variables.KEY_CLIENTE_VEHICULO_DEN,data.getString("vehiculo"));
@@ -789,6 +851,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         Validar.getJSONObject(index).put(variables.KEY_CLIENTE_VEHICULO_TAGADI, data.getString("tagadi"));
         Validar.getJSONObject(index).put(variables.KEY_CLIENTE_VEHICULO_PLACA, ValidateOptionalData(data,"placa"));
         Validar.getJSONObject(index).put(variables.KEY_CLIENTE_VEHICULO_CHOFER, ValidateOptionalData(data,"chofer"));
+        Validar.getJSONObject(index).put(variables.KEY_CLIENTE_VEHICULO_NROECO,ValidateOptionalData(data,"nroeco"));
     }
     /*Funcion para validar datos opcionales en el json*/
     private String ValidateOptionalData(JSONObject data, String key) throws JSONException {
@@ -799,12 +862,17 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
             return res;
         }
     }
-    private void PutTicketData() throws ClassNotFoundException, SQLException,
-            InstantiationException, JSONException, IllegalAccessException, SocketException {
+    private void PutTicketData() throws ExecutionException, InterruptedException, JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
-        Validar.getJSONObject(index).put(variables.KEY_TICKET,cgticket_obj.consulta_servicio(this,
-                spn_posicion.getSelectedItem().toString()));
+        Validar.getJSONObject(index).put(variables.KEY_TICKET,
+                new GetTicket(this, getApplicationContext(), new ControlGasListener() {
+                    @Override
+                    public void processFinish(JSONObject output) throws JSONException {
+
+                    }
+                }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress()).get()
+        );
     }
     private void UpdateTicketData(String key, String data) throws JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
@@ -1021,21 +1089,17 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         JSONObject vehiculo = new JSONObject();
         String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
         String metodoPago = "";
-        UpdateTicketData(variables.KEY_IMPRESO, String.valueOf(cgticket_obj.cant_impreso(getApplicationContext(),
-                GetTicketData(variables.KEY_TICKET_NROTRN))));
-        if (Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 10) {
+        if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 10) {
             titulo = "O R I G I N A L";
             metodoPago = CalculateMetoPago(GetTicketData(variables.KEY_TICKET_CLIENTE_TIPVAL));
             folio_impreso = GetTicketData(variables.KEY_TICKET_NROTRN) + "0";
 
-        } else if (Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 1) {
+        } else if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 1) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
-            metodoPago = cgticket_obj.get_rut(mContext, Posiciones.getJSONArray(variables.POSICIONES)
-                    .getJSONObject(spn_posicion.getSelectedItemPosition()).getJSONObject(variables.KEY_TICKET));
+            metodoPago = GetTicketData(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN);
         }
-        vehiculo = cgticket_obj.get_vehiculo(mContext, GetTicketData(variables.KEY_TICKET_NROTRN), GetData(variables.POSICION));
-        venta = CalculateVenta(GetTicketData(variables.KEY_TICKET_CLIENTE_TIPVAL));
+
         method = "addTextAlign";
         mPrinter.addTextAlign(Printer.ALIGN_CENTER);
         method = "addImage";
@@ -1089,14 +1153,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         textData.append(cliente + "\n");
         textData.append(metodoPago + "\n");
         if (HasData(variables.KEY_CODCLI)) {
-            if (vehiculo.has("rsp")) {
-                textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+            if (HasData(variables.KEY_CLIENTE_VEHICULO_CHOFER)) {
+                textData.append("Conductor     : " + GetData(variables.KEY_CLIENTE_VEHICULO_CHOFER) + "\n");
             }
-            if (vehiculo.has("nroeco")) {
-                textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+            if (HasData(variables.KEY_CLIENTE_VEHICULO_NROECO)) {
+                textData.append("No. Econ.     : " + GetData(variables.KEY_CLIENTE_VEHICULO_NROECO) + "\n");
             }
-            if (vehiculo.has("placa")) {
-                textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+            if (HasData(variables.KEY_CLIENTE_VEHICULO_PLACA)) {
+                textData.append("Placas        : " + GetData(variables.KEY_CLIENTE_VEHICULO_PLACA) + "\n");
             }
             if (HasData(variables.KEY_ODM)) {
                 textData.append("Kilometraje   : " + GetDataODM() + "\n");
@@ -1106,7 +1170,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         method = "addText";
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
-        textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + String.valueOf(GetData(variables.POSICION)) + "\n");
+        textData.append("TICKET    : " + folio_impreso + "   BOMBA : " + GetData(variables.POSICION) + "\n");
         textData.append("FECHA: " + GetTicketData(variables.KEY_TICKET_FECHA) + "  HORA: " + GetTicketData(variables.KEY_TICKET_HORA) + "\n");
         textData.append("VENDEDOR  : " + String.valueOf(GetTicketData(variables.KEY_TICKET_DESPACHADOR)).toUpperCase() + "\n");
         textData.append("PRECIO    : $ " + String.format("%.2f", Double.parseDouble(formateador2.format(Double.parseDouble(GetTicketData(variables.KEY_TICKET_PRECIO))))) + "\n");
@@ -1135,7 +1199,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         mPrinter.addText(textData.toString());
         textData.delete(0, textData.length());
 
-        if (Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 10) {
+        if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 10) {
             Bitmap qrrespol = null;
             QRCodeEncoder qrCodeEncoder1 = new QRCodeEncoder(repsolQR(datos_domicilio),
                     null,
@@ -1216,14 +1280,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
             textData.append(metodoPago + "\n");
             //textData.append("\n");
             if (HasData(variables.KEY_CODCLI)) {
-                if (vehiculo.has("rsp")) {
-                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                if (HasData(variables.KEY_CLIENTE_VEHICULO_CHOFER)) {
+                    textData.append("Conductor     : " + GetData(variables.KEY_CLIENTE_VEHICULO_CHOFER) + "\n");
                 }
-                if (vehiculo.has("nroeco")) {
-                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+                if (HasData(variables.KEY_CLIENTE_VEHICULO_NROECO)) {
+                    textData.append("No. Econ.     : " + GetData(variables.KEY_CLIENTE_VEHICULO_NROECO) + "\n");
                 }
-                if (vehiculo.has("placa")) {
-                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+                if (HasData(variables.KEY_CLIENTE_VEHICULO_PLACA)) {
+                    textData.append("Placas        : " + GetData(variables.KEY_CLIENTE_VEHICULO_PLACA) + "\n");
                 }
                 if (HasData(variables.KEY_ODM)) {
                     textData.append("Kilometraje   : " + GetDataODM() + "\n");
@@ -1264,7 +1328,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
             mPrinter.addText(textData.toString());
         }
         /*funcion para los sorteos*/
-        if (Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetTicketData(variables.KEY_IMPRESO)) == 10) {
+        if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 10) {
             if (sorteo > 0) {
                 if (Double.parseDouble(GetTicketData(variables.KEY_TICKET_TOTAL)) >= 200) {
                     Bitmap logoviaje = BitmapFactory.decodeResource(getResources(), R.drawable.ganaconcombu);
@@ -1553,7 +1617,12 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         mPrinter.clearCommandBuffer();
     }
     /*public void ImpresionContado(View view){
-        ValidacionCarga();
+        new ValidarUltimoNROTRN(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                Log.w("Listener cg",String.valueOf(output));
+            }
+        }).execute(spn_posicion.getSelectedItem().toString());
     }*/
     public void ImpresionContado(View view) {
         String Bombas="";
@@ -1709,77 +1778,135 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
         return String.format("%0" + (data.length * 2) + "X", new BigInteger(1,data));
     }
     private void FillCustomerNFC(String tag){
-        try {
-            PutData(variables.KEY_ULT_NROTRN, "1");//validacionFlotillero.validar_utlimo_nrotrn(this,
-                    //spn_posicion.getSelectedItem().toString()));
-            JSONObject jsonObject= new JSONObject();
-            dataCustomerCG = new ArrayList<>(cgticket_obj.GetCustomerNipCG(
-                    this,tag));
-            if ( dataCustomerCG.size()>0) {
-                jsonObject.put("codcli", dataCustomerCG.get(0).codcli);
-                jsonObject.put("chofer", dataCustomerCG.get(0).rsp);
-                jsonObject.put("placa", dataCustomerCG.get(0).plc);
-                jsonObject.put("vehiculo", dataCustomerCG.get(0).den_vehicle);
-                jsonObject.put("tar", dataCustomerCG.get(0).tar);
-                jsonObject.put("nroveh", dataCustomerCG.get(0).nroveh);
-                jsonObject.put("cliente", dataCustomerCG.get(0).den);
-                jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
-                jsonObject.put("tagadi", "");
-                FillCustomerData(jsonObject);
-                FillCustomerVehicleData(jsonObject);
-                CoreScreen();
-                CloseKeyboard();
-            }else{
-                new AlertDialog.Builder(Credito.this)
-                        .setTitle(R.string.error)
-                        .setIcon(icon)
-                        .setMessage("No se encontraron datos de cliente con el parametro establecido.")
-                        .setPositiveButton(R.string.btn_ok,null).show();
-            }
-        } catch (ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException | JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_FillCustomerNFC - " + e);
-            new AlertDialog.Builder(Credito.this)
-                    .setTitle(R.string.error)
-                    .setIcon(icon)
-                    .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
-            e.printStackTrace();
-        }
+        new ValidarUltimoNROTRN(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if (output.getInt(variables.CODE_ERROR)==0) {
+                        PutData(variables.KEY_ULT_NROTRN, output.getString(variables.KEY_ULT_NROTRN));
+                        Log.w("Listener cg", String.valueOf(output));
+                    }else{
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_ValidarUltimoNROTRN - " +
+                                output.getString(variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                }catch (JSONException e){
+                    logCE.EscirbirLog2(getApplicationContext(),"Credito_ValidarUltimoNROTRN - " + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+            }}).execute(spn_posicion.getSelectedItem().toString());
+        new GetCustomerTag(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if(output.getInt(variables.CODE_ERROR)==0){
+                        JSONObject jsonObject= new JSONObject();
+                        dataCustomerCG = (List<DataCustomerCG>) output.get(variables.GET_CUSTOMER_RESULT);
+                        if ( dataCustomerCG.size()>0) {
+                            try {
+                                jsonObject.put("codcli", dataCustomerCG.get(0).codcli);
+                                jsonObject.put("chofer", dataCustomerCG.get(0).rsp);
+                                jsonObject.put("placa", dataCustomerCG.get(0).plc);
+                                jsonObject.put("vehiculo", dataCustomerCG.get(0).den_vehicle);
+                                jsonObject.put("tar", dataCustomerCG.get(0).tar);
+                                jsonObject.put("nroveh", dataCustomerCG.get(0).nroveh);
+                                jsonObject.put("cliente", dataCustomerCG.get(0).den);
+                                jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
+                                jsonObject.put("nroeco", dataCustomerCG.get(0).nroeco);
+                                jsonObject.put("tagadi", "");
+                                FillCustomerData(jsonObject);
+                                FillCustomerVehicleData(jsonObject);
+                                CoreScreen();
+                                CloseKeyboard();
+                            } catch (JSONException | ClassNotFoundException | SQLException |
+                                    InstantiationException | IllegalAccessException e) {
+                                logCE.EscirbirLog2(getApplicationContext(),"Credito_GetCustomerTag - " + e);
+                                new AlertDialog.Builder(Credito.this)
+                                        .setTitle(R.string.error)
+                                        .setIcon(icon)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok,null).show();
+                                e.printStackTrace();
+                            }
+                        }
+                    }else{
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_GetCustomerTag - "
+                                + output.getString(variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                } catch (JSONException e) {
+                    logCE.EscirbirLog2(getApplicationContext(),"Credito_GetCustomerTag - " + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+            }}).execute(tag);
     }
     /*Validaciones del flotillero*/
     private Boolean ValidacionCarga()  {
-        boolean resdia = true, resestacion = true, reshora = true, resestado = true;
+        final boolean[] resdia = {true};
+        final boolean[] resestacion = {true};
+        final boolean[] reshora = {true};
+        final boolean[] resestado = {true};
+        final JSONObject[] dia = {null};
         try {
-            JSONObject dia= new JSONObject();
+            String tag;
             if(GetData(variables.METODO).equals(variables.KEY_NOMBRE)){
-                dia = validacionFlotillero.validar_dia(mContext, GetData(variables.KEY_CLIENTE_VEHICULO_TAR),
-                        GetData(variables.METODO));
+                tag = GetData(variables.KEY_CLIENTE_VEHICULO_TAR);
             }else {
-                dia = validacionFlotillero.validar_dia(mContext, GetData(variables.KEY_TAG),
-                        GetData(variables.METODO));
+                tag = GetData(variables.KEY_TAG);
+
             }
-            ArrayList<Integer> dias_carga = (ArrayList<Integer>) dia.get("Array");
-            if (!ValidacionCargaDia(dias_carga, dia)){
-                resdia = false;
-            }
-            if (!ValidacionCargaEstacion(dia)){
-                resestacion = false;
-            }
-            if(!ValidacionCargaHora(dia)){
-                reshora = false;
-            }
-            if (!ValidacionCargaEstado(dia)){
-                resestado = false;
-            }
-            ValidacionCargaProducto(dia);
-            if (!resdia || !resestacion || !reshora || !resestado ){
+            new GetVehicleRestrictions(this, getApplicationContext(), new ControlGasListener() {
+                @Override
+                public void processFinish(JSONObject output) {
+                    try {
+                        if(output.getInt(variables.CODE_ERROR)==0){
+                            Log.w("output",String.valueOf(output));
+                            Log.w("output data",String.valueOf(output.getJSONObject("Data")));
+                            dia[0] = output.getJSONObject("Data");
+                            ArrayList<Integer> dias_carga = (ArrayList<Integer>) dia[0].get("Array");
+                            if (!ValidacionCargaDia(dias_carga, dia[0])){
+                                resdia[0] = false;
+                            }
+                            if (!ValidacionCargaEstacion(dia[0])){
+                                resestacion[0] = false;
+                            }
+                            if(!ValidacionCargaHora(dia[0])){
+                                reshora[0] = false;
+                            }
+                            if (!ValidacionCargaEstado(dia[0])){
+                                resestado[0] = false;
+                            }
+                            ValidacionCargaProducto(dia[0]);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).execute(tag, GetData(variables.METODO));
+            if (!resdia[0] || !resestacion[0] || !reshora[0] || !resestado[0]){
                 return false;
             }else {
                 return true;
             }
-        } catch (ClassNotFoundException | JSONException | SQLException | InstantiationException |
-                IllegalAccessException e) {
+        } catch (JSONException e) {
             logCE.EscirbirLog2(getApplicationContext(),"Credito_ValidacionCarga - " + e);
             new AlertDialog.Builder(Credito.this)
                     .setIcon(icon)
@@ -1958,4 +2085,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener, 
             tvproducto2.setText(jsonObject.getString("Combustible"));
         }
     }
+
+
 }

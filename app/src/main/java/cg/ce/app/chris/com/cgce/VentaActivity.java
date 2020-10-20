@@ -42,8 +42,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.GetNipManager;
 import cg.ce.app.chris.com.cgce.Fragments.JarreoFullScreenFragment;
 import cg.ce.app.chris.com.cgce.common.RequestPermission;
+import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.Fragment1;
 
 
@@ -201,42 +204,49 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                 .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        cgticket ticket = new cgticket();
-                        String bdnipmanager = null;
-                        /*obtenemos y comparamos el nip del gerente almacenado previamente en la base de datos cecg_app*/
-                        try {
-                            bdnipmanager = ticket.getNipManager(getApplicationContext());
-                            Log.w("nip",bdnipmanager);
-                        } catch (SQLException | ClassNotFoundException | InstantiationException | JSONException | IllegalAccessException e) {
-                            new AlertDialog.Builder(VentaActivity.this)
-                                    .setTitle(R.string.error)
-                                    .setIcon(icon)
-                                    .setMessage(String.valueOf(e))
-                                    .setPositiveButton(R.string.btn_ok,null).show();
-                            logCE.EscirbirLog2(getApplicationContext(),"VentaActivity_CallJarreo - " + e);
-                            e.printStackTrace();
-                        }
-                        if(bdnipmanager != null) {
-                            if (nipManager.getText().toString().equals(bdnipmanager)){
-                                JarreoFullScreenFragment dialogFragment = new JarreoFullScreenFragment();
-                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                dialogFragment.show(transaction, String.valueOf(R.string.jarreo));
-                            }else {
-                                nipManager.setFocusable(true);
-                                new AlertDialog.Builder(VentaActivity.this)
-                                        .setTitle(R.string.error)
-                                        .setIcon(icon)
-                                        .setMessage(R.string.nipWrong)
-                                        .setPositiveButton(R.string.btn_ok,null).show();
-                            }
-                        }else{
-                            new AlertDialog.Builder(VentaActivity.this)
-                                    .setTitle(R.string.error)
-                                    .setIcon(icon)
-                                    .setMessage(R.string.nonipmanager)
-                                    .setPositiveButton(R.string.btn_ok,null).show();
-                        }
 
+                        final String[] bdnipmanager = {null};
+                        /*obtenemos y comparamos el nip del gerente almacenado previamente en la base de datos cecg_app*/
+                        new GetNipManager(VentaActivity.this, getApplicationContext(), new ControlGasListener() {
+                            @Override
+                            public void processFinish(JSONObject output) {
+                                try {
+                                    if (output.getInt(Variables.CODE_ERROR)==0) {
+                                        bdnipmanager[0] = output.getString(Variables.NIP_MANAGER);
+                                        if(bdnipmanager[0] != null) {
+                                            if (nipManager.getText().toString().equals(bdnipmanager[0])){
+                                                JarreoFullScreenFragment dialogFragment = new JarreoFullScreenFragment();
+                                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                                dialogFragment.show(transaction, String.valueOf(R.string.jarreo));
+                                            }else {
+                                                nipManager.setFocusable(true);
+                                                new AlertDialog.Builder(VentaActivity.this)
+                                                        .setTitle(R.string.error)
+                                                        .setIcon(icon)
+                                                        .setMessage(R.string.nipWrong)
+                                                        .setPositiveButton(R.string.btn_ok,null).show();
+                                            }
+                                        }else{
+                                            new AlertDialog.Builder(VentaActivity.this)
+                                                    .setTitle(R.string.error)
+                                                    .setIcon(icon)
+                                                    .setMessage(R.string.nonipmanager)
+                                                    .setPositiveButton(R.string.btn_ok,null).show();
+                                        }
+                                    }else{
+                                        logCE.EscirbirLog2(getApplicationContext(),
+                                                "VentaActivity_CallJarreo - " + output.get(Variables.MESSAGE_ERROR));
+                                        new AlertDialog.Builder(VentaActivity.this)
+                                                .setTitle(R.string.error)
+                                                .setIcon(icon)
+                                                .setMessage(String.valueOf(output.get(Variables.MESSAGE_ERROR)))
+                                                .setPositiveButton(R.string.btn_ok,null).show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).execute();
                     }
                 })
                 .setNegativeButton(R.string.cancelar,null).show();

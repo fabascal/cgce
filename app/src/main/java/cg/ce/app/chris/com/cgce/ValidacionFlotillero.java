@@ -118,7 +118,6 @@ public class ValidacionFlotillero {
                 validador-=dias[i-1];
             }
         }
-        connection.close();
         r.close();
         stmt.close();
         connection.close();

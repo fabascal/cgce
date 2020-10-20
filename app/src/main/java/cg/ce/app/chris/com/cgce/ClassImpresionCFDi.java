@@ -1,11 +1,16 @@
 package cg.ce.app.chris.com.cgce;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Display;
@@ -24,6 +29,7 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import static android.content.Context.WINDOW_SERVICE;
 
@@ -42,6 +48,8 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
     DecimalFormat formateador21 = new DecimalFormat("###,###.##");
     JSONObject cfdienvio = new JSONObject();
     cgticket cg = new cgticket();
+    String marca;
+    Drawable icon;
 
     public ClassImpresionCFDi(Activity activity, Context context, Button btn, JSONObject jsonObject){
         this.activity=activity;
@@ -111,7 +119,7 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
         Numero_a_Letra letra = new Numero_a_Letra();
         JSONObject datos_domicilio = new JSONObject();
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_impresion_total);
+        Bitmap logoData = ((BitmapDrawable) icon).getBitmap();
         StringBuilder textData = new StringBuilder();
         final int barcodeWidth = 2;
         final int barcodeHeight = 100;
@@ -303,7 +311,10 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
                 textData.append(String.valueOf(cfdienvio.getString("sello_sat")) + "\n");
             }
             textData.append("CADENA ORIGINAL DEL COMPLEMENTO DE CERTIFICACION DIGITAL DEL SAT\n");
-            if (cfdienvio.has("version") || cfdienvio.has("uuid") || cfdienvio.has("fecha_timbre") || cfdienvio.has("sello_cfd")) {
+            if (cfdienvio.has("version") ||
+                    cfdienvio.has("uuid") ||
+                    cfdienvio.has("fecha_timbre") ||
+                    cfdienvio.has("sello_cfd")) {
                 textData.append("|" + String.valueOf(cfdienvio.getString("version")) +
                         "|" + String.valueOf(cfdienvio.getString("uuid")) +
                         "|" + String.valueOf(cfdienvio.getString("fecha_timbre")) +
@@ -564,5 +575,24 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
                 }).start();
             }
         });
+    }
+    @SuppressLint("SourceLockedOrientationActivity")
+    public void BrandSharedPreferences(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Brand", Context.MODE_PRIVATE);
+        marca=sharedPreferences.getString(context.getResources().getString(R.string.BrandName), "Combu-Express");
+        switch (Objects.requireNonNull(sharedPreferences.getString(context.getResources().getString(R.string.BrandName), "Combu-Express"))){
+            case "Combu-Express":
+                icon = context.getDrawable(R.drawable.combuito);
+                break;
+            case "Repsol":
+                icon = context.getDrawable(R.drawable.isologo_repsol);
+                break;
+            case "Ener":
+                icon = context.getDrawable(R.drawable.logo_impresion_ener);
+                break;
+            case "Total":
+                icon = context.getDrawable(R.drawable.total);
+                break;
+        }
     }
 }

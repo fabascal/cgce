@@ -1,5 +1,7 @@
 package cg.ce.app.chris.com.cgce.common;
 
+import java.security.PublicKey;
+
 public class Variables {
     public final static String POSICION = "Posicion";
     public final static String POSICIONES = "Posiciones";
@@ -45,4 +47,12 @@ public class Variables {
     public final static String KEY_IMPRESO = "Impreso";
     public final static String KEY_TIPTRN = "Tiptrn";
     public final static String KEY_RUT = "Rut";
+    public final static String KEY_CLIENTE_VEHICULO_NROECO = "Nroeco";
+    public final static String CODE_ERROR = "Code_Error";
+    public final static String MESSAGE_ERROR = "Message_Error";
+    public final static String GET_CUSTOMER_RESULT = "CustomerResult";
+    public final static String NIP_MANAGER = "NipManager";
+    public final static String NIP_DESPACHADOR = "NipDespachador";
+    public final static String TPV_LIST = "ListTPV";
+    public final static String KET_TICKET_CLIENTE_TIPVAL_DEN = "TipvalDen";
 }
