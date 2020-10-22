@@ -9,14 +9,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Parcelable;
@@ -31,7 +29,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -68,12 +65,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerTag;
 import cg.ce.app.chris.com.cgce.ControlGas.GetImpreso;
 import cg.ce.app.chris.com.cgce.ControlGas.GetPumpPosition;
 import cg.ce.app.chris.com.cgce.ControlGas.GetTicket;
 import cg.ce.app.chris.com.cgce.ControlGas.GetVehicleRestrictions;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetPumpPositionListener;
 import cg.ce.app.chris.com.cgce.ControlGas.UpdateCodcli;
 import cg.ce.app.chris.com.cgce.ControlGas.ValidarUltimoNROTRN;
 import cg.ce.app.chris.com.cgce.common.Variables;
@@ -81,7 +79,7 @@ import cg.ce.app.chris.com.cgce.dialogos.close_credito;
 import cg.ce.app.chris.com.cgce.dialogos.fab_contado;
 
 public class Credito extends AppCompatActivity implements View.OnClickListener,
-        com.epson.epos2.printer.ReceiveListener {
+        com.epson.epos2.printer.ReceiveListener, GetPumpPositionListener {
     ValidateTablet tablet = new ValidateTablet();
     Spinner spn_posicion;
     Drawable icon;
@@ -286,57 +284,49 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
     }
     public void BtnCredito(View view){
-        try {
-            if (pdLoading != null){
-                pdLoading.dismiss();
-            }
-           /* pdLoading = new ProgressDialog(Credito.this);
-            pdLoading.setMessage("Actualizando..."); // Setting Message
-            pdLoading.setTitle(marca); // Setting Title
-            pdLoading.setIcon(icon);
-            pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-            pdLoading.show(); // Display Progress Dialog
-            pdLoading.setCancelable(false);*/
 
-            /*pdLoading.dismiss();*/
-            PutTicketData();
-            if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN))<Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))){
-                /*pdLoading = new ProgressDialog(Credito.this);
-                pdLoading.setMessage("Imprimiendo..."); // Setting Message
-                pdLoading.setTitle(marca); // Setting Title
-                pdLoading.setIcon(icon);
-                pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-                pdLoading.show(); // Display Progress Dialog
-                pdLoading.setCancelable(false);*/
-                /*new Thread(new Runnable() {
-                    public void run() {
-                        PrintReceip();
-                        pdLoading.dismiss();
+
+
+        new GetTicket(this, new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if (output.getInt(Variables.CODE_ERROR)==0){
+                        final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+                        int index = spn_posicion.getSelectedItemPosition();
+                        Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
+                        if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN))<Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))) {
+                            UpdateCodcli();
+                            PrintReceip();
+                        }else{
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(icon)
+                                    .setMessage(R.string.EsperaServicio)
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                        }
+                    }else{
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - "
+                                + output.getString(Variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok,null).show();
                     }
-                }).start();*/
-                UpdateCodcli();
-
-                PrintReceip();
-            }else{
-                new AlertDialog.Builder(Credito.this)
-                        .setTitle(R.string.error)
-                        .setIcon(icon)
-                        .setMessage(R.string.EsperaServicio)
-                        .setPositiveButton(R.string.btn_ok,null).show();
+                } catch (JSONException | ExecutionException | InterruptedException e) {
+                    logCE.EscirbirLog2(getApplicationContext(),"Credito_BtnCredito - " + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
             }
-        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException | SocketException | ExecutionException | InterruptedException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_BtnCredito - " + e);
-            new AlertDialog.Builder(Credito.this)
-                    .setTitle(R.string.error)
-                    .setIcon(icon)
-                    .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
-            e.printStackTrace();
-        }
+        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
     }
-    private void UpdateCodcli() throws JSONException, ClassNotFoundException, SQLException,
-            InstantiationException, IllegalAccessException, SocketException, ExecutionException, InterruptedException {
+    private void UpdateCodcli() throws JSONException,  ExecutionException, InterruptedException {
         dummy = new GetImpreso(this, getApplicationContext()).execute(GetTicketData(variables.KEY_TICKET_NROTRN)).get();
         if (dummy.getInt(Variables.CODE_ERROR)==0){
             PutData(Variables.KEY_IMPRESO, String.valueOf(dummy.getInt(Variables.KEY_IMPRESO)));
@@ -353,14 +343,23 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         if (GetData(variables.KEY_IMPRESO).equals("10")){
             new UpdateCodcli(this, getApplicationContext(), new ControlGasListener() {
                 @Override
-                public void processFinish(JSONObject output) throws JSONException {
-                    if (output.getInt(Variables.CODE_ERROR)==1){
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " +
-                                output.getString(Variables.MESSAGE_ERROR));
+                public void processFinish(JSONObject output){
+                    try {
+                        if (output.getInt(Variables.CODE_ERROR)==1){
+                            logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " +
+                                    output.getString(Variables.MESSAGE_ERROR));
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(icon)
+                                    .setMessage(output.getString(Variables.MESSAGE_ERROR));
+                        }
+                    } catch (JSONException e) {
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " + e);
                         new AlertDialog.Builder(Credito.this)
                                 .setTitle(R.string.error)
                                 .setIcon(icon)
-                                .setMessage(output.getString(Variables.MESSAGE_ERROR));
+                                .setMessage(String.valueOf(e));
+                        e.printStackTrace();
                     }
                 }
             }).execute(
@@ -463,40 +462,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     }
     /*Llenado inicial del Json, se ejecuta una ves en el oncreate*/
     public void FillPosicion(){
-        new GetPumpPosition(this, getApplicationContext(), new ControlGasListener() {
-            @Override
-            public void processFinish(JSONObject output) {
-                try {
-                    if (output.getInt(variables.CODE_ERROR)==0){
-                        ArrayList<String> data = (ArrayList<String>) output.get(variables.POSICIONES);
-                        ArrayAdapter NoCoreAdapter = new ArrayAdapter(getApplicationContext(),
-                                R.layout.spinner_bombas_credito, data);
-                        spn_posicion.setAdapter(NoCoreAdapter);
-                        for (int i =0 ; i < data.size() ; i++) {
-                            JSONObject Posicion = new JSONObject();
-                            Posicion.put(variables.POSICION,data.get(i));
-                            Logicos.put(Posicion);
-                            Posiciones.put(variables.POSICIONES,Logicos);
-                        }
-                    }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " +
-                                output.getString(variables.MESSAGE_ERROR));
-                        new AlertDialog.Builder(Credito.this)
-                                .setTitle(R.string.error)
-                                .setIcon(icon)
-                                .setMessage(output.getString(variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok,null).show();
-                    }
-                } catch (JSONException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " + e);
-                    new AlertDialog.Builder(Credito.this)
-                            .setTitle(R.string.error)
-                            .setIcon(icon)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
-                    e.printStackTrace();
-                }
-            }}).execute(mac.getMacAddress());
+        GetPumpPosition getPumpPosition = new GetPumpPosition(this, getApplicationContext());
+        getPumpPosition.delegate=this;
+        try {
+            getPumpPosition.execute(mac.getMacAddress()).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     private void CoreScreen() throws JSONException, ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException {
@@ -862,18 +834,55 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             return res;
         }
     }
-    private void PutTicketData() throws ExecutionException, InterruptedException, JSONException {
-        JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+    private void PutTicketData(){
+        new GetTicket(this, new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output)  {
+                try {
+                    if (output.getInt(Variables.CODE_ERROR)==0){
+                        final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+                        int index = spn_posicion.getSelectedItemPosition();
+                        Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
+                    }else{
+                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - "
+                                + output.getString(Variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                } catch (JSONException e) {
+                    logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - " + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+            }
+        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
+    }
+    /*private void PutTicketData() throws JSONException, ExecutionException, InterruptedException {
+        final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
-        Validar.getJSONObject(index).put(variables.KEY_TICKET,
-                new GetTicket(this, getApplicationContext(), new ControlGasListener() {
+        Validar.getJSONObject(index).put(Variables.KEY_TICKET,
+                new GetTicket(this, new ControlGasListener() {
                     @Override
                     public void processFinish(JSONObject output) throws JSONException {
-
+                        if (output.getInt(Variables.CODE_ERROR)==1){
+                            logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - "
+                                    + output.getString(Variables.MESSAGE_ERROR));
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(icon)
+                                    .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                        }
                     }
-                }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress()).get()
-        );
-    }
+                }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1"));
+    }*/
     private void UpdateTicketData(String key, String data) throws JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
@@ -1097,7 +1106,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         } else if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 1) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
-            metodoPago = GetTicketData(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN);
+            metodoPago = GetTicketData(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
         }
 
         method = "addTextAlign";
@@ -2087,4 +2096,37 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     }
 
 
+    @Override
+    public void GetPumpPositionFinish(JSONObject output) {
+        try {
+            if (output.getInt(variables.CODE_ERROR)==0){
+                ArrayList<String> data = (ArrayList<String>) output.get(variables.POSICIONES);
+                ArrayAdapter NoCoreAdapter = new ArrayAdapter(getApplicationContext(),
+                        R.layout.spinner_bombas_credito, data);
+                spn_posicion.setAdapter(NoCoreAdapter);
+                for (int i =0 ; i < data.size() ; i++) {
+                    JSONObject Posicion = new JSONObject();
+                    Posicion.put(variables.POSICION,data.get(i));
+                    Logicos.put(Posicion);
+                    Posiciones.put(variables.POSICIONES,Logicos);
+                }
+            }else{
+                logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " +
+                        output.getString(variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(output.getString(variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }
+        } catch (JSONException e) {
+            logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+    }
 }

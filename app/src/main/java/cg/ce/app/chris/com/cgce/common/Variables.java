@@ -52,7 +52,9 @@ public class Variables {
     public final static String MESSAGE_ERROR = "Message_Error";
     public final static String GET_CUSTOMER_RESULT = "CustomerResult";
     public final static String NIP_MANAGER = "NipManager";
+    public final static String NIP_MANAGER_WRITE = "NipManagerWrite";
     public final static String NIP_DESPACHADOR = "NipDespachador";
     public final static String TPV_LIST = "ListTPV";
-    public final static String KET_TICKET_CLIENTE_TIPVAL_DEN = "TipvalDen";
+    public final static String KEY_TICKET_CLIENTE_TIPVAL_DEN = "TipvalDen";
+    public final static String MAC_ADDRESS = "MacAddress";
 }

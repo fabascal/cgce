@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,26 +14,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetImpresoListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetVehicleDataListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
-import cg.ce.app.chris.com.cgce.DataBaseManager;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
-public class GetImpreso extends AsyncTask <String, Void, JSONObject> {
+public class GetVehicleData extends AsyncTask <String, Void, JSONObject> {
 
     private ProgressDialog mProgressDialog;
     private WeakReference<Activity> mActivity;
     private Context mContext;
     DataBaseCG cg = new DataBaseCG();
-    Integer res=10;
-    Connection conn = null;
-    Statement stmt;
-    JSONObject cursor = null;
-    ResultSet r;
+    public GetVehicleDataListener delegate=null;
     JSONObject result = new JSONObject();
-    public GetImpresoListener delegate = null;
+    Connection connection= null;
+    Statement stmt = null;
 
-    public GetImpreso(Activity activity, Context context) {
+    public GetVehicleData(Activity activity, Context context) {
         mActivity = new WeakReference<Activity>(activity);
         this.mContext = context;
         // Initialize the progress dialog
@@ -45,34 +40,47 @@ public class GetImpreso extends AsyncTask <String, Void, JSONObject> {
         // Progress dialog title
         mProgressDialog.setTitle("CombuGo");
         // Progress dialog message
-        mProgressDialog.setMessage("Favor de esperar, Obteniendo estatus de impresion...");
+        mProgressDialog.setMessage("Favor de esperar, estamos obteniendo informacion del vehiculo...");
     }
 
     @Override
     protected void onPreExecute() {
         mProgressDialog.show();
     }
+
     @Override
     protected JSONObject doInBackground(String... params) {
+        ResultSet r;
+        DataBaseCG cg = new DataBaseCG();
+
         try {
-            conn = cg.odbc_cecg_app(mContext);
-            DataBaseManager manager = new DataBaseManager(mContext);
-            cursor = manager.cargarcursorodbc2();
-            String query = "select impreso from despachos where nrotrn="+params[0]+"";
-            Log.w("query impreso", query);
-            stmt = conn.createStatement();
+            connection = cg.odbc_cg(mContext);
+            stmt = connection.createStatement();
+            String query = "select top 1 d.nrotrn,cv.plc,cv.rsp,cv.nroeco,d.odm,cv.codcli,cv.nroveh," +
+                    "d.codcli,d.nroveh, cv.tar from Despachos as d\n" +
+                    "inner join ClientesVehiculos as cv on d.nroveh=cv.nroveh and d.codcli=cv.codcli\n" +
+                    "where d.nrotrn="+params[0]+" and d.nrobom="+params[1]+" order by d.nrotrn desc";
             r = stmt.executeQuery(query);
-            if (r.next()) {
-                res = r.getInt("impreso");
+            if(!r.next()){
+                result.put("placa","Sin Placa");
+                result.put("rsp","Sin Chofer");
+                result.put("nroeco","Sin No° Economico");
+                result.put("ultodm","Sin Odometro");
+                result.put("tar",0);
+            }else{
+                result.put("placa", r.getString("plc"));
+                result.put("rsp", r.getString("rsp"));
+                result.put("nroeco", r.getString("nroeco"));
+                result.put("ultodm", r.getString("odm"));
+                result.put("tar",r.getString("tar"));
             }
             result.put(Variables.CODE_ERROR,0);
-            result.put(Variables.KEY_IMPRESO,res);
-            conn.close();
+            connection.close();
             stmt.close();
-        } catch (JSONException | ClassNotFoundException | InstantiationException |
-                IllegalAccessException | SQLException e) {
+        } catch (IllegalAccessException | ClassNotFoundException | InstantiationException |
+                SQLException | JSONException e) {
             try {
-                conn.close();
+                connection.close();
                 stmt.close();
                 result.put(Variables.CODE_ERROR,1);
                 result.put(Variables.MESSAGE_ERROR,e);
@@ -80,8 +88,9 @@ public class GetImpreso extends AsyncTask <String, Void, JSONObject> {
             } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
+
         }
-        System.out.println("GetImpreso " + result);
+        System.out.println("GetVehicleData" + result);
         return result;
     }
 
@@ -90,7 +99,7 @@ public class GetImpreso extends AsyncTask <String, Void, JSONObject> {
         if (mProgressDialog!= null){
             mProgressDialog.dismiss();
         }
+        delegate.GetVehicleDataFinish(jsonObject);
         super.onPostExecute(jsonObject);
-        delegate.GetImpresoFinish(jsonObject);
     }
 }

@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.common.GetHour;
 import cg.ce.app.chris.com.cgce.common.Variables;
@@ -29,6 +30,8 @@ public class GetVehicleRestrictions extends AsyncTask<String, Void, JSONObject> 
     DataBaseCG cg = new DataBaseCG();
     public ControlGasListener delegate=null;
     int []dias={1,2,4,8,16,32,64};
+    Connection connection= null;
+    Statement stmt = null;
 
     public GetVehicleRestrictions(Activity activity, Context context, ControlGasListener delegate) {
         mActivity = new WeakReference<Activity>(activity);
@@ -56,10 +59,10 @@ public class GetVehicleRestrictions extends AsyncTask<String, Void, JSONObject> 
         JSONObject res = new JSONObject();
         JSONObject result = new JSONObject();
         ArrayList<Integer>dias_carga = new ArrayList<>() ;
-        Connection connection= null;
+
         try {
             connection = cg.odbc_cg(mContext);
-            Statement stmt = connection.createStatement();
+            stmt = connection.createStatement();
             String query="";
             switch (params[1]){
                 case Variables.KEY_NOMBRE:
@@ -130,10 +133,12 @@ public class GetVehicleRestrictions extends AsyncTask<String, Void, JSONObject> 
             result.put(Variables.CODE_ERROR,0);
         } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | SQLException | JSONException e) {
             try {
+                connection.close();
+                stmt.close();
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
-            } catch (JSONException ex) {
+            } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
         }
@@ -146,11 +151,7 @@ public class GetVehicleRestrictions extends AsyncTask<String, Void, JSONObject> 
         if (mProgressDialog!= null){
             mProgressDialog.dismiss();
         }
-        try {
-            delegate.processFinish(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.processFinish(jsonObject);
         super.onPostExecute(jsonObject);
     }
 }

@@ -12,20 +12,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -35,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -46,30 +37,29 @@ import com.google.zxing.WriterException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.GetEstacionData;
+import cg.ce.app.chris.com.cgce.ControlGas.GetImpreso;
 import cg.ce.app.chris.com.cgce.ControlGas.GetTPVs;
 import cg.ce.app.chris.com.cgce.ControlGas.GetTicket;
-import cg.ce.app.chris.com.cgce.Printing.TicketPrint;
+import cg.ce.app.chris.com.cgce.ControlGas.GetVehicleData;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetEstacionDataListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetImpresoListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetVehicleDataListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.UpdateNrotrnListener;
+import cg.ce.app.chris.com.cgce.ControlGas.PutImpreso;
+import cg.ce.app.chris.com.cgce.ControlGas.UpdateNrotrn;
 import cg.ce.app.chris.com.cgce.common.RequestPermission;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
-public class ActivityTicket extends AppCompatActivity implements View.OnClickListener, com.epson.epos2.printer.ReceiveListener {
+public class ActivityTicket extends AppCompatActivity implements View.OnClickListener,
+        com.epson.epos2.printer.ReceiveListener, GetImpresoListener, UpdateNrotrnListener,
+        GetEstacionDataListener, GetVehicleDataListener {
     /*Elementos Graficos*/
     TextView nrotrn, prd, cant, precio, monto;
     ImageButton print;
@@ -79,7 +69,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     ValidateTablet tablet = new ValidateTablet();
     /*Objetos*/
     JSONObject ticket = new JSONObject();
-    cgticket cg = new cgticket();
     List tpv;
     /*Variables de actividad*/
     String event_ticket, evento_sorteo, tur, flag_brand;
@@ -103,6 +92,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     Variables variables = new Variables();
     MacActivity mac = new MacActivity();
     RequestPermission requestPermission = new RequestPermission();
+    JSONObject datos_domicilio;
+    JSONObject vehiculo;
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -133,13 +124,18 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         print.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle.getString("bomba") != null) {
-            new GetTicket(this, getApplicationContext(), new ControlGasListener() {
+            /*Funcion para obtener la data de la estacion, necesaria para el formato de impresion*/
+            GetEstacionData getEstacionData = new GetEstacionData(this, getApplicationContext());
+            getEstacionData.delegate = this;
+            getEstacionData.execute();
+            new GetTicket(this, new ControlGasListener() {
                 @Override
                 public void processFinish(JSONObject output) {
                     try {
                         if( output.getInt(Variables.CODE_ERROR)==0){
+                            String textnrotrn = null;
                             ticket = output;
-                            String textnrotrn =ticket.getString(Variables.KEY_TICKET_NROTRN) + "0";
+                            textnrotrn = ticket.getString(Variables.KEY_TICKET_NROTRN) + "0";
                             nrotrn.setText(textnrotrn);
                             prd.setText(ticket.getString(Variables.KEY_TICKET_PRODUCTO));
                             String textcant = "LTS " + formateador4.format(ticket.getDouble(
@@ -170,7 +166,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     }
 
                 }
-            }).execute(bundle.getString("bomba"),mac.getMacAddress());
+            }).execute(bundle.getString("bomba"),mac.getMacAddress(),"0");
         }
 
         spn_metodo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -198,8 +194,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         /*Se inicializa el objeto impresora*/
         initializeObject();
         pdLoading = new ProgressDialog(ActivityTicket.this);
-    }
 
+    }
 
     public void fill_spn_metodo_den() throws ClassNotFoundException, SQLException,
             InstantiationException, JSONException, IllegalAccessException {
@@ -260,20 +256,20 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         switch (view.getId()) {
             case R.id.print_ticket:
 
-                pdLoading = new ProgressDialog(ActivityTicket.this);
+                /*pdLoading = new ProgressDialog(ActivityTicket.this);
                 pdLoading.setMessage("Imprimiendo..."); // Setting Message
                 pdLoading.setTitle(flag_brand); // Setting Title
                 pdLoading.setIcon(image);
                 pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
                 pdLoading.show(); // Display Progress Dialog
-                pdLoading.setCancelable(false);
-
-                new Thread(new Runnable() {
+                pdLoading.setCancelable(false);*/
+                PrintReceip();
+                /*new Thread(new Runnable() {
                     public void run() {
-                        PrintReceip();
+
                         pdLoading.dismiss();
                     }
-                }).start();
+                }).start();*/
 
         }
     }
@@ -286,12 +282,22 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 Log.w("Code", String.valueOf(code));
                 if (code == 0) {
                     try {
-                        cg.actualizar_cant_impreso(getApplicationContext(),
-                                ticket.getString(variables.KEY_TICKET_NROTRN));
-                    } catch (ClassNotFoundException | JSONException | InstantiationException |
-                            IllegalAccessException | SQLException e) {
+                        new PutImpreso(ActivityTicket.this, new ControlGasListener() {
+                            @Override
+                            public void processFinish(JSONObject output) {
+                                try {
+                                    if ( output.getInt( Variables.CODE_ERROR )==1){
+
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).execute(ticket.getString(Variables.KEY_TICKET_NROTRN));
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                     Intent intent = new Intent(getApplicationContext(), VentaActivity.class);
                     startActivity(intent);
                 }
@@ -354,52 +360,27 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         try {
             ticket.put(variables.KEY_RUT, tur);
             ticket.put(variables.KEY_TIPTRN, tiptrn);
-            int impreso = cg.cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN));
-            if (impreso == 10) {
-                Log.w("ticket con tiptrn", ticket.toString());
-                runOnUiThread(new Runnable() {
-                    public synchronized void run() {
-                        try {
-                            cg.guardarnrotrn(getApplicationContext(), ticket, 1);
-                        } catch (ClassNotFoundException | SQLException | InstantiationException |
-                                IllegalAccessException | JSONException | SocketException e) {
-                            new AlertDialog.Builder(ActivityTicket.this)
-                                    .setTitle(R.string.error)
-                                    .setMessage(String.valueOf(e))
-                                    .setPositiveButton(R.string.btn_ok, null).show();
-                            e.printStackTrace();
-                        }
-                    }
-                });
 
-            }
-            if (!runPrintReceiptSequence()) {
-                updateButtonState(true);
-                if (pdLoading != null) {
-                    pdLoading.dismiss();
-                }
-                if (!state_error) {
-                    cg.actualizar_cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN));
-                    Intent intent = new Intent(ActivityTicket.this, VentaActivity.class);
-                    startActivity(intent);
-                }
-            }
+            /*Funcion para obtener la data del vehiculo, necesaria para el formato de impresion*/
+            GetVehicleData getVehicleData = new GetVehicleData(this, getApplicationContext());
+            getVehicleData.delegate= this;
+            getVehicleData.execute(ticket.getString(Variables.KEY_TICKET_NROTRN),ticket.getString(Variables.KEY_TICKET_BOMBA));
+            /*Funcion para obtener la validacion de impresion*/
+            GetImpreso getImpreso = new GetImpreso(this, getApplicationContext());
+            getImpreso.delegate=this;
+            getImpreso.execute(ticket.getString(Variables.KEY_TICKET_NROTRN));
 
-        } catch ( final ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException | JSONException | Epos2Exception | WriterException e) {
+
+        } catch ( final JSONException e) {
             if (pdLoading != null) {
                 pdLoading.dismiss();
             }
             logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_PrintReceip - " + e);
-            runOnUiThread(new Runnable() {
-                public synchronized void run() {
-                    new AlertDialog.Builder(ActivityTicket.this)
-                            .setTitle(R.string.error)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok, null).show();
-                    updateButtonState(true);
-                }
-            });
+            new AlertDialog.Builder(ActivityTicket.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            updateButtonState(true);
             e.printStackTrace();
         }
     }
@@ -450,15 +431,16 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         if (mPrinter == null) {
             return false;
         }
-        JSONObject datos_domicilio = cg.estacion_domicilio(mContext);
-        JSONObject vehiculo = new JSONObject();
+
+
+
         String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
         String metodoPago = "";
-        ticket.put(variables.KEY_IMPRESO, cg.cant_impreso(getApplicationContext(), ticket.getString(variables.KEY_TICKET_NROTRN)));
-        if (ticket.getInt(variables.KEY_IMPRESO) == 0 || ticket.getInt(variables.KEY_IMPRESO) == 10) {
+
+        if (ticket.getInt(Variables.KEY_IMPRESO) == 0 || ticket.getInt(Variables.KEY_IMPRESO) == 10) {
             titulo = "O R I G I N A L";
             if (ticket.getInt(Variables.KEY_TICKET_CODCLI)>0){
-                metodoPago = ticket.getString(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN);
+                metodoPago = ticket.getString(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
             }else{
                 metodoPago = ticket.getString(variables.KEY_RUT);
             }
@@ -478,11 +460,11 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         }
         Log.w("ticket", ticket.toString());
         if (ticket.getInt(variables.KEY_TICKET_CODCLI) != 0) {
-            vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));
+            /*vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));*/
             cliente = ticket.getString(variables.KEY_TICKET_DENCLI);
-            metodoPago = ticket.getString(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN);
+            metodoPago = ticket.getString(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
         } else {
-            vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));
+            /*vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));*/
 
             if (ticket.has("tpv")) {
                 if (ticket.getJSONObject("tpv").has("nombre")) {
@@ -545,7 +527,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         textData.append(cliente + "\n");
         textData.append(metodoPago + "\n");
         //textData.append("\n");
-        if (ticket.has("codcli")) {
+        if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
             if (vehiculo.has("rsp")) {
                 textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
             }
@@ -674,7 +656,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
             //textData.append("\n");
-            if (ticket.has("codcli")) {
+            if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
                 if (vehiculo.has("rsp")) {
                     textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
                 }
@@ -1073,6 +1055,131 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    @Override
+    public void GetImpresoFinish(JSONObject output) {
+        try {
+            if (output.getInt(Variables.CODE_ERROR)==0){
+                ticket.put(Variables.KEY_IMPRESO,output.getInt(Variables.KEY_IMPRESO));
+                if (ticket.getInt(Variables.KEY_IMPRESO)==10){
+                    UpdateNrotrn updateNrotrn = new UpdateNrotrn(this, getApplicationContext(), mac.getMacAddress(), "1");
+                    updateNrotrn.delegate = this;
+                    updateNrotrn.execute(ticket);
+                }
+
+                /*impresion*/
+                ExecutePrint executePrint = new ExecutePrint();
+                executePrint.execute();
+
+            }else{
+                updateButtonState(true);
+                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetImpresoFinish - " +
+                        output.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(ActivityTicket.this)
+                        .setTitle(R.string.error)
+                        .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void UpdateNrotrnFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==1){
+                updateButtonState(true);
+                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " +
+                        jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(ActivityTicket.this)
+                        .setTitle(R.string.error)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetEstacionDataFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0) {
+                datos_domicilio = jsonObject;
+            }else{
+                updateButtonState(true);
+                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " +
+                        jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(ActivityTicket.this)
+                        .setTitle(R.string.error)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetVehicleDataFinish(JSONObject jsonObject) {
+        System.out.println("GetVehicleDataFinish"+jsonObject);
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0){
+                vehiculo = jsonObject;
+            }else{
+                updateButtonState(true);
+                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " +
+                        jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(ActivityTicket.this)
+                        .setTitle(R.string.error)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public class  ExecutePrint extends AsyncTask<String,Void, JSONObject> {
+        JSONObject result = new JSONObject();
+        @Override
+        protected void onPreExecute() {
+            pdLoading = new ProgressDialog(ActivityTicket.this);
+                pdLoading.setMessage("Imprimiendo..."); // Setting Message
+                pdLoading.setTitle(flag_brand); // Setting Title
+                pdLoading.setIcon(image);
+                pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+                pdLoading.show(); // Display Progress Dialog
+                pdLoading.setCancelable(false);
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            try {
+                if (!runPrintReceiptSequence()) {
+                    updateButtonState(true);
+                    if (pdLoading != null) {
+                        pdLoading.dismiss();
+                    }
+                }
+            } catch (SQLException | WriterException | InstantiationException | JSONException |
+                    ClassNotFoundException | IllegalAccessException | Epos2Exception e) {
+                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " + e);
+                new AlertDialog.Builder(ActivityTicket.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+            return result;
+        }
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            if (pdLoading!= null){
+                pdLoading.dismiss();
+            }
+            super.onPostExecute(jsonObject);
         }
     }
 }

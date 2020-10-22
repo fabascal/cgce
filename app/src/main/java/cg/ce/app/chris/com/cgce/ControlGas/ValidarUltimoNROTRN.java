@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
@@ -25,6 +26,8 @@ public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
     private Context mContext;
     DataBaseCG cg = new DataBaseCG();
     public ControlGasListener delegate=null;
+    Connection connection = null;
+    Statement stmt = null;
 
     public ValidarUltimoNROTRN(Activity activity, Context context, ControlGasListener delegate) {
         mActivity = new WeakReference<Activity>(activity);
@@ -53,8 +56,8 @@ public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
         JSONObject res = new JSONObject();
         ResultSet r;
         try {
-            Connection connection= cg.odbc_cg(mContext);
-            Statement stmt = connection.createStatement();
+            connection = cg.odbc_cg(mContext);
+            stmt = connection.createStatement();
             String query = "select top 1 nrotrn from Despachos where nrobom ="+bomba+" order by nrotrn desc";
             r = stmt.executeQuery(query);
             while (r.next()) {
@@ -69,9 +72,11 @@ public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
                 SQLException | JSONException e) {
             e.printStackTrace();
             try {
+                stmt.close();
+                connection.close();
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,String.valueOf(e));
-            } catch (JSONException ex) {
+            } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
         }
@@ -86,11 +91,7 @@ public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
         }
         System.out.println("async response");
         System.out.println(s);
-        try {
-            delegate.processFinish(s);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.processFinish(s);
         super.onPostExecute(s);
     }
 }

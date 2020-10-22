@@ -26,7 +26,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,19 +37,19 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
 import cg.ce.app.chris.com.cgce.ControlGas.GetNipManager;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetNipManagerListener;
 import cg.ce.app.chris.com.cgce.Fragments.JarreoFullScreenFragment;
 import cg.ce.app.chris.com.cgce.common.RequestPermission;
 import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.Fragment1;
 
 
-public class VentaActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class VentaActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, GetNipManagerListener {
 
     SharedPreferences sharedPreferences;
     CardView cardViewContado,cardViewCredito,CardViewServicios,CardViewTPV,cardViewAceite;
@@ -65,6 +64,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
     LogCE logCE = new LogCE();
     RequestPermission requestPermission = new RequestPermission();
     Drawable icon;
+    Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         msj=findViewById(R.id.tvmsj);
         Intent intent= getIntent();
         msj.setText(intent.getStringExtra(MSJ));
-
+        mContext = this;
         if (intent.hasExtra("Error_Status")) {
                 error_status.setVisibility(View.VISIBLE);
                 //warning.setVisibility(View.VISIBLE);
@@ -195,7 +195,7 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         final EditText nipManager = new EditText(this);
         nipManager.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD | InputType.TYPE_CLASS_NUMBER);
         nipManager.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
+        nipManager.setFocusable(true);
         new AlertDialog.Builder(VentaActivity.this)
                 .setTitle(R.string.jarreo)
                 .setMessage(R.string.jarreo_msj)
@@ -204,49 +204,10 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
                 .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        final String[] bdnipmanager = {null};
                         /*obtenemos y comparamos el nip del gerente almacenado previamente en la base de datos cecg_app*/
-                        new GetNipManager(VentaActivity.this, getApplicationContext(), new ControlGasListener() {
-                            @Override
-                            public void processFinish(JSONObject output) {
-                                try {
-                                    if (output.getInt(Variables.CODE_ERROR)==0) {
-                                        bdnipmanager[0] = output.getString(Variables.NIP_MANAGER);
-                                        if(bdnipmanager[0] != null) {
-                                            if (nipManager.getText().toString().equals(bdnipmanager[0])){
-                                                JarreoFullScreenFragment dialogFragment = new JarreoFullScreenFragment();
-                                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                                dialogFragment.show(transaction, String.valueOf(R.string.jarreo));
-                                            }else {
-                                                nipManager.setFocusable(true);
-                                                new AlertDialog.Builder(VentaActivity.this)
-                                                        .setTitle(R.string.error)
-                                                        .setIcon(icon)
-                                                        .setMessage(R.string.nipWrong)
-                                                        .setPositiveButton(R.string.btn_ok,null).show();
-                                            }
-                                        }else{
-                                            new AlertDialog.Builder(VentaActivity.this)
-                                                    .setTitle(R.string.error)
-                                                    .setIcon(icon)
-                                                    .setMessage(R.string.nonipmanager)
-                                                    .setPositiveButton(R.string.btn_ok,null).show();
-                                        }
-                                    }else{
-                                        logCE.EscirbirLog2(getApplicationContext(),
-                                                "VentaActivity_CallJarreo - " + output.get(Variables.MESSAGE_ERROR));
-                                        new AlertDialog.Builder(VentaActivity.this)
-                                                .setTitle(R.string.error)
-                                                .setIcon(icon)
-                                                .setMessage(String.valueOf(output.get(Variables.MESSAGE_ERROR)))
-                                                .setPositiveButton(R.string.btn_ok,null).show();
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).execute();
+                        GetNipManager getNipManager = new GetNipManager(VentaActivity.this,getApplicationContext());
+                        getNipManager.delegate = VentaActivity.this;
+                        getNipManager.execute(nipManager.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancelar,null).show();
@@ -348,4 +309,41 @@ public class VentaActivity extends AppCompatActivity implements NavigationView.O
         }
     }
 
+    @Override
+    public void GetNipManagerFinish(JSONObject output) {
+        System.out.println(output);
+        try {
+            if (output.getInt(Variables.CODE_ERROR)==0) {
+                if(output.getString(Variables.NIP_MANAGER) != null) {
+                    if (output.getString(Variables.NIP_MANAGER_WRITE).equals(output.getString(Variables.NIP_MANAGER))){
+                        JarreoFullScreenFragment dialogFragment = new JarreoFullScreenFragment();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        dialogFragment.show(transaction, String.valueOf(R.string.jarreo));
+                    }else {
+                        new AlertDialog.Builder(VentaActivity.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(R.string.nipWrong)
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                }else{
+                    new AlertDialog.Builder(VentaActivity.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(R.string.nonipmanager)
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                }
+            }else{
+                logCE.EscirbirLog2(getApplicationContext(),
+                        "VentaActivity_CallJarreo - " + output.get(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(VentaActivity.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(String.valueOf(output.get(Variables.MESSAGE_ERROR)))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

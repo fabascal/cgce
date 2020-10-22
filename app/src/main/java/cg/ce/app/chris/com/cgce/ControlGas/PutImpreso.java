@@ -15,24 +15,24 @@ import java.sql.Statement;
 
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
-import cg.ce.app.chris.com.cgce.DataBaseManager;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
-public class UpdateCodcli extends AsyncTask<String, Void, JSONObject> {
+public class PutImpreso extends AsyncTask <String, Void, JSONObject> {
 
     private ProgressDialog mProgressDialog;
     private WeakReference<Activity> mActivity;
     private Context mContext;
     DataBaseCG cg = new DataBaseCG();
-    JSONObject cursor = null;
-    JSONObject res = new JSONObject();
     public ControlGasListener delegate=null;
+    JSONObject result = new JSONObject();
     Connection conn = null;
     Statement stmt = null;
 
-    public UpdateCodcli(Activity activity, Context context, ControlGasListener delegate) {
+
+    public PutImpreso(Activity activity, ControlGasListener delegate) {
+
         mActivity = new WeakReference<Activity>(activity);
-        this.mContext = context;
+        this.mContext = activity.getApplicationContext();
         this.delegate = delegate;
         // Initialize the progress dialog
         mProgressDialog = new ProgressDialog(activity);
@@ -42,45 +42,40 @@ public class UpdateCodcli extends AsyncTask<String, Void, JSONObject> {
         // Progress dialog title
         mProgressDialog.setTitle("CombuGo");
         // Progress dialog message
-        mProgressDialog.setMessage("Favor de esperar, actualizando informacion del ticket...");
+        mProgressDialog.setMessage("Favor de esperar, estamos actualizando el servicio...");
+
     }
+
     @Override
     protected void onPreExecute() {
         mProgressDialog.show();
     }
+
     @Override
     protected JSONObject doInBackground(String... params) {
-        String cliente = params[0];
-        String vehiculo = params[1];
-        String odm = params[2];
-        String tar = params[3];
-        String ticket = params[4];
+        String query = "update despachos set impreso=1 where nrotrn="+params[0]+"";
+        DataBaseCG dbcg = new DataBaseCG();
+
         try {
-            DataBaseManager manager = new DataBaseManager(mContext);
-            cursor = manager.cargarcursorodbc2();
-            String base = null;
-            base = cursor.getString("db_cg");
-            DataBaseCG dbcg = new DataBaseCG();
-            conn = dbcg.odbc_cg(mContext);
+            conn = dbcg.odbc_cecg_app(mContext);
             stmt = conn.createStatement();
-            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codcli ="+cliente+", " +
-                    "nroveh="+vehiculo+", odm="+odm+", tar="+tar+" where nrotrn = "+ticket+"");
-            res.put(Variables.CODE_ERROR,0);
+            stmt.executeUpdate(query);
             stmt.close();
             conn.close();
-
-        } catch (JSONException | IllegalAccessException | ClassNotFoundException | InstantiationException | SQLException e) {
+            result.put(Variables.CODE_ERROR,0);
+        } catch (JSONException | ClassNotFoundException | InstantiationException |
+                IllegalAccessException | SQLException e) {
             try {
-                conn.close();
                 stmt.close();
-                res.put(Variables.CODE_ERROR,1);
-                res.put(Variables.MESSAGE_ERROR, e);
+                conn.close();
+                result.put(Variables.CODE_ERROR,1);
+                result.put(Variables.MESSAGE_ERROR,e);
+                e.printStackTrace();
             } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
-            e.printStackTrace();
         }
-        return res;
+        return result;
     }
 
     @Override

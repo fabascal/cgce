@@ -15,10 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.DataBaseManager;
-import cg.ce.app.chris.com.cgce.LogCE;
-import cg.ce.app.chris.com.cgce.cgticket;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
 public class GetTicket extends AsyncTask<String, Void, JSONObject> {
@@ -30,9 +29,13 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
     public ControlGasListener delegate=null;
     JSONObject cursor = null;
     JSONObject result = new JSONObject();
+    /*peticion 0 es contado y 1 es credito*/
+    int peticion=0;
+    Statement stmt =null;
+    Connection conn = null;
 
 
-    public GetTicket(Activity activity, Context context, ControlGasListener delegate){
+    public GetTicket(Activity activity, ControlGasListener delegate){
         mActivity = new WeakReference<Activity>(activity);
         this.mContext = activity.getApplicationContext();
         this.delegate = delegate;
@@ -53,11 +56,10 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
 
     @Override
     protected JSONObject doInBackground(String... params) {
+        peticion = Integer.parseInt(params[2]);
         DataBaseManager manager = new DataBaseManager(mContext);
         cursor = manager.cargarcursorodbc2();
         DataBaseCG dbcg = new DataBaseCG();
-        Statement stmt =null;
-        Connection conn = null;
         ResultSet r;
         String base;
         try {
@@ -103,7 +105,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
                 result.put(Variables.KEY_TICKET_NROTUR,r.getString(20));
                 result.put(Variables.KEY_TICKET_NROCTE,r.getString(21));
                 result.put(Variables.KEY_TICKET_CLIENTE_TIPVAL,r.getInt(22));
-                result.put(Variables.KET_TICKET_CLIENTE_TIPVAL_DEN,CalculateMetoPago(String.valueOf(r.getInt(22))));
+                result.put(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN,CalculateMetoPago(String.valueOf(r.getInt(22))));
                 result.put(Variables.KEY_RUT,r.getString("rut"));
                 result.put(Variables.KEY_TICKET_IVA, r.getDouble(24));
                 result.put(Variables.KEY_TICKET_IEPS, r.getDouble(25));
@@ -116,10 +118,12 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
         } catch (JSONException | SQLException | ClassNotFoundException | InstantiationException |
                 IllegalAccessException | SocketException e) {
             try {
+                stmt.close();
+                conn.close();
                 result.put(Variables.CODE_ERROR,1);
                 result.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
-            } catch (JSONException ex) {
+            } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
         }
@@ -132,11 +136,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
         if (mProgressDialog!= null){
             mProgressDialog.dismiss();
         }
-        try {
-            delegate.processFinish(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.processFinish(jsonObject);
         super.onPostExecute(jsonObject);
     }
     public String nombre_despachador (Context con, String mac) throws ClassNotFoundException, SQLException,

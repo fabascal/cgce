@@ -1,7 +1,6 @@
 package cg.ce.app.chris.com.cgce.ControlGas;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -17,7 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import cg.ce.app.chris.com.cgce.ContadoActivity;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.DataBaseManager;
 import cg.ce.app.chris.com.cgce.TPVs;
@@ -32,6 +31,8 @@ public class GetTPVs extends AsyncTask <String,Void, JSONObject> {
     public ControlGasListener delegate=null;
     JSONObject cursor = null;
     JSONObject result = new JSONObject();
+    Statement stmt =null;
+    Connection conn = null;
 
     public GetTPVs(Activity activity, Context context, ControlGasListener delegate){
         mActivity = new WeakReference<Activity>(activity);
@@ -57,8 +58,7 @@ public class GetTPVs extends AsyncTask <String,Void, JSONObject> {
         DataBaseManager manager = new DataBaseManager(mContext);
         cursor = manager.cargarcursorodbc2();
         DataBaseCG dbcg = new DataBaseCG();
-        Statement stmt =null;
-        Connection conn = null;
+
         ResultSet rs;
         String base;
         List<TPVs> tpVsList;
@@ -83,10 +83,12 @@ public class GetTPVs extends AsyncTask <String,Void, JSONObject> {
         } catch (JSONException | ClassNotFoundException | InstantiationException |
                 IllegalAccessException | SQLException e) {
             try {
+                stmt.close();
+                conn.close();
                 result.put(Variables.CODE_ERROR,1);
                 result.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
-            } catch (JSONException ex) {
+            } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
 
@@ -99,11 +101,7 @@ public class GetTPVs extends AsyncTask <String,Void, JSONObject> {
         if (mProgressDialog!= null){
             mProgressDialog.dismiss();
         }
-        try {
-            delegate.processFinish(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.processFinish(jsonObject);
         super.onPostExecute(jsonObject);
     }
 }

@@ -1,12 +1,8 @@
 package cg.ce.app.chris.com.cgce.socket;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,14 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-
-import cg.ce.app.chris.com.cgce.R;
-import cg.ce.app.chris.com.cgce.SorteoListener;
-import cg.ce.app.chris.com.cgce.VentaActivity;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
-import cg.ce.app.chris.com.cgce.listeners.ValesListener;
 
-import static java.lang.Thread.sleep;
 
 public class SGPMGateway extends AsyncTask<JSONObject, String, String> {
     String SERVER_IP;

@@ -10,12 +10,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetPumpPositionListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.MacActivity;
 import cg.ce.app.chris.com.cgce.common.Variables;
@@ -26,12 +29,13 @@ public class GetPumpPosition extends AsyncTask<String, Void, JSONObject> {
     private WeakReference<Activity> mActivity;
     private Context mContext;
     DataBaseCG cg = new DataBaseCG();
-    public ControlGasListener delegate=null;
+    public GetPumpPositionListener delegate=null;
+    Connection connect;
+    PreparedStatement stmt;
 
-    public GetPumpPosition(Activity activity, Context context, ControlGasListener delegate) {
+    public GetPumpPosition(Activity activity, Context context) {
         mActivity = new WeakReference<Activity>(activity);
         this.mContext = context;
-        this.delegate = delegate;
         // Initialize the progress dialog
         mProgressDialog = new ProgressDialog(activity);
         mProgressDialog.setIndeterminate(false);
@@ -50,9 +54,6 @@ public class GetPumpPosition extends AsyncTask<String, Void, JSONObject> {
     protected JSONObject doInBackground(String... params) {
         ResultSet rs;
         Cursor c;
-        Connection connect;
-        PreparedStatement stmt;
-
         JSONObject res = new JSONObject();
         String query = "select p.numero_logico as logico from posicion as p \n" +
                 "left outer join dispensario as disp on disp.id=p.id_dispensario\n" +
@@ -76,10 +77,12 @@ public class GetPumpPosition extends AsyncTask<String, Void, JSONObject> {
         } catch (InstantiationException | JSONException | ClassNotFoundException |
                 IllegalAccessException | SQLException e) {
             try {
+                connect.close();
+                stmt.close();
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
-            } catch (JSONException ex) {
+            } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
         }
@@ -92,11 +95,7 @@ public class GetPumpPosition extends AsyncTask<String, Void, JSONObject> {
         }
         System.out.println("async response");
         System.out.println(s);
-        try {
-            delegate.processFinish(s);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.GetPumpPositionFinish(s);
         super.onPostExecute(s);
     }
 }

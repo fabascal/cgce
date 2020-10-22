@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.DataCustomerCG;
 import cg.ce.app.chris.com.cgce.common.Variables;
@@ -27,6 +28,8 @@ public class GetCustomerTag extends AsyncTask<String, Void, JSONObject> {
     private Context mContext;
     DataBaseCG cg = new DataBaseCG();
     public ControlGasListener delegate=null;
+    Connection conn = null;
+    Statement stmt = null;
 
     public GetCustomerTag(Activity activity, Context context, ControlGasListener delegate) {
         mActivity = new WeakReference<Activity>(activity);
@@ -52,7 +55,7 @@ public class GetCustomerTag extends AsyncTask<String, Void, JSONObject> {
         List<DataCustomerCG> dataCustomerCGS = new ArrayList<>();
         ResultSet rs;
         DataBaseCG cg = new DataBaseCG();
-        Connection conn = null;
+
         JSONObject res = new JSONObject();
         try {
             conn = cg.odbc_cg(mContext);
@@ -60,7 +63,7 @@ public class GetCustomerTag extends AsyncTask<String, Void, JSONObject> {
                     "v.nroveh as nroveh, c.cod as codcli, c.den as den, c.rfc as rfc, v.nroeco as nroeco " +
                     "from ClientesVehiculos as v left outer join Clientes as c on c.cod=v.codcli " +
                     "where v.tag='" + tag + "'";
-            Statement stmt = conn.createStatement();
+            stmt = conn.createStatement();
             rs = stmt.executeQuery(query);
             while (rs.next()){
                 DataCustomerCG data = new DataCustomerCG();
@@ -82,10 +85,12 @@ public class GetCustomerTag extends AsyncTask<String, Void, JSONObject> {
         } catch (IllegalAccessException | ClassNotFoundException | InstantiationException |
                 SQLException | JSONException e) {
             try {
+                conn.close();
+                stmt.close();
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
-            } catch (JSONException ex) {
+            } catch (JSONException | SQLException ex) {
                 ex.printStackTrace();
             }
 
@@ -97,11 +102,7 @@ public class GetCustomerTag extends AsyncTask<String, Void, JSONObject> {
         if (mProgressDialog!= null){
             mProgressDialog.dismiss();
         }
-        try {
-            delegate.processFinish(s);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.processFinish(s);
         super.onPostExecute(s);
     }
 }

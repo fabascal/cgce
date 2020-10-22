@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -19,24 +18,16 @@ import android.widget.Spinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import cg.ce.app.chris.com.cgce.ControlGas.ControlGasListener;
 import cg.ce.app.chris.com.cgce.ControlGas.GetPumpPosition;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetPumpPositionListener;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
 
-public class ContadoActivity extends AppCompatActivity {
+public class ContadoActivity extends AppCompatActivity implements GetPumpPositionListener {
     ImageButton imbtn_ticket,imbtn_cfdi;
     Spinner spn_dispensarios;
-    ResultSet rs;
-    Cursor c;
-    Connection connect;
-    PreparedStatement stmt;
     Sensores sensores = new Sensores();
     ValidateTablet tablet = new ValidateTablet();
     LogCE logCE = new LogCE();
@@ -54,41 +45,14 @@ public class ContadoActivity extends AppCompatActivity {
         spn_dispensarios = (Spinner) findViewById(R.id.spn_dispensario);
         addListenerOnButton();
         MacActivity mac = new MacActivity();
-        new GetPumpPosition(this, getApplicationContext(), new ControlGasListener() {
-            @Override
-            public void processFinish(JSONObject output) {
-                try {
-                    if (output.getInt(Variables.CODE_ERROR)==0){
-                        ArrayList<String> data = (ArrayList<String>) output.get(Variables.POSICIONES);
-                        ArrayAdapter NoCoreAdapter = new ArrayAdapter(getApplicationContext(),
-                                R.layout.spinner_bombas, data);
-                        spn_dispensarios.setAdapter(NoCoreAdapter);
-                    }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_GetPumpPosition - " +
-                                output.getString(Variables.MESSAGE_ERROR));
-                        new AlertDialog.Builder(ContadoActivity.this)
-                                .setTitle(R.string.error)
-                                .setIcon(icon)
-                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok,null).show();
-                    }
-                } catch (JSONException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_GetPumpPosition - " + e);
-                    new AlertDialog.Builder(ContadoActivity.this)
-                            .setTitle(R.string.error)
-                            .setIcon(icon)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
-                    e.printStackTrace();
-                }
-            }
-        }).execute(mac.getMacAddress());
+        GetPumpPosition getPumpPosition = new GetPumpPosition(this,getApplicationContext());
+        getPumpPosition.delegate=this;
+        getPumpPosition.execute(mac.getMacAddress());
     }
 
     private void addListenerOnButton() {
         imbtn_ticket = (ImageButton) findViewById(R.id.imbtn_ticket);
         imbtn_cfdi = (ImageButton) findViewById(R.id.imbtn_cfdi);
-
         imbtn_cfdi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,6 +114,34 @@ public class ContadoActivity extends AppCompatActivity {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    @Override
+    public void GetPumpPositionFinish(JSONObject output) {
+        try {
+            if (output.getInt(Variables.CODE_ERROR)==0){
+                ArrayList<String> data = (ArrayList<String>) output.get(Variables.POSICIONES);
+                ArrayAdapter NoCoreAdapter = new ArrayAdapter(getApplicationContext(),
+                        R.layout.spinner_bombas, data);
+                spn_dispensarios.setAdapter(NoCoreAdapter);
+            }else{
+                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_GetPumpPosition - " +
+                        output.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(ContadoActivity.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }
+        } catch (JSONException e) {
+            logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_GetPumpPosition - " + e);
+            new AlertDialog.Builder(ContadoActivity.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
         }
     }
 }
