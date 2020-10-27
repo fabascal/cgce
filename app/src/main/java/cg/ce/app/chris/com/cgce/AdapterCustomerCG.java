@@ -71,6 +71,7 @@ public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHol
                 CustomerCG_data.put("rfc",data.get(getAdapterPosition()).rfc);
                 CustomerCG_data.put("cliente",data.get(getAdapterPosition()).den);
                 CustomerCG_data.put("codcli",data.get(getAdapterPosition()).codcli);
+                CustomerCG_data.put("tipval",data.get(getAdapterPosition()).tipval);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -81,8 +81,12 @@ public class GetEstacionData extends AsyncTask <String, Void, JSONObject> {
             rs.close();
         } catch (JSONException | ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException e) {
             try {
-                conn.close();
-                stmt.close();
+                if(conn!=null) {
+                    conn.close();
+                }
+                if (stmt!=null) {
+                    stmt.close();
+                }
                 result.put(Variables.CODE_ERROR, 1);
                 result.put(Variables.MESSAGE_ERROR, e);
                 e.printStackTrace();

@@ -126,7 +126,9 @@ public class ContadoActivity extends AppCompatActivity implements GetPumpPositio
                         R.layout.spinner_bombas, data);
                 spn_dispensarios.setAdapter(NoCoreAdapter);
             }else{
-                logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_GetPumpPosition - " +
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" +
                         output.getString(Variables.MESSAGE_ERROR));
                 new AlertDialog.Builder(ContadoActivity.this)
                         .setTitle(R.string.error)
@@ -135,7 +137,9 @@ public class ContadoActivity extends AppCompatActivity implements GetPumpPositio
                         .setPositiveButton(R.string.btn_ok,null).show();
             }
         } catch (JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"ContadoActivity_GetPumpPosition - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(ContadoActivity.this)
                     .setTitle(R.string.error)
                     .setIcon(icon)

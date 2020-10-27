@@ -12,4 +12,5 @@ public class DataCustomerCG {
     public int nroveh;
     public int tagadi;
     public int nroeco;
+    public String tipval;
 }

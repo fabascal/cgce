@@ -133,8 +133,12 @@ public class GetVehicleRestrictions extends AsyncTask<String, Void, JSONObject> 
             result.put(Variables.CODE_ERROR,0);
         } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | SQLException | JSONException e) {
             try {
-                connection.close();
-                stmt.close();
+                if(connection!=null) {
+                    connection.close();
+                }
+                if (stmt!=null) {
+                    stmt.close();
+                }
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();

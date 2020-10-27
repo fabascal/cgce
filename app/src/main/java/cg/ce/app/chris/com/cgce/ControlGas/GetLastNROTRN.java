@@ -19,7 +19,7 @@ import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
-public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
+public class GetLastNROTRN extends AsyncTask<String, Void, JSONObject>{
 
     private ProgressDialog mProgressDialog;
     private WeakReference<Activity> mActivity;
@@ -29,7 +29,7 @@ public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
     Connection connection = null;
     Statement stmt = null;
 
-    public ValidarUltimoNROTRN(Activity activity, Context context, ControlGasListener delegate) {
+    public GetLastNROTRN(Activity activity, Context context, ControlGasListener delegate) {
         mActivity = new WeakReference<Activity>(activity);
         this.mContext = context;
         this.delegate = delegate;
@@ -72,8 +72,12 @@ public class ValidarUltimoNROTRN extends AsyncTask<String, Void, JSONObject>{
                 SQLException | JSONException e) {
             e.printStackTrace();
             try {
-                stmt.close();
-                connection.close();
+                if(stmt!=null) {
+                    stmt.close();
+                }
+                if(connection!=null) {
+                    connection.close();
+                }
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,String.valueOf(e));
             } catch (JSONException | SQLException ex) {

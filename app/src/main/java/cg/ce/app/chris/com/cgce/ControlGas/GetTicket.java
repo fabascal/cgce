@@ -118,8 +118,12 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
         } catch (JSONException | SQLException | ClassNotFoundException | InstantiationException |
                 IllegalAccessException | SocketException e) {
             try {
-                stmt.close();
-                conn.close();
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
                 result.put(Variables.CODE_ERROR,1);
                 result.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
@@ -206,4 +210,5 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
         }
         return res;
     }
+
 }

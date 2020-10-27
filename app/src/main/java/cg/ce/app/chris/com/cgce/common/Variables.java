@@ -57,4 +57,6 @@ public class Variables {
     public final static String TPV_LIST = "ListTPV";
     public final static String KEY_TICKET_CLIENTE_TIPVAL_DEN = "TipvalDen";
     public final static String MAC_ADDRESS = "MacAddress";
+    public final static String DATA_CUSTOMER = "DataCustomer";
+    public final static String DATA_CUSTOMER_VEHICLE = "DataCustomerVehicle";
 }

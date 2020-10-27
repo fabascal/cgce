@@ -77,8 +77,12 @@ public class GetPumpPosition extends AsyncTask<String, Void, JSONObject> {
         } catch (InstantiationException | JSONException | ClassNotFoundException |
                 IllegalAccessException | SQLException e) {
             try {
-                connect.close();
-                stmt.close();
+                if (connect != null) {
+                    connect.close();
+                }
+                if ( stmt != null) {
+                    stmt.close();
+                }
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();

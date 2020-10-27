@@ -147,8 +147,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                                     (ticket.getDouble(Variables.KEY_TICKET_TOTAL));
                             monto.setText(textmonto);
                         }else{
-                            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetTicket - "
-                                    + output.getString(Variables.MESSAGE_ERROR));
+                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                    stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
                             new AlertDialog.Builder(ActivityTicket.this)
                                     .setTitle(R.string.error)
                                     .setIcon(image)
@@ -156,7 +157,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                                     .setPositiveButton(R.string.btn_ok, null).show();
                         }
                     } catch (JSONException e) {
-                        logCE.EscirbirLog2(getApplicationContext(),String.valueOf(e));
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + e);
                         new AlertDialog.Builder(ActivityTicket.this)
                                 .setTitle(R.string.error)
                                 .setIcon(image)
@@ -177,11 +180,13 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     fill_spn_metodo_den();
                 } catch (ClassNotFoundException | SQLException | InstantiationException |
                         JSONException | IllegalAccessException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
                     new AlertDialog.Builder(ActivityTicket.this)
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
                             .setPositiveButton(R.string.btn_ok, null).show();
-                    logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_OnCreate - " + e);
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     e.printStackTrace();
                 }
             }
@@ -212,7 +217,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                             MonederoAdapter.setDropDownViewResource(R.layout.spinner_tiptrn);
                             spn_metodo_den.setAdapter(MonederoAdapter);
                         }else{
-                            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetTPVs - " +
+                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                    stacktraceObj[2].getMethodName() + "|" +
                                     output.getString(Variables.MESSAGE_ERROR));
                             new AlertDialog.Builder(ActivityTicket.this)
                                     .setTitle(R.string.error)
@@ -220,8 +227,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                                     .setPositiveButton(R.string.btn_ok, null).show();
                         }
                     } catch (JSONException e) {
-                        logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetTPVs - " +
-                                e);
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + e);
                         new AlertDialog.Builder(ActivityTicket.this)
                                 .setTitle(R.string.error)
                                 .setMessage(String.valueOf(e))
@@ -320,7 +328,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         try {
             mPrinter = new Printer(mPrinter.TM_M30, mPrinter.MODEL_ANK, mContext);
         } catch (Exception e) {
-            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_initializeObject - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             ShowMsg.showException(e, "Printer", mContext);
             return false;
         }
@@ -375,7 +385,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             if (pdLoading != null) {
                 pdLoading.dismiss();
             }
-            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_PrintReceip - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(ActivityTicket.this)
                     .setTitle(R.string.error)
                     .setMessage(String.valueOf(e))
@@ -841,7 +853,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             }
             flag = 1;
             mPrinter.clearCommandBuffer();
-            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_printData - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             ShowMsg.showException(e, "sendData", getApplicationContext());
             try {
                 mPrinter.disconnect();
@@ -867,7 +881,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         } catch (final Epos2Exception e) {
             state_error = true;
             flag=1;
-            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_connectPrinter - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             runOnUiThread(new Runnable() {
                 public synchronized void run() {
                     ShowMsg.showException(e, "connect", mContext);
@@ -920,7 +936,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     } else {
                         runOnUiThread(new Runnable() {
                             public synchronized void run() {
-                                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_disconnectPrinter - " + e);
+                                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                        stacktraceObj[2].getMethodName() + "|" + e);
                                 ShowMsg.showException(e, "disconnect", mContext);
                             }
                         });
@@ -929,7 +947,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 } else {
                     runOnUiThread(new Runnable() {
                         public synchronized void run() {
-                            logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_disconnectPrinter - " + e);
+                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                    stacktraceObj[2].getMethodName() + "|" + e);
                             ShowMsg.showException(e, "disconnect", mContext);
                         }
                     });
@@ -1075,7 +1095,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
 
             }else{
                 updateButtonState(true);
-                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_GetImpresoFinish - " +
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" +
                         output.getString(Variables.MESSAGE_ERROR));
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
@@ -1092,7 +1114,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         try {
             if (jsonObject.getInt(Variables.CODE_ERROR)==1){
                 updateButtonState(true);
-                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " +
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" +
                         jsonObject.getString(Variables.MESSAGE_ERROR));
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
@@ -1111,7 +1135,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 datos_domicilio = jsonObject;
             }else{
                 updateButtonState(true);
-                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " +
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" +
                         jsonObject.getString(Variables.MESSAGE_ERROR));
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
@@ -1131,7 +1157,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 vehiculo = jsonObject;
             }else{
                 updateButtonState(true);
-                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " +
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" +
                         jsonObject.getString(Variables.MESSAGE_ERROR));
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
@@ -1147,12 +1175,12 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         @Override
         protected void onPreExecute() {
             pdLoading = new ProgressDialog(ActivityTicket.this);
-                pdLoading.setMessage("Imprimiendo..."); // Setting Message
-                pdLoading.setTitle(flag_brand); // Setting Title
-                pdLoading.setIcon(image);
-                pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-                pdLoading.show(); // Display Progress Dialog
-                pdLoading.setCancelable(false);
+            pdLoading.setMessage("Imprimiendo..."); // Setting Message
+            pdLoading.setTitle(flag_brand); // Setting Title
+            pdLoading.setIcon(image);
+            pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+            pdLoading.show(); // Display Progress Dialog
+            pdLoading.setCancelable(false);
         }
 
         @Override
@@ -1166,7 +1194,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 }
             } catch (SQLException | WriterException | InstantiationException | JSONException |
                     ClassNotFoundException | IllegalAccessException | Epos2Exception e) {
-                logCE.EscirbirLog2(getApplicationContext(),"ActivityTicket_UpdateNrotrnFinish - " + e);
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + e);
                 new AlertDialog.Builder(ActivityTicket.this)
                         .setTitle(R.string.error)
                         .setMessage(String.valueOf(e))

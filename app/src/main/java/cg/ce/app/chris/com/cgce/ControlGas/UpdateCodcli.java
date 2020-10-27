@@ -71,8 +71,12 @@ public class UpdateCodcli extends AsyncTask<String, Void, JSONObject> {
 
         } catch (JSONException | IllegalAccessException | ClassNotFoundException | InstantiationException | SQLException e) {
             try {
-                conn.close();
-                stmt.close();
+                if(conn!=null) {
+                    conn.close();
+                }
+                if (stmt!=null) {
+                    stmt.close();
+                }
                 res.put(Variables.CODE_ERROR,1);
                 res.put(Variables.MESSAGE_ERROR, e);
             } catch (JSONException | SQLException ex) {

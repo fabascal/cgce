@@ -1,6 +1,7 @@
 package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,11 +18,12 @@ import android.graphics.drawable.Drawable;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,49 +46,64 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
-import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerName;
+import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerNip;
 import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerTag;
+import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerVehicle;
+import cg.ce.app.chris.com.cgce.ControlGas.GetEstacionData;
 import cg.ce.app.chris.com.cgce.ControlGas.GetImpreso;
+import cg.ce.app.chris.com.cgce.ControlGas.GetLastNROTRN;
 import cg.ce.app.chris.com.cgce.ControlGas.GetPumpPosition;
 import cg.ce.app.chris.com.cgce.ControlGas.GetTicket;
 import cg.ce.app.chris.com.cgce.ControlGas.GetVehicleRestrictions;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNameListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNipListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerVehicleListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetEstacionDataListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetImpresoListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetPumpPositionListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.UpdateNrotrnListener;
+import cg.ce.app.chris.com.cgce.ControlGas.PutImpreso;
 import cg.ce.app.chris.com.cgce.ControlGas.UpdateCodcli;
-import cg.ce.app.chris.com.cgce.ControlGas.ValidarUltimoNROTRN;
+import cg.ce.app.chris.com.cgce.ControlGas.UpdateNrotrn;
 import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.close_credito;
 import cg.ce.app.chris.com.cgce.dialogos.fab_contado;
 
 public class Credito extends AppCompatActivity implements View.OnClickListener,
-        com.epson.epos2.printer.ReceiveListener, GetPumpPositionListener {
+        com.epson.epos2.printer.ReceiveListener, GetPumpPositionListener, GetEstacionDataListener,
+        GetImpresoListener, UpdateNrotrnListener, GetCustomerNipListener, GetCustomerNameListener,
+        GetCustomerVehicleListener {
     ValidateTablet tablet = new ValidateTablet();
     Spinner spn_posicion;
     Drawable icon;
     String marca;
     ImageButton btn_print, imbtn_clientecg;
     JSONObject Posiciones = new JSONObject();
-    JSONObject dummy = new JSONObject();
     JSONArray Logicos = new JSONArray();
     Variables variables = new Variables();
     final static String ERROR_POSICION_CONTADO = "Todas las posiciones tienen una venta en curso.";
@@ -135,6 +152,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     boolean IsTablet = false;
     boolean writeMode;
     MacActivity mac = new MacActivity();
+    JSONObject datos_domicilio = new JSONObject();
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -159,12 +177,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 onCreateNFC();
             } catch (ClassNotFoundException | SQLException | InstantiationException |
                     IllegalAccessException | JSONException e) {
-                logCE.EscirbirLog2(getApplicationContext(),"Credito_onCreate - " + e);
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + e);
                 new AlertDialog.Builder(Credito.this)
-                        .setIcon(icon)
                         .setTitle(R.string.error)
                         .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok,null).show();
+                        .setPositiveButton(R.string.btn_ok, null).show();
                 e.printStackTrace();
             }
         }
@@ -219,12 +238,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     CoreScreen();
                 } catch (JSONException | InstantiationException | SQLException |
                         IllegalAccessException | ClassNotFoundException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_OnCreate - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
-                            .setIcon(icon)
                             .setTitle(R.string.error)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
             }
@@ -245,12 +265,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 try {
                     PutData(variables.KEY_ODM,sb.toString());
                 } catch (JSONException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_onTextChanged - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
-                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
             }
@@ -263,6 +284,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         /*Se inicializa el objeto impresora*/
         initializeObject();
         pdLoading = new ProgressDialog(Credito.this);
+        GetEstacionData getEstacionData = new GetEstacionData(this, getApplicationContext());
+        getEstacionData.delegate= this;
+        getEstacionData.execute();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -284,9 +308,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
     }
     public void BtnCredito(View view){
-
-
-
         new GetTicket(this, new ControlGasListener() {
             @Override
             public void processFinish(JSONObject output) {
@@ -297,7 +318,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                         Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
                         if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN))<Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))) {
                             UpdateCodcli();
-                            PrintReceip();
+
                         }else{
                             new AlertDialog.Builder(Credito.this)
                                     .setTitle(R.string.error)
@@ -306,16 +327,51 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                     .setPositiveButton(R.string.btn_ok,null).show();
                         }
                     }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - "
-                                + output.getString(Variables.MESSAGE_ERROR));
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
                         new AlertDialog.Builder(Credito.this)
                                 .setTitle(R.string.error)
-                                .setIcon(icon)
                                 .setMessage(output.getString(Variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok,null).show();
+                                .setPositiveButton(R.string.btn_ok, null).show();
                     }
-                } catch (JSONException | ExecutionException | InterruptedException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_BtnCredito - " + e);
+                } catch (JSONException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
+            }
+        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
+
+    }
+    private void UpdateCodcli() throws JSONException  {
+        GetImpreso getImpreso = new GetImpreso(this, getApplicationContext());
+        getImpreso.delegate=this;
+        getImpreso.execute(GetTicketData(Variables.KEY_TICKET_NROTRN));
+    }
+    private void PrintReceip()  {
+        this.updateButtonState(false);
+        try {
+            if (GetData(variables.KEY_IMPRESO).equals("10")){
+                JSONArray Validar = null;
+                try {
+                    Validar = Posiciones.getJSONArray(variables.POSICIONES);
+                    int index = spn_posicion.getSelectedItemPosition();
+
+                    UpdateNrotrn updateNrotrn = new UpdateNrotrn(this, getApplicationContext(),mac.getMacAddress(),"2");
+                    updateNrotrn.delegate=this;
+                    System.out.println(Validar.getJSONObject(index).getJSONObject(Variables.KEY_TICKET));
+                    updateNrotrn.execute(Validar.getJSONObject(index).getJSONObject(Variables.KEY_TICKET));
+
+                } catch (JSONException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
                             .setIcon(icon)
@@ -324,97 +380,17 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     e.printStackTrace();
                 }
             }
-        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
-    }
-    private void UpdateCodcli() throws JSONException,  ExecutionException, InterruptedException {
-        dummy = new GetImpreso(this, getApplicationContext()).execute(GetTicketData(variables.KEY_TICKET_NROTRN)).get();
-        if (dummy.getInt(Variables.CODE_ERROR)==0){
-            PutData(Variables.KEY_IMPRESO, String.valueOf(dummy.getInt(Variables.KEY_IMPRESO)));
-        }else{
-            logCE.EscirbirLog2(getApplicationContext(),
-                    "Credito_BtnCredito - " + dummy.getString(variables.MESSAGE_ERROR));
-            new AlertDialog.Builder(Credito.this)
-                    .setTitle(R.string.error)
-                    .setIcon(icon)
-                    .setMessage(dummy.getString(variables.MESSAGE_ERROR))
-                    .setPositiveButton(R.string.btn_ok,null).show();
-        }
-        Log.w("impreso a validar",GetData(Variables.KEY_IMPRESO));
-        if (GetData(variables.KEY_IMPRESO).equals("10")){
-            new UpdateCodcli(this, getApplicationContext(), new ControlGasListener() {
-                @Override
-                public void processFinish(JSONObject output){
-                    try {
-                        if (output.getInt(Variables.CODE_ERROR)==1){
-                            logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " +
-                                    output.getString(Variables.MESSAGE_ERROR));
-                            new AlertDialog.Builder(Credito.this)
-                                    .setTitle(R.string.error)
-                                    .setIcon(icon)
-                                    .setMessage(output.getString(Variables.MESSAGE_ERROR));
-                        }
-                    } catch (JSONException e) {
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " + e);
-                        new AlertDialog.Builder(Credito.this)
-                                .setTitle(R.string.error)
-                                .setIcon(icon)
-                                .setMessage(String.valueOf(e));
-                        e.printStackTrace();
-                    }
-                }
-            }).execute(
-                    GetData(variables.KEY_CODCLI),
-                    GetData(variables.KEY_CLIENTE_VEHICULO_NROVEH),
-                    GetDataODM(),
-                    GetData(variables.KEY_CLIENTE_VEHICULO_TAR),
-                    GetTicketData(variables.KEY_TICKET_NROTRN));
 
-        }
-    }
-    private void PrintReceip()  {
-        this.updateButtonState(false);
-        try {
-            if (GetData(variables.KEY_IMPRESO).equals("10")){
-                runOnUiThread(new Runnable() {
-                    public synchronized void run() {
-                        JSONArray Validar = null;
-                        try {
-                            Validar = Posiciones.getJSONArray(variables.POSICIONES);
-                            int index = spn_posicion.getSelectedItemPosition();
-                            cgticket_obj.guardarnrotrn(getApplicationContext(),
-                                    Validar.getJSONObject(index).getJSONObject(variables.KEY_TICKET),2);
-                        } catch (JSONException | ClassNotFoundException | SQLException |
-                                InstantiationException | IllegalAccessException | SocketException e) {
-                            logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " + e);
-                            new AlertDialog.Builder(Credito.this)
-                                    .setTitle(R.string.error)
-                                    .setIcon(icon)
-                                    .setMessage(String.valueOf(e))
-                                    .setPositiveButton(R.string.btn_ok,null).show();
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-            if (!runPrintReceiptSequence()){
-                updateButtonState(true);
-                if (pdLoading != null) {
-                    pdLoading.dismiss();
-                }
-            }
-        } catch (SQLException | IllegalAccessException | InstantiationException |
-                ClassNotFoundException | JSONException | WriterException | Epos2Exception e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_PrintReceip - " + e);
-            runOnUiThread(new Runnable() {
-                public synchronized void run() {
-                    new AlertDialog.Builder(Credito.this)
-                            .setIcon(icon)
-                            .setTitle(R.string.error)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok, null).show();
-                    updateButtonState(true);
-                }
-            });
+        } catch ( JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setIcon(icon)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            updateButtonState(true);
         }
     }
 
@@ -464,11 +440,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     public void FillPosicion(){
         GetPumpPosition getPumpPosition = new GetPumpPosition(this, getApplicationContext());
         getPumpPosition.delegate=this;
-        try {
-            getPumpPosition.execute(mac.getMacAddress()).get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        getPumpPosition.execute(mac.getMacAddress());
     }
     private void CoreScreen() throws JSONException, ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException {
@@ -535,12 +507,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     CoreScreen();
                 } catch (JSONException | ClassNotFoundException | SQLException |
                         InstantiationException | IllegalAccessException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
-                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
                 Toast.makeText(this,"RFID",Toast.LENGTH_LONG).show();
@@ -551,12 +524,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     CoreScreen();
                 } catch (JSONException | ClassNotFoundException | SQLException |
                         InstantiationException | IllegalAccessException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
-                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
                 Toast.makeText(this,"NIP",Toast.LENGTH_LONG).show();
@@ -567,40 +541,42 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     CoreScreen();
                 } catch (JSONException | ClassNotFoundException | SQLException |
                         InstantiationException | IllegalAccessException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
-                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
                 break;
         }
     }
     public void SearchCustomerNip(final View v){
-        new ValidarUltimoNROTRN(this, getApplicationContext(), new ControlGasListener() {
+        new GetLastNROTRN(this, getApplicationContext(), new ControlGasListener() {
             @Override
             public void processFinish(JSONObject output) {
                 try {
                     if (output.getInt(variables.CODE_ERROR)==0){
                         PutData(variables.KEY_ULT_NROTRN,output.getString(variables.KEY_ULT_NROTRN));
                     }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " +
-                                output.getString(variables.MESSAGE_ERROR));
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
                         new AlertDialog.Builder(Credito.this)
                                 .setTitle(R.string.error)
-                                .setIcon(icon)
                                 .setMessage(output.getString(variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok,null).show();
+                                .setPositiveButton(R.string.btn_ok, null).show();
                     }
                 } catch (JSONException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_onClick - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
-                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
 
@@ -608,36 +584,15 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }).execute(spn_posicion.getSelectedItem().toString());
 
         try {
-            JSONObject jsonObject= new JSONObject();
             PutData(variables.KEY_TAG,et_clientecg.getText().toString());
-            dataCustomerCG = new ArrayList<>(cgticket_obj.GetCustomerNipCG(
-                    this,GetData(variables.KEY_TAG)));
-            if ( dataCustomerCG.size()>0) {
-                jsonObject.put("codcli", dataCustomerCG.get(0).codcli);
-                jsonObject.put("chofer", dataCustomerCG.get(0).rsp);
-                jsonObject.put("placa", dataCustomerCG.get(0).plc);
-                jsonObject.put("vehiculo", dataCustomerCG.get(0).den_vehicle);
-                jsonObject.put("tar", dataCustomerCG.get(0).tar);
-                jsonObject.put("nroveh", dataCustomerCG.get(0).nroveh);
-                jsonObject.put("cliente", dataCustomerCG.get(0).den);
-                jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
-                jsonObject.put("nroeco",dataCustomerCG.get(0).nroeco);
-                jsonObject.put("tagadi", "");
-                FillCustomerData(jsonObject);
-                FillCustomerVehicleData(jsonObject);
-                CoreScreen();
-                CloseKeyboard();
-            }else{
-                new AlertDialog.Builder(Credito.this)
-                        .setTitle(R.string.error)
-                        .setIcon(icon)
-                        .setMessage("No se encontraron datos de cliente con el parametro establecido.")
-                        .setPositiveButton(R.string.btn_ok,null).show();
-            }
-        } catch (ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException | JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_SearchCustomerNip - " + e);
-            new AlertDialog.Builder(Credito.this)
+            GetCustomerNip getCustomerNip = new GetCustomerNip(this);
+            getCustomerNip.delegate=this;
+            getCustomerNip.execute(GetData(variables.KEY_TAG));
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(this)
                     .setTitle(R.string.error)
                     .setIcon(icon)
                     .setMessage(String.valueOf(e))
@@ -646,32 +601,19 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
     }
     public void SearchCustomerName(View v){
-        try {
-            if (etSearchCustomer.getText().length()<MIN_SEARCH){
-                String error = "El mínimo de caracteres para buscar es (" + String.valueOf(MIN_SEARCH)
-                        + "), la búsqueda actual es de "+ etSearchCustomer.getText().length()
-                        + " carácter(es), favor de corregir el parámetro de búsqueda.";
-                new AlertDialog.Builder(Credito.this)
-                        .setTitle(R.string.error)
-                        .setIcon(icon)
-                        .setMessage(error)
-                        .setPositiveButton(R.string.btn_ok,null).show();
-            }else {
-                dataCustomerCG = new ArrayList<>(cgticket_obj.getCustomerCG(
-                        this, etSearchCustomer.getText().toString()));
-                mRVCustomerCG = (RecyclerView) findViewById(R.id.clientes_cg);
-                mAdapter = new AdapterCustomerCG(Credito.this, dataCustomerCG);
-                mRVCustomerCG.setAdapter(mAdapter);
-                mRVCustomerCG.setLayoutManager(new LinearLayoutManager(Credito.this));
-            }
-        } catch (ClassNotFoundException | SQLException | InstantiationException | JSONException |
-                IllegalAccessException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_SearchCustomerName - " + e);
+        if (etSearchCustomer.getText().length()<MIN_SEARCH){
+            String error = "El mínimo de caracteres para buscar es (" + String.valueOf(MIN_SEARCH)
+                    + "), la búsqueda actual es de "+ etSearchCustomer.getText().length()
+                    + " carácter(es), favor de corregir el parámetro de búsqueda.";
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
                     .setIcon(icon)
-                    .setMessage(String.valueOf(e))
+                    .setMessage(error)
                     .setPositiveButton(R.string.btn_ok,null).show();
+        }else {
+            GetCustomerName getCustomerName = new GetCustomerName(this);
+            getCustomerName.delegate=this;
+            getCustomerName.execute(etSearchCustomer.getText().toString());
         }
         CloseKeyboard();
     }
@@ -682,22 +624,20 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             tvvehiculo_cliente.setText(GetData(variables.KEY_CLIENTE));
             tvvehiculo_rfc.setText(GetData(variables.KEY_RFC));
             tvvehiculo_codcli.setText(GetData(variables.KEY_CODCLI));
-            List<DataCustomerCG> dataCustomerVehicleCG = new ArrayList<>(cgticket_obj.getCustomerVehicleCG(
-                    this,js.getString("codcli")));
-            mAdapterVehicle = new AdapterCustomerVehicleCG(Credito.this,dataCustomerVehicleCG);
-            mRVCustomerVehicleCG.setAdapter(mAdapterVehicle);
-            mRVCustomerVehicleCG.setLayoutManager(new LinearLayoutManager(Credito.this));
-            if (First){
-            etSearchCustomer.setText("");}
-            viewFlipper.setDisplayedChild(4);
-        } catch (JSONException | InstantiationException | SQLException | IllegalAccessException |
-                ClassNotFoundException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_AdapterClickCustomerCG - " + e);
+
+            GetCustomerVehicle getCustomerVehicle = new GetCustomerVehicle(this);
+            getCustomerVehicle.delegate=this;
+            getCustomerVehicle.execute(js.getString("codcli"), String.valueOf(First));
+
+
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
-                    .setIcon(icon)
                     .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
+                    .setPositiveButton(R.string.btn_ok, null).show();
             e.printStackTrace();
         }
     }
@@ -726,6 +666,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                 try {
                                     if (nipCustomer.getText().toString().equals
                                             (GetData(variables.KEY_CLIENTE_VEHICULO_TAGADI))){
+                                        ValidacionCarga();
                                         FillScreenFinalData();
                                         viewFlipper.setDisplayedChild(5);
                                         btn_print.setVisibility(View.VISIBLE);
@@ -737,12 +678,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                                 .setPositiveButton(R.string.btn_ok,null).show();
                                     }
                                 } catch (JSONException e) {
-                                    logCE.EscirbirLog2(getApplicationContext(),"Credito_AdapterClickCustomerVehicleCG - " + e);
+                                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                            stacktraceObj[2].getMethodName() + "|" + e);
                                     new AlertDialog.Builder(Credito.this)
                                             .setTitle(R.string.error)
-                                            .setIcon(icon)
                                             .setMessage(String.valueOf(e))
-                                            .setPositiveButton(R.string.btn_ok,null).show();
+                                            .setPositiveButton(R.string.btn_ok, null).show();
                                     e.printStackTrace();
                                 }
                             }
@@ -751,18 +693,20 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             }else {
                 PutData(variables.KEY_ULT_NROTRN, validacionFlotillero.validar_utlimo_nrotrn(this,
                         spn_posicion.getSelectedItem().toString()));
+                ValidacionCarga();
                 FillScreenFinalData();
                 viewFlipper.setDisplayedChild(5);
                 btn_print.setVisibility(View.VISIBLE);
             }
         } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
                 IllegalAccessException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_AdapterClickCustomerVehicleCG - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
-                    .setIcon(icon)
                     .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
+                    .setPositiveButton(R.string.btn_ok, null).show();
             e.printStackTrace();
         }
     }
@@ -812,6 +756,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         Validar.getJSONObject(index).put(variables.KEY_CLIENTE,data.getString("cliente"));
         Validar.getJSONObject(index).put(variables.KEY_RFC,data.getString("rfc"));
         Validar.getJSONObject(index).put(variables.KEY_CODCLI,data.getString("codcli"));
+        Validar.getJSONObject(index).put(variables.KEY_TICKET_CLIENTE_TIPVAL_DEN,data.getString("tipval"));
     }
     private void FillCustomerVehicleData(JSONObject data) throws JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
@@ -844,21 +789,22 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                         int index = spn_posicion.getSelectedItemPosition();
                         Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
                     }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - "
-                                + output.getString(Variables.MESSAGE_ERROR));
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
                         new AlertDialog.Builder(Credito.this)
                                 .setTitle(R.string.error)
-                                .setIcon(icon)
                                 .setMessage(output.getString(Variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok,null).show();
+                                .setPositiveButton(R.string.btn_ok, null).show();
                     }
                 } catch (JSONException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
-                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
             }
@@ -945,12 +891,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                     flag_clean_data=true;
                                 } catch (JSONException | ClassNotFoundException | SQLException |
                                         InstantiationException | IllegalAccessException e) {
-                                    logCE.EscirbirLog2(getApplicationContext(),"Credito_MethodCleanData - " + e);
+                                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                            stacktraceObj[2].getMethodName() + "|" + e);
                                     new AlertDialog.Builder(Credito.this)
-                                            .setIcon(icon)
                                             .setTitle(R.string.error)
                                             .setMessage(String.valueOf(e))
-                                            .setPositiveButton(R.string.btn_ok,null).show();
+                                            .setPositiveButton(R.string.btn_ok, null).show();
                                     e.printStackTrace();
                                 }
                             }
@@ -1055,7 +1002,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         try {
             mPrinter = new Printer(mPrinter.TM_M30, mPrinter.MODEL_ANK, mContext);
         } catch (Exception e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_initializeObject - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             ShowMsg.showException(e, "Printer", mContext);
             return false;
         }
@@ -1094,13 +1043,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         if (mPrinter == null) {
             return false;
         }
-        JSONObject datos_domicilio = cgticket_obj.estacion_domicilio(mContext);
+
         JSONObject vehiculo = new JSONObject();
         String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
         String metodoPago = "";
+        System.out.println("validar metodopago" + Posiciones);
         if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 0 || Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 10) {
             titulo = "O R I G I N A L";
-            metodoPago = CalculateMetoPago(GetTicketData(variables.KEY_TICKET_CLIENTE_TIPVAL));
+            metodoPago = GetData(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
             folio_impreso = GetTicketData(variables.KEY_TICKET_NROTRN) + "0";
 
         } else if (Integer.parseInt(GetData(variables.KEY_IMPRESO)) == 1) {
@@ -1441,7 +1391,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             }
             flag = 1;
             mPrinter.clearCommandBuffer();
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_printData - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             ShowMsg.showException(e, "sendData", getApplicationContext());
             try {
                 mPrinter.disconnect();
@@ -1465,7 +1417,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             mPrinter.connect(target, Printer.PARAM_DEFAULT);
         } catch (final Epos2Exception e) {
             flag=1;
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_connectPrinter - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             runOnUiThread(new Runnable() {
                 public synchronized void run() {
                     ShowMsg.showException(e, "connect", mContext);
@@ -1497,34 +1451,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 GetTicketData(variables.KEY_TICKET_NROTRN) + "|";
         return qr;
     }
-    @Override
-    public void onPtrReceive(final Printer printerObj, final int code,
-                             final PrinterStatusInfo status, final String printJobId) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public synchronized void run() {
-                Log.w("Code", String.valueOf(code));
-                if (code == 0) {
-                    try {
-                        cgticket_obj.actualizar_cant_impreso(mContext, GetTicketData(variables.KEY_TICKET_NROTRN));
-                        CleanData();
-                    } catch (ClassNotFoundException | JSONException | InstantiationException |
-                            IllegalAccessException | SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                ShowMsg.showResult(code, makeErrorMessage(status), mContext);
-                dispPrinterWarnings(status);
-                updateButtonState(true);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        disconnectPrinter();
-                    }
-                }).start();
-            }
-        });
-    }
+
     private String makeErrorMessage(PrinterStatusInfo status) {
         String msg = "";
         if (status.getOnline() == Printer.FALSE) {
@@ -1606,7 +1533,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     } else {
                         runOnUiThread(new Runnable() {
                             public synchronized void run() {
-                                logCE.EscirbirLog2(getApplicationContext(),"Credito_disconnectPrinter - " + e);
+                                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                        stacktraceObj[2].getMethodName() + "|" + e);
                                 ShowMsg.showException(e, "disconnect", mContext);
                             }
                         });
@@ -1615,7 +1544,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 } else {
                     runOnUiThread(new Runnable() {
                         public synchronized void run() {
-                            logCE.EscirbirLog2(getApplicationContext(),"Credito_disconnectPrinter - " + e);
+                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                    stacktraceObj[2].getMethodName() + "|" + e);
                             ShowMsg.showException(e, "disconnect", mContext);
                         }
                     });
@@ -1626,12 +1557,12 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         mPrinter.clearCommandBuffer();
     }
     /*public void ImpresionContado(View view){
-        new ValidarUltimoNROTRN(this, getApplicationContext(), new ControlGasListener() {
+        new GetTicket(this, new ControlGasListener() {
             @Override
             public void processFinish(JSONObject output) {
-                Log.w("Listener cg",String.valueOf(output));
+                System.out.println(output);
             }
-        }).execute(spn_posicion.getSelectedItem().toString());
+        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
     }*/
     public void ImpresionContado(View view) {
         String Bombas="";
@@ -1656,12 +1587,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 dialogFragment.show(getFragmentManager(), "dialog");
             }
         } catch (JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_ImpresionContado - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
-                    .setIcon(icon)
                     .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
+                    .setPositiveButton(R.string.btn_ok, null).show();
             e.printStackTrace();
         }
 
@@ -1674,12 +1606,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             readFromIntent(intent);
         } catch (ClassNotFoundException | SQLException | InstantiationException |
                 IllegalAccessException | JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_onNewIntent - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(Credito.this)
-                    .setIcon(icon)
                     .setTitle(R.string.error)
+                    .setIcon(icon)
                     .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
+                    .setPositiveButton(R.string.btn_ok, null).show();
             e.printStackTrace();
         }
         if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
@@ -1757,12 +1691,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     // Get the Text
                     text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
                 } catch (UnsupportedEncodingException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_buildTagViews - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
-                            .setIcon(icon)
                             .setTitle(R.string.error)
+                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     Log.e("UnsupportedEncoding", e.toString());
                 }
             }
@@ -1787,7 +1723,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         return String.format("%0" + (data.length * 2) + "X", new BigInteger(1,data));
     }
     private void FillCustomerNFC(String tag){
-        new ValidarUltimoNROTRN(this, getApplicationContext(), new ControlGasListener() {
+        new GetLastNROTRN(this, getApplicationContext(), new ControlGasListener() {
             @Override
             public void processFinish(JSONObject output) {
                 try {
@@ -1795,7 +1731,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                         PutData(variables.KEY_ULT_NROTRN, output.getString(variables.KEY_ULT_NROTRN));
                         Log.w("Listener cg", String.valueOf(output));
                     }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_ValidarUltimoNROTRN - " +
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" +
                                 output.getString(variables.MESSAGE_ERROR));
                         new AlertDialog.Builder(Credito.this)
                                 .setTitle(R.string.error)
@@ -1804,12 +1742,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                 .setPositiveButton(R.string.btn_ok,null).show();
                     }
                 }catch (JSONException e){
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_ValidarUltimoNROTRN - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
                             .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
             }}).execute(spn_posicion.getSelectedItem().toString());
@@ -1832,37 +1772,43 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                 jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
                                 jsonObject.put("nroeco", dataCustomerCG.get(0).nroeco);
                                 jsonObject.put("tagadi", "");
+                                jsonObject.put("tipval",dataCustomerCG.get(0).tipval);
                                 FillCustomerData(jsonObject);
                                 FillCustomerVehicleData(jsonObject);
                                 CoreScreen();
                                 CloseKeyboard();
                             } catch (JSONException | ClassNotFoundException | SQLException |
                                     InstantiationException | IllegalAccessException e) {
-                                logCE.EscirbirLog2(getApplicationContext(),"Credito_GetCustomerTag - " + e);
+                                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                        stacktraceObj[2].getMethodName() + "|" + e);
                                 new AlertDialog.Builder(Credito.this)
                                         .setTitle(R.string.error)
                                         .setIcon(icon)
                                         .setMessage(String.valueOf(e))
-                                        .setPositiveButton(R.string.btn_ok,null).show();
+                                        .setPositiveButton(R.string.btn_ok, null).show();
                                 e.printStackTrace();
                             }
                         }
                     }else{
-                        logCE.EscirbirLog2(getApplicationContext(),"Credito_GetCustomerTag - "
-                                + output.getString(variables.MESSAGE_ERROR));
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
                         new AlertDialog.Builder(Credito.this)
                                 .setTitle(R.string.error)
                                 .setIcon(icon)
                                 .setMessage(output.getString(variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok,null).show();
+                                .setPositiveButton(R.string.btn_ok, null).show();
                     }
                 } catch (JSONException e) {
-                    logCE.EscirbirLog2(getApplicationContext(),"Credito_GetCustomerTag - " + e);
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(Credito.this)
                             .setTitle(R.string.error)
                             .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
+                            .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
             }}).execute(tag);
@@ -1887,8 +1833,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 public void processFinish(JSONObject output) {
                     try {
                         if(output.getInt(variables.CODE_ERROR)==0){
-                            Log.w("output",String.valueOf(output));
-                            Log.w("output data",String.valueOf(output.getJSONObject("Data")));
                             dia[0] = output.getJSONObject("Data");
                             ArrayList<Integer> dias_carga = (ArrayList<Integer>) dia[0].get("Array");
                             if (!ValidacionCargaDia(dias_carga, dia[0])){
@@ -1916,12 +1860,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 return true;
             }
         } catch (JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_ValidacionCarga - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(Credito.this)
-                    .setIcon(icon)
                     .setTitle(R.string.error)
+                    .setIcon(icon)
                     .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
+                    .setPositiveButton(R.string.btn_ok, null).show();
             e.printStackTrace();
 
         }
@@ -1930,7 +1876,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     private Boolean ValidacionCargaDia(ArrayList<Integer> dias_carga, JSONObject dia) throws JSONException {
         ArrayList<Integer> dias_semana=new ArrayList<>();
         Boolean res  = false;
-
         if (dias_carga.contains(1)){
             lunes.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             lunes.setBackgroundResource(R.drawable.ok_vector);
@@ -2111,22 +2056,357 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     Posiciones.put(variables.POSICIONES,Logicos);
                 }
             }else{
-                logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " +
-                        output.getString(variables.MESSAGE_ERROR));
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
                 new AlertDialog.Builder(Credito.this)
                         .setTitle(R.string.error)
                         .setIcon(icon)
                         .setMessage(output.getString(variables.MESSAGE_ERROR))
-                        .setPositiveButton(R.string.btn_ok,null).show();
+                        .setPositiveButton(R.string.btn_ok, null).show();
             }
         } catch (JSONException e) {
-            logCE.EscirbirLog2(getApplicationContext(),"Credito_FillPosicion - " + e);
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetEstacionDataFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0) {
+                datos_domicilio = jsonObject;
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetImpresoFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0){
+                PutData(Variables.KEY_IMPRESO, String.valueOf(jsonObject.getInt(Variables.KEY_IMPRESO)));
+                if (GetData(variables.KEY_IMPRESO).equals("10")){
+                    new UpdateCodcli(this, getApplicationContext(), new ControlGasListener() {
+                        @Override
+                        public void processFinish(JSONObject output){
+                            try {
+                                if (output.getInt(Variables.CODE_ERROR)==1){
+                                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                            stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
+                                    new AlertDialog.Builder(Credito.this)
+                                            .setTitle(R.string.error)
+                                            .setIcon(icon)
+                                            .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                            .setPositiveButton(R.string.btn_ok, null).show();
+                                }
+                            } catch (JSONException e) {
+                                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                        stacktraceObj[2].getMethodName() + "|" + e);
+                                new AlertDialog.Builder(Credito.this)
+                                        .setTitle(R.string.error)
+                                        .setIcon(icon)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok, null).show();
+                                e.printStackTrace();
+                            }
+                        }
+                    }).execute(
+                            GetData(variables.KEY_CODCLI),
+                            GetData(variables.KEY_CLIENTE_VEHICULO_NROVEH),
+                            GetDataODM(),
+                            GetData(variables.KEY_CLIENTE_VEHICULO_TAR),
+                            GetTicketData(variables.KEY_TICKET_NROTRN));
+                    PrintReceip();
+
+                }
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + jsonObject.getString(variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(jsonObject.getString(variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void UpdateNrotrnFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0){
+                /*impresion*/
+                ExecutePrint executePrint = new ExecutePrint();
+                executePrint.execute();
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetCustomerNipFinish(JSONObject res) {
+        try {
+            if (res.getInt(Variables.CODE_ERROR)==0){
+                JSONObject jsonObject= new JSONObject();
+                dataCustomerCG = new ArrayList<>((Collection<? extends DataCustomerCG>) res.get(Variables.DATA_CUSTOMER));
+                if ( dataCustomerCG.size()>0) {
+                    jsonObject.put("codcli", dataCustomerCG.get(0).codcli);
+                    jsonObject.put("chofer", dataCustomerCG.get(0).rsp);
+                    jsonObject.put("placa", dataCustomerCG.get(0).plc);
+                    jsonObject.put("vehiculo", dataCustomerCG.get(0).den_vehicle);
+                    jsonObject.put("tar", dataCustomerCG.get(0).tar);
+                    jsonObject.put("nroveh", dataCustomerCG.get(0).nroveh);
+                    jsonObject.put("cliente", dataCustomerCG.get(0).den);
+                    jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
+                    jsonObject.put("nroeco",dataCustomerCG.get(0).nroeco);
+                    jsonObject.put("tipval",dataCustomerCG.get(0).tipval);
+                    jsonObject.put("tagadi", "");
+                    FillCustomerData(jsonObject);
+                    FillCustomerVehicleData(jsonObject);
+                    CoreScreen();
+                    CloseKeyboard();
+                }else{
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage("No se encontraron datos de cliente con el parametro establecido.")
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                }
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + res.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(res.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }
+        } catch (ClassNotFoundException | SQLException | InstantiationException |
+                IllegalAccessException | JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
             new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
                     .setIcon(icon)
                     .setMessage(String.valueOf(e))
                     .setPositiveButton(R.string.btn_ok,null).show();
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetCustomerNameFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0){
+                dataCustomerCG = new ArrayList<>((Collection<? extends DataCustomerCG>) jsonObject.get(Variables.DATA_CUSTOMER));
+                mRVCustomerCG = (RecyclerView) findViewById(R.id.clientes_cg);
+                mAdapter = new AdapterCustomerCG(Credito.this, dataCustomerCG);
+                mRVCustomerCG.setAdapter(mAdapter);
+                mRVCustomerCG.setLayoutManager(new LinearLayoutManager(Credito.this));
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void GetCustomerVehicleFinish(JSONObject jsonObject) {
+        try {
+            if (jsonObject.getInt(Variables.CODE_ERROR)==0){
+
+                List<DataCustomerCG> dataCustomerVehicleCG = new ArrayList<>(
+                        (Collection<? extends DataCustomerCG>) jsonObject.get(Variables.DATA_CUSTOMER_VEHICLE));
+                mAdapterVehicle = new AdapterCustomerVehicleCG(Credito.this,dataCustomerVehicleCG);
+                mRVCustomerVehicleCG.setAdapter(mAdapterVehicle);
+                mRVCustomerVehicleCG.setLayoutManager(new LinearLayoutManager(Credito.this));
+                if (Boolean.parseBoolean(jsonObject.getString("Boolean"))){
+                    etSearchCustomer.setText("");}
+                viewFlipper.setDisplayedChild(4);
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + jsonObject.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(jsonObject.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onPtrReceive(final Printer printerObj, final int code, final PrinterStatusInfo status,
+                             final String printJobId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                if (code == 0) {
+                    try {
+                        new PutImpreso(Credito.this, new ControlGasListener() {
+                            @Override
+                            public void processFinish(JSONObject output) {
+                                try {
+                                    if (output.getInt(Variables.CODE_ERROR)==0){
+                                        CleanData();
+                                    }else{
+                                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                                stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
+                                        new AlertDialog.Builder(Credito.this)
+                                                .setTitle(R.string.error)
+                                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                                .setPositiveButton(R.string.btn_ok, null).show();
+                                    }
+                                } catch (JSONException | ClassNotFoundException | SQLException |
+                                        InstantiationException | IllegalAccessException e) {
+                                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                            stacktraceObj[2].getMethodName() + "|" + e);
+                                    new AlertDialog.Builder(Credito.this)
+                                            .setTitle(R.string.error)
+                                            .setMessage(String.valueOf(e))
+                                            .setPositiveButton(R.string.btn_ok, null).show();
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).execute(GetTicketData(variables.KEY_TICKET_NROTRN));
+                    } catch ( JSONException e) {
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + e);
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                        e.printStackTrace();
+                    }
+                }
+                ShowMsg.showResult(code, makeErrorMessage(status), mContext);
+                dispPrinterWarnings(status);
+                updateButtonState(true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        disconnectPrinter();
+                    }
+                }).start();
+            }
+        });
+    }
+
+    public class ExecutePrint extends AsyncTask <String, Void, JSONObject>{
+
+        @Override
+        protected void onPreExecute() {
+            pdLoading = new ProgressDialog(Credito.this);
+            pdLoading.setMessage("Imprimiendo..."); // Setting Message
+            pdLoading.setTitle(marca); // Setting Title
+            pdLoading.setIcon(icon);
+            pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+            pdLoading.show(); // Display Progress Dialog
+            pdLoading.setCancelable(false);
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            try {
+                if (!runPrintReceiptSequence()){
+                    updateButtonState(true);
+                    if (pdLoading != null) {
+                        pdLoading.dismiss();
+                    }
+                }
+            } catch (SQLException | WriterException | InstantiationException | JSONException |
+                    ClassNotFoundException | IllegalAccessException | Epos2Exception e) {
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + e);
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            if (pdLoading!= null){
+                pdLoading.dismiss();
+            }
+            super.onPostExecute(jsonObject);
         }
     }
 }

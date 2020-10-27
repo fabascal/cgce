@@ -83,8 +83,12 @@ public class GetTPVs extends AsyncTask <String,Void, JSONObject> {
         } catch (JSONException | ClassNotFoundException | InstantiationException |
                 IllegalAccessException | SQLException e) {
             try {
-                stmt.close();
-                conn.close();
+                if(conn!=null) {
+                    conn.close();
+                }
+                if (stmt!=null) {
+                    stmt.close();
+                }
                 result.put(Variables.CODE_ERROR,1);
                 result.put(Variables.MESSAGE_ERROR,e);
                 e.printStackTrace();
