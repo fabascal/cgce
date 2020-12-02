@@ -47,6 +47,7 @@ public class Variables {
     public final static String KEY_IMPRESO = "Impreso";
     public final static String KEY_TIPTRN = "Tiptrn";
     public final static String KEY_RUT = "Rut";
+    public final static String KEY_RUT_CG = "RutCG";
     public final static String KEY_CLIENTE_VEHICULO_NROECO = "Nroeco";
     public final static String CODE_ERROR = "Code_Error";
     public final static String MESSAGE_ERROR = "Message_Error";

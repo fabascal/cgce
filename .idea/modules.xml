@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AndroidStudioProjects-cgce.iml" filepath="$PROJECT_DIR$/AndroidStudioProjects-cgce.iml" group="cgce" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/cgce.iml" filepath="$PROJECT_DIR$/cgce.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/cgce-app.iml" filepath="$PROJECT_DIR$/app/cgce-app.iml" group="cgce/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cgce.iml" filepath="$PROJECT_DIR$/.idea/modules/cgce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/cgce.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/cgce.app.iml" />
     </modules>
   </component>
 </project>

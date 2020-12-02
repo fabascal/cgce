@@ -8,8 +8,20 @@ public class AceiteList  {
     private Double precio;
     private Integer cantidad;
     private Integer codprd;
+    private boolean showMenu;
 
+    public boolean isShowMenu() {
+        return showMenu;
+    }
+    public void setShowMenu(boolean showMenu) {
+        this.showMenu = showMenu;
+    }
 
+    public Integer setImagen(){return imagen;}
+    public String setDescripcion(){return descripcion;}
+    public Double setPrecio(){return precio;}
+    public Integer setCantidad(){return cantidad;}
+    public Integer setCodprd(){return codprd;}
 
     public Integer getImagen(){return imagen;}
     public String getDescripcion(){return descripcion;}

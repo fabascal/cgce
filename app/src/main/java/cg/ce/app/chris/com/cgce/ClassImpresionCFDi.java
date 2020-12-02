@@ -64,7 +64,7 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
+        BrandSharedPreferences();
         //this method will be running on UI thread
         pdLoading.setIndeterminate(true);
         pdLoading.setCancelable(false);
@@ -119,7 +119,21 @@ public class ClassImpresionCFDi extends AsyncTask<JSONObject,String,Boolean> imp
         Numero_a_Letra letra = new Numero_a_Letra();
         JSONObject datos_domicilio = new JSONObject();
         String method = "";
-        Bitmap logoData = ((BitmapDrawable) icon).getBitmap();
+        Bitmap logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.logo_impresion);
+        switch (marca) {
+            case "Combu-Express":
+                logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.logo_impresion);
+                break;
+            case "Repsol":
+                logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.logo_impresion_repsol);
+                break;
+            case "Ener":
+                logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.logo_impresion_ener);
+                break;
+            case "Total":
+                logoData = BitmapFactory.decodeResource(activity.getResources(), R.drawable.logo_impresion_total);
+                break;
+        }
         StringBuilder textData = new StringBuilder();
         final int barcodeWidth = 2;
         final int barcodeHeight = 100;

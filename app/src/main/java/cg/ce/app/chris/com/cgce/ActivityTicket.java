@@ -2,6 +2,7 @@ package cg.ce.app.chris.com.cgce;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -94,6 +95,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     RequestPermission requestPermission = new RequestPermission();
     JSONObject datos_domicilio;
     JSONObject vehiculo;
+    Activity mActivity;
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -105,6 +107,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         OnCreateScreen();
         requestPermission.requestRuntimePermission(this);
         mContext = this;
+        mActivity=this;
         nrotrn = findViewById(R.id.nrotrn);
         prd = findViewById(R.id.prd);
         cant = findViewById(R.id.cant);
@@ -135,6 +138,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                         if( output.getInt(Variables.CODE_ERROR)==0){
                             String textnrotrn = null;
                             ticket = output;
+
                             textnrotrn = ticket.getString(Variables.KEY_TICKET_NROTRN) + "0";
                             nrotrn.setText(textnrotrn);
                             prd.setText(ticket.getString(Variables.KEY_TICKET_PRODUCTO));
@@ -368,9 +372,8 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             tiptrn = 51;
         }
         try {
-            ticket.put(variables.KEY_RUT, tur);
             ticket.put(variables.KEY_TIPTRN, tiptrn);
-
+            ticket.put(variables.KEY_RUT, tur);
             /*Funcion para obtener la data del vehiculo, necesaria para el formato de impresion*/
             GetVehicleData getVehicleData = new GetVehicleData(this, getApplicationContext());
             getVehicleData.delegate= this;
@@ -379,7 +382,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             GetImpreso getImpreso = new GetImpreso(this, getApplicationContext());
             getImpreso.delegate=this;
             getImpreso.execute(ticket.getString(Variables.KEY_TICKET_NROTRN));
-
 
         } catch ( final JSONException e) {
             if (pdLoading != null) {
@@ -443,19 +445,31 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         if (mPrinter == null) {
             return false;
         }
-
-
-
-        String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
         String metodoPago = "";
+        String titulo = "", folio_impreso = "", cliente = "", venta = "", tpv = "";
+        System.out.println("metodopago GetImpresoFinish" + ticket);
 
+        if (ticket.getInt(Variables.KEY_IMPRESO) == 10) {
+            System.out.println("metodopago ticket nuevo");
+            metodoPago = tur;
+        }else {
+            if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
+                System.out.println("metodopago tiene codcli");
+                System.out.println("metodopago codcli"+ ticket.getInt(Variables.KEY_TICKET_CODCLI));
+                if (ticket.getInt(Variables.KEY_TICKET_CODCLI) > 0) {
+                    System.out.println("metodopago tiene codcli mayor a 0");
+                    metodoPago = ticket.getString(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
+                } else {
+                    System.out.println("metodopago tiene codcli menor a 0");
+                    if (ticket.has(Variables.KEY_RUT_CG)) {
+                        metodoPago = ticket.getString(variables.KEY_RUT_CG);
+                    }
+                }
+            }
+        }
+        System.out.println("metodopago"+metodoPago);
         if (ticket.getInt(Variables.KEY_IMPRESO) == 0 || ticket.getInt(Variables.KEY_IMPRESO) == 10) {
             titulo = "O R I G I N A L";
-            if (ticket.getInt(Variables.KEY_TICKET_CODCLI)>0){
-                metodoPago = ticket.getString(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
-            }else{
-                metodoPago = ticket.getString(variables.KEY_RUT);
-            }
             folio_impreso = ticket.getString(variables.KEY_TICKET_NROTRN) + "0";
             if ( spn_metodo.getSelectedItem().toString().equals("T. Credito") ||
                     spn_metodo.getSelectedItem().toString().equals("T. Debito")){
@@ -463,18 +477,19 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             }else {
                 flag_TicketImpreso=true;
             }
-
+            System.out.println("ticket validar" + ticket);
         } else if (ticket.getInt(variables.KEY_IMPRESO) == 1) {
             titulo = "C O P I A";
             folio_impreso = "C O P I A";
-            metodoPago = ticket.getString(variables.KEY_RUT);
+
             flag_TicketImpreso = true;
         }
+
         Log.w("ticket", ticket.toString());
         if (ticket.getInt(variables.KEY_TICKET_CODCLI) != 0) {
             /*vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));*/
             cliente = ticket.getString(variables.KEY_TICKET_DENCLI);
-            metodoPago = ticket.getString(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN);
+
         } else {
             /*vehiculo = cg.get_vehiculo(mContext, ticket.getString(variables.KEY_TICKET_NROTRN), ticket.getString(variables.KEY_TICKET_BOMBA));*/
 
@@ -540,19 +555,21 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         textData.append(metodoPago + "\n");
         //textData.append("\n");
         if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
-            if (vehiculo.has("rsp")) {
-                textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+            if(ticket.getInt(Variables.KEY_TICKET_CODCLI)>0) {
+                if (vehiculo.has("rsp")) {
+                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                }
+                if (vehiculo.has("nroeco")) {
+                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+                }
+                if (vehiculo.has("placa")) {
+                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+                }
+                if (vehiculo.has("ultodm")) {
+                    textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
+                }
+                textData.append("------------------------------\n");
             }
-            if (vehiculo.has("nroeco")) {
-                textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
-            }
-            if (vehiculo.has("placa")) {
-                textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
-            }
-            if (vehiculo.has("ultodm")) {
-                textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
-            }
-            textData.append("------------------------------\n");
         }
         method = "addText";
         mPrinter.addText(textData.toString());
@@ -1088,7 +1105,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                     updateNrotrn.delegate = this;
                     updateNrotrn.execute(ticket);
                 }
-
                 /*impresion*/
                 ExecutePrint executePrint = new ExecutePrint();
                 executePrint.execute();
@@ -1197,10 +1213,19 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
                 logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
                         stacktraceObj[2].getMethodName() + "|" + e);
-                new AlertDialog.Builder(ActivityTicket.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok, null).show();
+                new Thread(){
+                    public void run(){
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(ActivityTicket.this)
+                                        .setTitle(R.string.error)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok, null).show();
+                            }
+                        });
+                    }
+                }.start();
             }
             return result;
         }

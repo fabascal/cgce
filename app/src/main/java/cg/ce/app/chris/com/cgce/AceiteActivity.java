@@ -11,8 +11,13 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -37,6 +44,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +73,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import cg.ce.app.chris.com.cgce.common.QrString;
+import cg.ce.app.chris.com.cgce.common.RecyclerEntityAceite;
 import cg.ce.app.chris.com.cgce.dialogos.AceiteCantidad;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
 import cg.ce.app.chris.com.cgce.socket.SGPMGateway;
@@ -88,7 +97,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     JSONObject jsAceitesList;
     JSONArray items = new JSONArray();
     private RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    AceiteAdapterRV adapter;
     private List<AceiteList> aceiteLists;
     cgticket cg = new cgticket();
     String barcode;
@@ -104,6 +113,8 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     ProgressDialog progress;
     private Printer mPrinter = null;
     Drawable icon, logo;
+    LogCE logCE = new LogCE();
+    RelativeLayout main;
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -111,6 +122,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BrandSharedPreferences();
+        main = findViewById(R.id.activity_aceite);
         /*Funcion para obtener el tamaño del dispositivo y orientar la pantalla*/
         ScreenDevice();
         Bundle bundle = getIntent().getExtras();
@@ -130,6 +142,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         horizontalDecoration.setDrawable(horizontalDivider);
         recyclerView.addItemDecoration(horizontalDecoration);
         FillGenerals();
+
         imgbtnscan = (ImageButton) findViewById(R.id.imgbtnscan);
         //imgbtnscan.setOnClickListener(AceiteActivity.this);
         tvname = (TextView) findViewById(R.id.tvname);
@@ -157,6 +170,65 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         }
         /*Se inicializa el objeto impresora*/
         initializeObject();
+        /*Borrar un aceite*/
+        ItemTouchHelper.SimpleCallback touchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            private Drawable deleteIcon = ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_delete);
+            private final ColorDrawable background = new ColorDrawable(Color.RED);
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                final AceiteList entity = adapter.getEntity(viewHolder.getAdapterPosition());
+                adapter.removeItem(viewHolder.getAdapterPosition());
+
+                Snackbar snackbar = Snackbar.make(main, "Item deleted", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                adapter.undoDelete(entity, position);
+                            }
+                        });
+                snackbar.show();
+            }
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+                View itemView = viewHolder.itemView;
+
+                int iconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+                int iconTop = itemView.getTop() + (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+                int iconBottom = iconTop + deleteIcon.getIntrinsicHeight();
+
+                if (dX > 0) {
+                    int iconLeft = itemView.getLeft() + iconMargin + deleteIcon.getIntrinsicWidth();
+                    int iconRight = itemView.getLeft() + iconMargin;
+
+                    deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                    background.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + ((int) dX), itemView.getBottom());
+                } else if (dX < 0) {
+                    int iconLeft = itemView.getRight() - iconMargin - deleteIcon.getIntrinsicWidth();
+                    int iconRight = itemView.getRight() - iconMargin;
+
+                    deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                    background.setBounds(itemView.getRight() + ((int) dX), itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                } else {
+                    background.setBounds(0, 0, 0, 0);
+                }
+                ColorFilter filter = new LightingColorFilter(Color.BLACK, Color.BLACK);
+                deleteIcon.setColorFilter(filter);
+                background.draw(c);
+                deleteIcon.draw(c);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelperCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -213,10 +285,16 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
+                scanIntegrator.setPrompt("Escanear producto");
                 if (IsTable) {
                     scanIntegrator.addExtra("SCAN_CAMERA_ID", 1);
                     scanIntegrator.setOrientationLocked(true);
+                }else{
+                    scanIntegrator.addExtra("SCAN_CAMERA_ID", 0);
+                    scanIntegrator.setCaptureActivity(ScanActivityPortrait.class);
+                    scanIntegrator.setOrientationLocked(false);
                 }
+                scanIntegrator.setBeepEnabled(true);
                 scanIntegrator.initiateScan();
                 return false;
             }
@@ -282,6 +360,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         total();
     }
 
+
     @Override
     protected void onDestroy() {
 
@@ -333,47 +412,27 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 break;
             case R.id.btn_vender:
-                progress = ProgressDialog.show(this, "CombuGo",
-                        "Registrando venta", true);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        try {
-                            callSGPM(jsAceiteTicket, VENTASECOS, bomba);
-                        } catch (InterruptedException | ExecutionException | JSONException e) {
-                            progress.dismiss();
-                            Looper.prepare();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    new AlertDialog.Builder(AceiteActivity.this)
-                                            .setTitle(R.string.error)
-                                            .setIcon(icon)
-                                            .setMessage(e.toString() )
-                                            .setPositiveButton(R.string.btn_ok, null).show();
-                                }
-                            });
-                            Looper.loop();
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                progress.dismiss();
-                            }
-                        });
-                    }
-                }).start();
-
+                try {
+                    callSGPM(jsAceiteTicket, VENTASECOS, bomba);
+                } catch (JSONException | ExecutionException | InterruptedException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
+                    new AlertDialog.Builder(AceiteActivity.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(e.toString() )
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
                 break;
         }
     }
 
 
 
-    public String callSGPM(JSONObject js, String method, String bomba) throws JSONException, ExecutionException, InterruptedException {
+    public String callSGPM(JSONObject js, String method, String bomba) throws JSONException,
+            ExecutionException, InterruptedException {
 
         JSONObject cursor = null;
         JSONArray array = jsAceiteTicket.getJSONArray("items");
@@ -394,7 +453,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         cursor = manager.cargarcursorodbc2();
         cursor.put("port", 9770);
         cursor.put("message", message);
-        SGPMGateway sgmp = new SGPMGateway(cursor);
+        SGPMGateway sgmp = new SGPMGateway(AceiteActivity.this,getApplicationContext(),cursor);
         sgmp.delegate = this;
         return sgmp.execute(cursor).get();
     }

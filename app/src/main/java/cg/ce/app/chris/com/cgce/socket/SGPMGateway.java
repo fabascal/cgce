@@ -1,5 +1,8 @@
 package cg.ce.app.chris.com.cgce.socket;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.ref.WeakReference;
 import java.net.Socket;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
 
@@ -19,15 +23,31 @@ public class SGPMGateway extends AsyncTask<JSONObject, String, String> {
     String MESSAGE;
     String response="false";
     public StringListener delegate=null;
+    private ProgressDialog mProgressDialog;
+    private WeakReference<Activity> mActivity;
+    private Context mContext;
 
 
-    public SGPMGateway (JSONObject jsonObject) throws JSONException {
+    public SGPMGateway (Activity activity, Context context, JSONObject jsonObject) throws JSONException {
+        mActivity = new WeakReference<Activity>(activity);
+        this.mContext = context;
         SERVER_IP = jsonObject.getString("ip");
         SERVER_PORT = jsonObject.getInt("port");
         MESSAGE = jsonObject.getString("message");
-
+        // Initialize the progress dialog
+        mProgressDialog = new ProgressDialog(activity);
+        mProgressDialog.setIndeterminate(false);
+        // Progress dialog horizontal style
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        // Progress dialog title
+        mProgressDialog.setTitle("CombuGo");
+        // Progress dialog message
+        mProgressDialog.setMessage("Registrando venta...");
     }
-
+    @Override
+    protected void onPreExecute() {
+        mProgressDialog.show();
+    }
     @Override
     protected String doInBackground(JSONObject... jsonObjects) {
         try {
@@ -56,22 +76,14 @@ public class SGPMGateway extends AsyncTask<JSONObject, String, String> {
            response="Info|0|" + String.valueOf(e);
             e.printStackTrace();
         }
-       /* int waited = 0;
-        while (waited < 1500) {
-            try {
-                sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            waited += 100;
-        }*/
         return response;
     }
 
     @Override
     protected void onPostExecute(String result) {
-        System.out.println("Gateway response");
-        System.out.println(result);
+        if (mProgressDialog!= null){
+            mProgressDialog.dismiss();
+        }
         super.onPostExecute(result);
         delegate.processFinish(result);
     }

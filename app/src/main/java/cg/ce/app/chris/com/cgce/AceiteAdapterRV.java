@@ -19,6 +19,8 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
+
+import cg.ce.app.chris.com.cgce.common.RecyclerEntityAceite;
 import cg.ce.app.chris.com.cgce.dialogos.AceiteCantidad;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
 
@@ -45,7 +47,19 @@ public class AceiteAdapterRV extends RecyclerView.Adapter<AceiteAdapterRV.ViewHo
         this.activity = activity;
 
     }
+    public AceiteList getEntity(int adapterPosition) {
+        return aceiteLists.get(adapterPosition);
+    }
 
+    public void removeItem(int position) {
+        aceiteLists.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void undoDelete(AceiteList entity, int position) {
+        aceiteLists.add(position, entity);
+        notifyDataSetChanged();
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -58,11 +72,11 @@ public class AceiteAdapterRV extends RecyclerView.Adapter<AceiteAdapterRV.ViewHo
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         // this method will bind the data to the ViewHolder from whence it'll be shown to other Views
 
-        final AceiteList aceiteList = aceiteLists.get(position);
+        final AceiteList aceiteList = aceiteLists.get(holder.getAdapterPosition());
         holder.producto_total.setText("$" + String.valueOf(aceiteList.getCantidad()*aceiteList.getPrecio()));
         holder.producto_cantidad.setText(String.valueOf(aceiteList.getCantidad()) + " PZA ");
         holder.producto_descripcion.setText(aceiteList.getDescripcion());
@@ -74,13 +88,14 @@ public class AceiteAdapterRV extends RecyclerView.Adapter<AceiteAdapterRV.ViewHo
             @Override
             public void onClick(View v) {
 
-               AceiteList aceiteList1 = aceiteLists.get(position);
+               AceiteList aceiteList1 = aceiteLists.get(holder.getAdapterPosition());
                openDialog(aceiteList1);
 
             }
         });
 
     }
+
 
 
     @Override

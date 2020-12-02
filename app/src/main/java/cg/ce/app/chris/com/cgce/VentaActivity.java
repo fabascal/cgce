@@ -242,7 +242,8 @@ public class VentaActivity extends AppCompatActivity
         }
 
         if (!requestPermissions.isEmpty()) {
-            ActivityCompat.requestPermissions(this, requestPermissions.toArray(new String[requestPermissions.size()]), requestPermission.REQUEST_PERMISSION);
+            ActivityCompat.requestPermissions(this, requestPermissions.toArray(
+                    new String[requestPermissions.size()]), requestPermission.REQUEST_PERMISSION);
         }
     }
 

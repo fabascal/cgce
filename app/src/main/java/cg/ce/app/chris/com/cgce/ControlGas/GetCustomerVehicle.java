@@ -16,7 +16,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNameListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerVehicleListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.DataCustomerCG;
@@ -71,7 +70,7 @@ public class GetCustomerVehicle extends AsyncTask<String,Void, JSONObject> {
                 data.den_vehicle = rs.getString("den");
                 data.tar = rs.getInt("tar");
                 data.nroveh = rs.getInt("nroveh");
-                data.nroeco = rs.getInt("nroeco");
+                data.nroeco = rs.getString("nroeco");
                 /*Log.w("Data-Query1", rs.getString("tagadi")  );*/
                 if (rs.getString("tagadi")==null || rs.getString("tagadi").equals("")){
                     data.tagadi = 0 ;

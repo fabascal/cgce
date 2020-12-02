@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="cg.ce.app.chris.com.cgce">
     <!-- NFC -->
     <uses-permission android:name="android.permission.NFC" />
@@ -214,6 +215,11 @@
             android:name=".MarcaUpdateActivity"
             android:theme="@style/ContentMain" />
         <activity android:name=".ServiciosActivity" />
+        <activity android:name=".ScanActivityPortrait"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
     </application>
 
 </manifest>

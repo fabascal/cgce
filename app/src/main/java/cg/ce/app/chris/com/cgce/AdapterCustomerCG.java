@@ -3,6 +3,7 @@ package cg.ce.app.chris.com.cgce;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +16,15 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.common.Variables;
+
 public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private LayoutInflater inflater;
     List<DataCustomerCG> data= Collections.emptyList();
+    final String MSG_CLIENTE_NAME = "El cliente no acepta este medio de identificacion actualmente, " +
+            "favor de realizar la identificacion con algun otro medio.";
 
     public AdapterCustomerCG(Context context, List<DataCustomerCG> data){
         this.context=context;
@@ -66,17 +71,25 @@ public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHol
         // Click event for all items
         @Override
         public void onClick(View v ) {
-            JSONObject CustomerCG_data=new JSONObject();
-            try {
-                CustomerCG_data.put("rfc",data.get(getAdapterPosition()).rfc);
-                CustomerCG_data.put("cliente",data.get(getAdapterPosition()).den);
-                CustomerCG_data.put("codcli",data.get(getAdapterPosition()).codcli);
-                CustomerCG_data.put("tipval",data.get(getAdapterPosition()).tipval);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (!data.get(getAdapterPosition()).codtip.equals("0")){
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle(R.string.error)
+                        .setIcon(R.drawable.combuito)
+                        .setMessage(MSG_CLIENTE_NAME)
+                        .setPositiveButton(R.string.btn_ok,null).show();
+            }else {
+                JSONObject CustomerCG_data = new JSONObject();
+                try {
+                    CustomerCG_data.put("rfc", data.get(getAdapterPosition()).rfc);
+                    CustomerCG_data.put("cliente", data.get(getAdapterPosition()).den);
+                    CustomerCG_data.put("codcli", data.get(getAdapterPosition()).codcli);
+                    CustomerCG_data.put("tipval", data.get(getAdapterPosition()).tipval);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ClearListDataCustomerCG();
+                ((Credito) context).AdapterClickCustomerCG(CustomerCG_data, true);
             }
-            ClearListDataCustomerCG();
-            ((Credito)context).AdapterClickCustomerCG(CustomerCG_data, true);
 
         }
     }

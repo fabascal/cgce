@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNameListener;
-import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNipListener;
 import cg.ce.app.chris.com.cgce.DataBaseCG;
 import cg.ce.app.chris.com.cgce.DataCustomerCG;
 import cg.ce.app.chris.com.cgce.common.Variables;
@@ -58,7 +57,8 @@ public class GetCustomerName extends AsyncTask<String,Void, JSONObject> {
         DataBaseCG cg = new DataBaseCG();
         try {
             conn = cg.odbc_cg(mContext);
-            String query = "select cod as cod,den as den,rfc as rfc,tipval as tipval from Clientes where den like '%" + params[0] + "%'";
+            String query = "select cod as cod,den as den,rfc as rfc,tipval as tipval, codtip as codtip" +
+                    " from Clientes where codest in (0) and den like '%" + params[0] + "%'";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(query);
             while (rs.next()){
@@ -67,6 +67,7 @@ public class GetCustomerName extends AsyncTask<String,Void, JSONObject> {
                 data.den = rs.getString("den");
                 data.rfc = rs.getString("rfc");
                 data.tipval = CalculateMetoPago(String.valueOf(rs.getInt("tipval")));
+                data.codtip = rs.getString("codtip");
                 dataCustomerCGS.add(data);
             }
             conn.close();

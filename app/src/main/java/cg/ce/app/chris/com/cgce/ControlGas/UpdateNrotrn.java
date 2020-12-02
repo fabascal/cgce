@@ -111,6 +111,7 @@ public class UpdateNrotrn extends AsyncTask <JSONObject, Void, JSONObject> {
         conn = dbcg.odbc_cg(mContext);
         stmt = conn.createStatement();
         String ticket2=ticket.getString(Variables.KEY_TICKET_NROTRN)+"0";
+        System.out.println("UpdateNrotrn" + ticket);
         if (ticket.has(Variables.KEY_RUT)){
             if(ticket.getString(Variables.KEY_RUT).substring(0,1).equals("6")){
                 stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set codres='"+

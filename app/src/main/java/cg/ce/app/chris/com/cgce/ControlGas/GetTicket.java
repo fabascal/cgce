@@ -71,7 +71,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
                     "cli.den,desp.hratrn,desp.codgas,desp.codprd,desp.nroveh,desp.odm,desp.fchcor,desp.nrotur,desp.nrocte,cli.tipval,\n" +
                     "(select top 1 pre from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc),\n" +
                     "(select top 1 iva from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc) ,\n" +
-                    "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc), " +
+                    "(select top 1 preiie from ["+base+"].[dbo].[Precios] where codprd=desp.codprd and codgas=desp.codgas and fch<=desp.fchtrn order by fch desc),\n" +
                     "desp.rut as rut  \n" +
                     "FROM ["+base+"].[dbo].[Despachos] as desp\n" +
                     "left outer join ["+base+"].[dbo].[Productos] as prod on prod.cod=desp.codprd \n" +
@@ -79,7 +79,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+params[0]+" order by desp.nrotrn desc");
-                    /*"where desp.nrotrn='40022970' order by desp.nrotrn desc");*/
+                    /*"where desp.nrotrn='40206190' order by desp.nrotrn desc");*/
             if (r.next()) {
                 float a = r.getFloat(11);
                 if (a<0){
@@ -106,7 +106,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
                 result.put(Variables.KEY_TICKET_NROCTE,r.getString(21));
                 result.put(Variables.KEY_TICKET_CLIENTE_TIPVAL,r.getInt(22));
                 result.put(Variables.KEY_TICKET_CLIENTE_TIPVAL_DEN,CalculateMetoPago(String.valueOf(r.getInt(22))));
-                result.put(Variables.KEY_RUT,r.getString("rut"));
+                result.put(Variables.KEY_RUT_CG,r.getString(26));
                 result.put(Variables.KEY_TICKET_IVA, r.getDouble(24));
                 result.put(Variables.KEY_TICKET_IEPS, r.getDouble(25));
                 result.put(Variables.NIP_DESPACHADOR,nip_desp(mContext,params[1]));
@@ -131,7 +131,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
                 ex.printStackTrace();
             }
         }
-        System.out.println("GetTicket" + String.valueOf(result));
+        System.out.println("GetTicket-Asynctask" + String.valueOf(result));
         return result;
     }
 

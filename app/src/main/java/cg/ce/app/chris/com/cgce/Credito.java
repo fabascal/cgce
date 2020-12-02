@@ -119,7 +119,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     /*elementos de activity_credito_impresion*/
     TextView tv_cliente,tv_rfc,tv_codcli,tv_placa,tv_vehiculo,tv_chofer,semana,tvhora,tvhora1,tvhora2,tvhora3;
     TextView tvestado1, tvestado2, tvproducto1, tvproducto2;
-    EditText et_odm;
+    EditText et_odm,filterPLC;
     cgticket cgticket_obj = new cgticket();
     ValidacionFlotillero validacionFlotillero = new ValidacionFlotillero();
     private RecyclerView mRVCustomerCG, mRVCustomerVehicleCG;
@@ -231,6 +231,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         tvestado2 = (TextView) findViewById(R.id.tvestado2);
         tvproducto1 = (TextView) findViewById(R.id.tvproducto1);
         tvproducto2 = (TextView) findViewById(R.id.tvproducto2);
+        filterPLC = (EditText) findViewById(R.id.filterPLC);
         spn_posicion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -287,6 +288,20 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         GetEstacionData getEstacionData = new GetEstacionData(this, getApplicationContext());
         getEstacionData.delegate= this;
         getEstacionData.execute();
+
+        filterPLC.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                System.out.println("Credito ontext "+ s);
+                mAdapterVehicle.getFilter().filter(s);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -318,7 +333,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                         Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
                         if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN))<Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))) {
                             UpdateCodcli();
-
                         }else{
                             new AlertDialog.Builder(Credito.this)
                                     .setTitle(R.string.error)
@@ -1109,8 +1123,12 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         textData.append("\n");
         mPrinter.addTextAlign(Printer.ALIGN_LEFT);
         textData.append(GetData(variables.KEY_CLIENTE));
+
         textData.append(cliente + "\n");
         textData.append(metodoPago + "\n");
+        if (HasData(Variables.METODO)){
+            textData.append("Método de identificación - " + GetData(Variables.METODO) + "\n");
+        }
         if (HasData(variables.KEY_CODCLI)) {
             if (HasData(variables.KEY_CLIENTE_VEHICULO_CHOFER)) {
                 textData.append("Conductor     : " + GetData(variables.KEY_CLIENTE_VEHICULO_CHOFER) + "\n");
@@ -1237,6 +1255,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             textData.append(GetData(variables.KEY_CLIENTE));
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
+            if (HasData(Variables.METODO)){
+                textData.append("Método de identificación - " + GetData(Variables.METODO)  + "\n");
+            }
             //textData.append("\n");
             if (HasData(variables.KEY_CODCLI)) {
                 if (HasData(variables.KEY_CLIENTE_VEHICULO_CHOFER)) {
@@ -2275,6 +2296,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
 
                 List<DataCustomerCG> dataCustomerVehicleCG = new ArrayList<>(
                         (Collection<? extends DataCustomerCG>) jsonObject.get(Variables.DATA_CUSTOMER_VEHICLE));
+
                 mAdapterVehicle = new AdapterCustomerVehicleCG(Credito.this,dataCustomerVehicleCG);
                 mRVCustomerVehicleCG.setAdapter(mAdapterVehicle);
                 mRVCustomerVehicleCG.setLayoutManager(new LinearLayoutManager(Credito.this));

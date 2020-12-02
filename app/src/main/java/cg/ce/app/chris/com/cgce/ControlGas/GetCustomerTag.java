@@ -75,7 +75,7 @@ public class GetCustomerTag extends AsyncTask<String, Void, JSONObject> {
                 data.den_vehicle = rs.getString("den_vehicle");
                 data.tar = rs.getInt("tar");
                 data.nroveh = rs.getInt("nroveh");
-                data.nroeco = rs.getInt("nroeco");
+                data.nroeco = rs.getString("nroeco");
                 data.tipval = CalculateMetoPago(String.valueOf(rs.getInt("tipval")));
                 dataCustomerCGS.add(data);
             }
