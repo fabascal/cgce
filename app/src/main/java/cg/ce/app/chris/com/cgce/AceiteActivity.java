@@ -34,6 +34,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -74,6 +75,7 @@ import java.util.concurrent.ExecutionException;
 
 import cg.ce.app.chris.com.cgce.common.QrString;
 import cg.ce.app.chris.com.cgce.common.RecyclerEntityAceite;
+import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.AceiteCantidad;
 import cg.ce.app.chris.com.cgce.listeners.StringListener;
 import cg.ce.app.chris.com.cgce.socket.SGPMGateway;
@@ -185,15 +187,35 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
                 final int position = viewHolder.getAdapterPosition();
                 final AceiteList entity = adapter.getEntity(viewHolder.getAdapterPosition());
                 adapter.removeItem(viewHolder.getAdapterPosition());
+                try {
+                    JSONArray array_validar = jsAceiteTicket.getJSONArray("items");
+                    for (int j =0; j < array_validar.length();j++) {
+                        JSONObject jsvalidar = array_validar.getJSONObject(j);
+                        if (jsvalidar.getString("codprd").equals(String.valueOf(entity.getCodprd()))){
+                            jsAceiteTicket.getJSONArray("items").remove(j);
+                        }
+                    }
+                    total();
+                    Snackbar snackbar = Snackbar.make(main, "Producto eliminado", Snackbar.LENGTH_LONG)
+                            .setAction("DESHACER", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Log.w("entity", entity.toString());
+                                    adapter.undoDelete(entity, position);
+                                    UndoDeleteProduct(entity);
+                                }
+                            });
+                    snackbar.show();
 
-                Snackbar snackbar = Snackbar.make(main, "Item deleted", Snackbar.LENGTH_LONG)
-                        .setAction("UNDO", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                adapter.undoDelete(entity, position);
-                            }
-                        });
-                snackbar.show();
+                } catch (JSONException e) {
+                    new AlertDialog.Builder(AceiteActivity.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok,null).show();
+                    e.printStackTrace();
+                }
+
             }
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
@@ -230,7 +252,21 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
+    public void UndoDeleteProduct(AceiteList list){
+        JSONObject res = new JSONObject();
+        try {
+            res.put("codprd",list.getCodprd());
+            res.put("descripcion",list.getDescripcion());
+            res.put("precio",list.getPrecio());
+            res.put("codext",list.getCodext());
+            loadData(res);
+            total();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+
+    }
     @SuppressLint("SourceLockedOrientationActivity")
     private void ScreenDevice(){
         if (tablet.esTablet(getApplicationContext())){
@@ -348,7 +384,12 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
 
             JSONObject jo = array.getJSONObject(i);
 
-            AceiteList aceites = new AceiteList(R.drawable.aceite_logo,jo.getString("descripcion"),jo.getDouble("precio"),jo.getInt("cantidad"), jo.getInt("codprd"));
+            AceiteList aceites = new AceiteList(R.drawable.aceite_logo,
+                    jo.getString("descripcion"),
+                    jo.getDouble("precio"),
+                    jo.getInt("cantidad"),
+                    jo.getInt("codprd"),
+                    jo.getString("codext"));
             aceiteLists.add(aceites);
 
         }
