@@ -1651,7 +1651,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void onResume(){
         super.onResume();
-        WriteModeOn();
+        if (!IsTablet) {
+            WriteModeOn();
+        }
     }
     private void WriteModeOn(){
         writeMode = true;

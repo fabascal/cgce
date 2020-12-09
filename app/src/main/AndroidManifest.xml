@@ -54,6 +54,7 @@
         android:icon="@drawable/inicio"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Credito"
             android:windowSoftInputMode="adjustPan">
@@ -80,7 +81,7 @@
         <activity
             android:name=".Splashscreen"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

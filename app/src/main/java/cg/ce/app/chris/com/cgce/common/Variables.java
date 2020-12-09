@@ -60,4 +60,6 @@ public class Variables {
     public final static String MAC_ADDRESS = "MacAddress";
     public final static String DATA_CUSTOMER = "DataCustomer";
     public final static String DATA_CUSTOMER_VEHICLE = "DataCustomerVehicle";
+    public static final String DEVICE = "Device";
+    public static final String CORTE = "Corte";
 }

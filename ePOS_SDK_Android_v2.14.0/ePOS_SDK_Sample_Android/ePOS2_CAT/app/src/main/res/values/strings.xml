@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">ePOS2_CAT</string>
+
+    <string name="app_title">ePOS2 CAT</string>
+    <string name="tab_connect">connect</string>
+    <string name="tab_authorize">authorize</string>
+    <string name="tab_command">command</string>
+    <string name="target">TCP:192.168.192.168[local_cat]</string>
+    <string name="title_err_code">Error Code</string>
+    <string name="title_err_method">Method</string>
+    <string name="txt_target">Target</string>
+    <string name="btn_connect">Connect</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="btn_clear">Clear</string>
+    <string name="btn_clealance">Clealance</string>
+    <string name="btn_accessDailyLog">AccessDailyLog</string>
+    <string name="btn_sendDirectIOCommand">SendDirectIOCommand</string>
+
+
+    <string name="txt_trainingMode">Training Mode</string>
+    <string name="txt_Service">Service</string>
+    <string name="txt_totalAmount">Total Amount</string>
+    <string name="txt_data">Data</string>
+    <string name="txt_command">Command</string>
+    <string name="txt_string">String</string>
+    <string name="txt_service">Service</string>
+    
+    <string name="service_credit">Credit</string>
+    <string name="service_debit">Debit</string>
+    <string name="service_unionpay">UnionPay</string>
+    <string name="service_edy">Edy</string>
+    <string name="service_id">iD</string>
+    <string name="service_nanaco">nanaco</string>
+    <string name="service_quicpay">QUICPay</string>
+    <string name="service_suica">Suica</string>
+    <string name="service_waon">WAON</string>
+    <string name="service_point">POINT</string>
+    <string name="service_common">COMMON</string>
+
+    <string name="authorize_sales">AuthorizeSales</string>
+    <string name="authorize_void">AuthorizeVoid</string>
+    <string name="authorize_refund">AuthorizeRefund</string>
+    <string name="authorize_completion">AuthorizeCompletion</string>
+
+    <string name="title_msg_result">Result</string>
+    <string name="title_msg_description">Description</string>
+    <string name="title_msg_oposCode">OPOS CODE</string>
+</resources>
