@@ -120,7 +120,7 @@ public class AceiteCreditoMetodoNFC extends AppCompatActivity implements View.On
                 etiqueta=readTextFromMessage((NdefMessage)parcelables[0]);
                 etiqueta=etiqueta+"|"+bin2hex(myTag.getId());
                 toJson json = new toJson();
-                JSONObject data = json.strtojson(etiqueta);
+                JSONObject data = json.strtojson(etiqueta,"|");
                 try {
                     jsonenviaproducto.put("rfc", data.getString("1"));
                     Log.w("json",jsonenviaproducto.toString());

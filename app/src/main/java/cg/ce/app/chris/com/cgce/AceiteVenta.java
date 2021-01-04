@@ -62,6 +62,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         Intent intent=null;
         String tipo_venta="0";
+        cardViewContado.setClickable(false);
         switch (view.getId()) {
             case R.id.CardViewContado:
                 tipo_venta="1";
@@ -76,6 +77,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
             intent.putExtra("bomba",spn_dispensarios.getSelectedItem().toString());
             intent.putExtra("tipo_venta",tipo_venta);
             startActivity(intent);
+            finish();
         }
     }
     @SuppressLint("SourceLockedOrientationActivity")
@@ -121,7 +123,7 @@ public class AceiteVenta extends AppCompatActivity implements View.OnClickListen
             if (jsonObject.getInt(Variables.CODE_ERROR)==0) {
                 ArrayList<String> data = (ArrayList<String>) jsonObject.get(Variables.POSICIONES);
                 ArrayAdapter NoCoreAdapter = new ArrayAdapter(getApplicationContext(),
-                        R.layout.spinner_bombas, data);
+                        R.layout.spinner_bombas_credito, data);
                 spn_dispensarios.setAdapter(NoCoreAdapter);
             }else{
                 StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();

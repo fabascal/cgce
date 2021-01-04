@@ -63,6 +63,7 @@ public class ClienteBusqueda extends AppCompatActivity implements GetCustomerFac
     private String Bandera;
     LogCE logCE = new LogCE();
     Drawable icon;
+    JSONObject cursor=null;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -108,20 +109,37 @@ public class ClienteBusqueda extends AppCompatActivity implements GetCustomerFac
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             GetCustomerFacturacion getCustomerFacturacion = new GetCustomerFacturacion(this, getApplicationContext());
             getCustomerFacturacion.delegate=this;
-            getCustomerFacturacion.execute(intent.getStringExtra(SearchManager.QUERY),Bandera);
+            getCustomerFacturacion.execute(intent.getStringExtra(SearchManager.QUERY),Bandera,getIntegra());
             if (searchView != null) {
                 searchView.clearFocus();
             }
         }
     }
-
+    public String getIntegra(){
+        DataBaseManager manager = new DataBaseManager(getApplicationContext());
+        cursor = manager.cargarcursorodbc2();
+        String integra=null;
+        try {
+            integra = cursor.getString("integra");
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(ClienteBusqueda.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            e.printStackTrace();
+        }
+        return integra;
+    }
     @Override
     public void GetCustomerNameFinish(JSONObject result) {
         try {
-            Log.w("json-getcustomer", String.valueOf(result.getString(Variables.KEY_CLIENTE)));
             if (result.getInt(Variables.CODE_ERROR)==0){
+                Log.w("json-getcustomer", String.valueOf(result.getString(Variables.KEY_CLIENTE)));
                 List<DataCliente> data=new ArrayList<>();
-
                 if(result.getString(Variables.KEY_CLIENTE).equals("no rows")) {
                     new AlertDialog.Builder(ClienteBusqueda.this)
                             .setTitle(R.string.error)
@@ -138,7 +156,7 @@ public class ClienteBusqueda extends AppCompatActivity implements GetCustomerFac
                             clienteData.rfc = json_data.getString("rfc");
                             clienteData.nombre = json_data.getString("nombre");
                             clienteData.correo = json_data.getString("correo");
-                            clienteData.id_cliente = json_data.getString("id_cliente");
+                            clienteData.id_cliente = json_data.getString("id");
                             clienteData.bomba = bomba;
                             data.add(clienteData);
                         }
@@ -171,6 +189,14 @@ public class ClienteBusqueda extends AppCompatActivity implements GetCustomerFac
                         .setPositiveButton(R.string.btn_ok, null).show();
             }
         } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(ClienteBusqueda.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
             e.printStackTrace();
         }
     }

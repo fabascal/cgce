@@ -28,14 +28,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/repsoldatacliente"/>
+
         <Spinner
             android:id="@+id/spn_dispensario"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="end|center_vertical"
             android:layout_marginStart="25dp"
             android:background="@drawable/spinner_back"
-            android:fadingEdge="horizontal|vertical"/>
+            android:fadingEdge="horizontal|vertical" />
     </LinearLayout>
 
     <View

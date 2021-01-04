@@ -62,4 +62,5 @@ public class Variables {
     public final static String DATA_CUSTOMER_VEHICLE = "DataCustomerVehicle";
     public static final String DEVICE = "Device";
     public static final String CORTE = "Corte";
+    public static final String ADRESS = "Domicilio";
 }

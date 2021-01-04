@@ -7,4 +7,194 @@
         <item>Anticipos</item>
         <item>Combu-Vale</item>
     </string-array>
+
+    <string-array name="MetodoPagoId">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+    </string-array>
+    <string-array name="MetodoPagoClave">
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>08</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>17</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>99</item>
+    </string-array>
+    <string-array name="MetodoPagoDescripcion">
+        <item>Efectivo</item>
+        <item>Cheque nominativo</item>
+        <item>Transferencia electrónica de fondos</item>
+        <item>Tarjeta de Crédito</item>
+        <item>Monedero Electrónico</item>
+        <item>Dinero electrónico</item>
+        <item>Vales de despensa</item>
+        <item>Dación en pago</item>
+        <item>Pago por subrogación</item>
+        <item>Pago por consignación</item>
+        <item>Condonación</item>
+        <item>Compensación</item>
+        <item>Novación</item>
+        <item>Confusión</item>
+        <item>Remisión de deuda</item>
+        <item>Prescripción o caducidad</item>
+        <item>A satisfacción del acreedor</item>
+        <item>Tarjeta de Débito</item>
+        <item>Tarjeta de Servicio</item>
+        <item>Aplicación de anticipos</item>
+        <item>Por definir</item>
+    </string-array>
+    <string-array name="MetodoPagoActivo">
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="UsoCFDiId">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+    </string-array>
+    <string-array name="UsoCFDiClave">
+        <item>G01</item>
+        <item>G02</item>
+        <item>G03</item>
+        <item>I01</item>
+        <item>I02</item>
+        <item>I03</item>
+        <item>I04</item>
+        <item>I05</item>
+        <item>I06</item>
+        <item>I07</item>
+        <item>I08</item>
+        <item>D01</item>
+        <item>D02</item>
+        <item>D03</item>
+        <item>D04</item>
+        <item>D05</item>
+        <item>D06</item>
+        <item>D07</item>
+        <item>D08</item>
+        <item>D09</item>
+        <item>D10</item>
+        <item>P01</item>
+    </string-array>
+    <string-array name="UsoCFDiDescripcion">
+        <item>Adquisición de mercancias</item>
+        <item>Devoluciones, descuentos o bonificaciones</item>
+        <item>Gastos en general</item>
+        <item>Construcciones</item>
+        <item>Mobilario y equipo de oficina por inversiones</item>
+        <item>Equipo de transporte</item>
+        <item>Equipo de computo y accesorios</item>
+        <item>Dados, troqueles, moldes, matrices y herramental</item>
+        <item>Comunicaciones telefónicas</item>
+        <item>Comunicaciones satelitales</item>
+        <item>Otra maquinaria y equipo</item>
+        <item>Honorarios médicos, dentales y gastos hospitalarios.</item>
+        <item>Gastos médicos por incapacidad o discapacidad</item>
+        <item>Gastos funerales.</item>
+        <item>Donativos.</item>
+        <item>Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación).</item>
+        <item>Aportaciones voluntarias al SAR.</item>
+        <item>Primas por seguros de gastos médicos.</item>
+        <item>Gastos de transportación escolar obligatoria.</item>
+        <item>Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones.</item>
+        <item>Pagos por servicios educativos (colegiaturas)</item>
+        <item>Por definir</item>
+    </string-array>
+    <string-array name="UsoCFDiActivo">
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 </resources>

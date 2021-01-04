@@ -79,6 +79,7 @@ public class ContadoActivity extends AppCompatActivity implements GetPumpPositio
                         Intent intent = new Intent(ContadoActivity.this,ActivityTicket.class);
                         intent.putExtra("bomba",spn_dispensarios.getSelectedItem().toString());
                         startActivity(intent);
+                        finish();
                 }
 
                 transaction.commit();

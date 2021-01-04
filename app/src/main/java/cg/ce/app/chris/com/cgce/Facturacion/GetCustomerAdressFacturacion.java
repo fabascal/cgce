@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,30 +16,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import cg.ce.app.chris.com.cgce.Facturacion.Listeners.GetCustomerFacturacionListener;
+import cg.ce.app.chris.com.cgce.Facturacion.Listeners.GetCustomerAdressFacturacionListener;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
-public class GetCustomerFacturacion extends AsyncTask <String, String, JSONObject> {
+public class GetCustomerAdressFacturacion extends AsyncTask <String, Void, JSONObject> {
 
+    public static final int CONNECTION_TIMEOUT = 60000;
+    public static final int READ_TIMEOUT = 60000;
     private ProgressDialog mProgressDialog;
     private WeakReference<Activity> mActivity;
     HttpURLConnection conn;
     URL url = null;
     String searchQuery, searchBandera;
     Context mContext;
-    public GetCustomerFacturacionListener delegate = null;
-    public static final int CONNECTION_TIMEOUT = 60000;
-    public static final int READ_TIMEOUT = 60000;
+    public GetCustomerAdressFacturacionListener delegate = null;
     private final static String NETWORK_ERROR = "Error de conexion.";
 
-    public GetCustomerFacturacion(Activity activity, Context context){
+    public GetCustomerAdressFacturacion(Activity activity, Context context){
         mActivity = new WeakReference<Activity>(activity);
         this.mContext = context;
         // Initialize the progress dialog
@@ -51,21 +49,22 @@ public class GetCustomerFacturacion extends AsyncTask <String, String, JSONObjec
         // Progress dialog title
         mProgressDialog.setTitle("CombuGo");
         // Progress dialog message
-        mProgressDialog.setMessage("Favor de esperar, estamos obteniendo informacion del cliente...");
+        mProgressDialog.setMessage("Favor de esperar, estamos obteniendo domicilios del cliente...");
+
     }
 
     @Override
     protected void onPreExecute() {
         mProgressDialog.show();
     }
-
     @Override
     protected JSONObject doInBackground(String... params) {
         JSONObject res = new JSONObject();
         try {
-            //url = new URL("http://factura.combuexpress.mx/kioscoce/cliente-search_fa2.php");
-            url = new URL( "http://"+params[2]+"/integral/ws/cliente-search_fa2_integra.php");
-            Log.w("url", String.valueOf(url));
+            //url = new URL("http://factura.combuexpress.mx/kioscoce/cliente_domicilio-search_fa2.php");
+            //url = new URL("http://factura.combuexpress.mx/kioscoce/cliente_domicilio-search_fa2_integra.php");
+            url = new URL( "http://"+params[2]+"/integral/ws/cliente_domicilio-search_fa2_integra.php");
+            // Setup HttpURLConnection class to send and receive data from php and mysql
             conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(READ_TIMEOUT);
             conn.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -86,7 +85,6 @@ public class GetCustomerFacturacion extends AsyncTask <String, String, JSONObjec
             os.close();
             conn.connect();
             int response_code = conn.getResponseCode();
-            // Check if successful connection made
             if (response_code == HttpURLConnection.HTTP_OK) {
                 // Read data sent from server
                 InputStream input = conn.getInputStream();
@@ -98,10 +96,10 @@ public class GetCustomerFacturacion extends AsyncTask <String, String, JSONObjec
                 }
                 // Pass data to onPostExecute method
                 res.put(Variables.CODE_ERROR,0);
-                res.put(Variables.KEY_CLIENTE, result.toString());
+                res.put(Variables.ADRESS, result.toString());
             } else {
                 res.put(Variables.CODE_ERROR,1);
-                res.put(Variables.MESSAGE_ERROR, NETWORK_ERROR);
+                res.put(Variables.MESSAGE_ERROR,NETWORK_ERROR);
             }
         } catch (IOException | JSONException e) {
             try {
@@ -111,17 +109,18 @@ public class GetCustomerFacturacion extends AsyncTask <String, String, JSONObjec
             } catch (JSONException jsonException) {
                 jsonException.printStackTrace();
             }
+        }finally {
+            conn.disconnect();
         }
-        Log.w("GetCustomerFacturacion", String.valueOf(res));
+
         return res;
     }
-
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
-        if (mProgressDialog != null){
+        if(mProgressDialog!=null){
             mProgressDialog.dismiss();
         }
-        delegate.GetCustomerNameFinish(jsonObject);
+        delegate.GetCustomerAdressFacturacionFinish(jsonObject);
         super.onPostExecute(jsonObject);
     }
 }

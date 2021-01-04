@@ -125,6 +125,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/button_cfdi_rounded" />
+        android:background="@drawable/button_cfdi_rounded_total" />
 
 </RelativeLayout>

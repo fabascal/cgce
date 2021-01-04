@@ -194,6 +194,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:textColor="#ffff"
-        android:background="@drawable/button_cfdi_rounded_repsol" />
+        android:background="@drawable/button_cfdi_rounded_total" />
 
 </RelativeLayout>

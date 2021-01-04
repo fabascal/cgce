@@ -181,7 +181,7 @@ public class RfidCredito extends AppCompatActivity implements View.OnClickListen
                 etiqueta=readTextFromMessage((NdefMessage)parcelables[0]);
                 etiqueta=etiqueta+"|"+bin2hex(myTag.getId());
                 toJson json = new toJson();
-                JSONObject data = json.strtojson(etiqueta);
+                JSONObject data = json.strtojson(etiqueta,"|");
                 try {
                     new AsyncFetch(data.getString("1")).execute();
                 } catch (JSONException e) {

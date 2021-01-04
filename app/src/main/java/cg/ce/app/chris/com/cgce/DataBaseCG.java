@@ -33,12 +33,14 @@ public class DataBaseCG {
         cursor = manager.cargarcursorodbc2();
 
         String direccion=null;
+        String integra=null;
         String puerto=null;
         String user=null;
         String base=null;
         String pass = null;
         try {
             direccion = cursor.getString("ip");
+            integra = cursor.getString("integra");
             puerto = cursor.getString("puerto");
             user = cursor.getString("userdb");
             base = cursor.getString("db");
@@ -82,12 +84,14 @@ public class DataBaseCG {
         cursor = manager.cargarcursorodbc2();
         Log.w("Cursor",cursor.toString());
         String direccion=null;
+        String integra=null;
         String puerto=null;
         String user=null;
         String base=null;
         String pass = null;
         try {
             direccion = cursor.getString("ip");
+            integra = cursor.getString("integra");
             puerto = cursor.getString("puerto");
             user = cursor.getString("userdb");
             base = cursor.getString("db_cg");
@@ -119,12 +123,14 @@ public class DataBaseCG {
         cursor = manager.cargarcursorodbc2();
 
         String direccion=null;
+        String integra=null;
         String puerto=null;
         String user=null;
         String base=null;
         String pass = null;
 
         direccion = cursor.getString("ip");
+        integra = cursor.getString("integra");
         puerto = cursor.getString("puerto");
         user = cursor.getString("userdb");
         base = cursor.getString("db");
@@ -151,11 +157,13 @@ public class DataBaseCG {
         DataBaseManager manager = new DataBaseManager(con);
         cursor = manager.cargarcursorodbc2();
         String direccion=null;
+        String integra=null;
         String puerto=null;
         String user=null;
         String base=null;
         String pass = null;
         direccion = cursor.getString("ip");
+        integra = cursor.getString("integra");
         puerto = cursor.getString("puerto");
         user = cursor.getString("userdb");
         base = cursor.getString("db");

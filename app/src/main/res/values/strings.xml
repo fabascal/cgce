@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">CombuGo</string>
-    <string name="et_ip">Direccion "192.168.1.20"</string>
+    <string name="et_ip">IP Volumetrico</string>
     <string name="et_puerto">Puerto</string>
     <string name="et_bd">Base</string>
     <string name="et_bd_cg">Base CG</string>
@@ -173,4 +173,5 @@
     <string name="Inhabilitado">Inhabilitado</string>
     <string name="HoraCero">00:00-00:00</string>
     <string name="Producto">Producto</string>
+    <string name="et_ip_integra">IP Integra</string>
 </resources>

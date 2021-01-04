@@ -119,6 +119,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.mPagos_array, android.R.layout.simple_spinner_item);
+
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(R.layout.spinner_tiptrn);
 // Apply the adapter to the spinner
@@ -533,6 +534,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         textData.append(datos_domicilio.getString("calle") + " " + datos_domicilio.getString("exterior") + " " + datos_domicilio.getString("interior") + "\n");
         textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " + datos_domicilio.getString("cp") + "\n");
         textData.append(datos_domicilio.getString("localidad") + ", " + datos_domicilio.getString("municipio") + "\n");
+        textData.append("TEL. "+datos_domicilio.getString("telefono") + "\n");
         textData.append(datos_domicilio.getString("rfc") + "\n");
         //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
         textData.append("\n");
@@ -664,6 +666,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             textData.append(datos_domicilio.getString("calle") + " " + datos_domicilio.getString("exterior") + " " + datos_domicilio.getString("interior") + "\n");
             textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " + datos_domicilio.getString("cp") + "\n");
             textData.append(datos_domicilio.getString("localidad") + ", " + datos_domicilio.getString("municipio") + "\n");
+            textData.append("TEL. "+datos_domicilio.getString("telefono") + "\n");
             textData.append(datos_domicilio.getString("rfc") + "\n");
             //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
             textData.append("\n");

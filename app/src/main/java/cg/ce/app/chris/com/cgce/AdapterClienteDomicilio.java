@@ -96,14 +96,17 @@ public class AdapterClienteDomicilio extends RecyclerView.Adapter {
             JSONObject cfdi_domicilio_data=new JSONObject();
             try {
                 cfdi_domicilio_data.put("id_cliente",id_cliente);
-                cfdi_domicilio_data.put("rfc",rfc.getText());
-                cfdi_domicilio_data.put("nombre",razon.getText());
+                cfdi_domicilio_data.put("RFC",rfc.getText());
+                cfdi_domicilio_data.put("razon_social",razon.getText());
                 cfdi_domicilio_data.put("correo",correo.getText());
                 cfdi_domicilio_data.put("id_domicilio",data.get(getAdapterPosition()).id_domicilio);
                 cfdi_domicilio_data.put("calle",data.get(getAdapterPosition()).calle);
                 cfdi_domicilio_data.put("colonia",data.get(getAdapterPosition()).colonia);
+                cfdi_domicilio_data.put("localidad",data.get(getAdapterPosition()).localidad);
+                cfdi_domicilio_data.put("id_estado",data.get(getAdapterPosition()).id_estado);
                 cfdi_domicilio_data.put("estado",data.get(getAdapterPosition()).estado);
                 cfdi_domicilio_data.put("municipio",data.get(getAdapterPosition()).municipio);
+                cfdi_domicilio_data.put("pais",data.get(getAdapterPosition()).pais);
                 cfdi_domicilio_data.put("cp",data.get(getAdapterPosition()).cp);
                 cfdi_domicilio_data.put("exterior",data.get(getAdapterPosition()).exterior);
                 cfdi_domicilio_data.put("interior",data.get(getAdapterPosition()).interior);
@@ -130,7 +133,7 @@ public class AdapterClienteDomicilio extends RecyclerView.Adapter {
                 e.printStackTrace();
             }
             context.startActivity(i);
-
+            ((DomicilioBusqueda) context).finish();
         }
     }
 }

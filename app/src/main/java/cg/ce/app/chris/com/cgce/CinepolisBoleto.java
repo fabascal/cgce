@@ -118,7 +118,7 @@ public class CinepolisBoleto extends DialogFragment implements View.OnClickListe
     @Override
     public void processFinish(String output){
         toJson tojson = new toJson();
-        jsonrespuesta=tojson.strtojson(output);
+        jsonrespuesta=tojson.strtojson(output,"|");
 
         try {
             res=new JSONObject(String.valueOf(jsonrespuesta.getString("0")));

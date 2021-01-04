@@ -8,9 +8,14 @@ import org.json.JSONObject;
  */
 
 public class toJson {
-    public JSONObject strtojson(String str){
+    public JSONObject strtojson(String str,String split){
         JSONObject json = new JSONObject();
-        String[] result = str.split("\\|");
+        String result[] = new String[0];
+        if (split.equals("|")){
+        result = str.split("\\|");}
+        else if(split.equals(",")) {
+            result = str.split(",");
+        }
 
         Integer i =0;
         for (String s : result) {

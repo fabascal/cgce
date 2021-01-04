@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 public class ConfiguracionesActivity extends AppCompatActivity implements View.OnClickListener{
     Button btn_odbc;
-    EditText et_ip, et_puerto,et_bd,et_userbd,et_passbd,et_bd_cg;
+    EditText et_ip, et_puerto,et_bd,et_userbd,et_passbd,et_bd_cg,et_integra;
     JSONObject cursor=null;
     ValidateTablet tablet = new ValidateTablet();
 
@@ -31,6 +31,7 @@ public class ConfiguracionesActivity extends AppCompatActivity implements View.O
         }
         et_ip = (EditText)findViewById(R.id.et_ip);
         et_puerto = (EditText)findViewById(R.id.et_puerto);
+        et_integra = (EditText)findViewById(R.id.et_integra);
         et_bd = (EditText)findViewById(R.id.et_bd);
         et_bd_cg = (EditText)findViewById(R.id.et_bd_cg);
         et_userbd = (EditText)findViewById(R.id.et_userbd);
@@ -49,6 +50,7 @@ public class ConfiguracionesActivity extends AppCompatActivity implements View.O
         String base=null;
         String pass = null;
         String base_cg=null;
+        String integra=null;
         try {
             direccion = cursor.getString("ip");
             puerto = cursor.getString("puerto");
@@ -56,6 +58,7 @@ public class ConfiguracionesActivity extends AppCompatActivity implements View.O
             base = cursor.getString("db");
             pass = cursor.getString("passdb");
             base_cg = cursor.getString("db_cg");
+            integra = cursor.getString("integra");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -65,7 +68,7 @@ public class ConfiguracionesActivity extends AppCompatActivity implements View.O
         et_bd_cg.setText(base_cg);
         et_bd.setText(base);
         et_passbd.setText(pass);
-
+        et_integra.setText(integra);
     }
 
     @Override
@@ -79,12 +82,13 @@ public class ConfiguracionesActivity extends AppCompatActivity implements View.O
                 String bd_cg=et_bd_cg.getText().toString();
                 String user=et_userbd.getText().toString();
                 String pass=et_passbd.getText().toString();
+                String integra=et_integra.getText().toString();
                 long dato = manager.contarodbc();
                 if (dato==1){
-                    manager.actualizar(direccion,puerto,bd,bd_cg,user,pass);
+                    manager.actualizar(direccion,integra,puerto,bd,bd_cg,user,pass);
                     Toast.makeText(getApplicationContext(),"Actualizado",Toast.LENGTH_SHORT).show();
                 }else {
-                    manager.insertar(direccion,puerto,bd,bd_cg,user,pass);
+                    manager.insertar(direccion,integra,puerto,bd,bd_cg,user,pass);
                     Toast.makeText(getApplicationContext(),"Insertado",Toast.LENGTH_SHORT).show();
                 }
 

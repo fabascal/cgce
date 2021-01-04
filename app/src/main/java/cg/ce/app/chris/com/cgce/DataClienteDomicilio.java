@@ -15,5 +15,6 @@ public class DataClienteDomicilio {
     public String municipio;
     public String pais;
     public String estado;
+    public String id_estado;
     public String bomba;
 }

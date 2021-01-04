@@ -18,6 +18,7 @@ public class DataBaseManager {
 
     public static final String CN_ID="_id";
     public static final String CN_DIRECCION="direccion";
+    public static final String CN_INTEGRA="integra";
     public static final String CN_PUERTO="puerto";
     public static final String CN_DB="db";
     public static final String CN_DB_CG="db_cg";
@@ -25,6 +26,14 @@ public class DataBaseManager {
     public static final String CN_PASSDB="pass";
     public static final String CN_PRINTER="target";
     public static final String CN_MARCA="marca";
+
+    /*
+    1.-Version 1 - Base inicio
+    2.-Version 2 - Se agrega columna para integra
+    */
+
+    private static final String DATABASE_ALTER_INTEGRA = "ALTER TABLE "
+            + TABLE_NAME + " ADD COLUMN " + CN_INTEGRA + " TEXT;";
 
 
 
@@ -39,6 +48,7 @@ public class DataBaseManager {
     public static final String CREATE_TABLE = "create table " + TABLE_NAME+" ("
             + CN_ID + " integer primary key autoincrement,"
             + CN_DIRECCION + " text not null,"
+            /*+ CN_INTEGRA + " text not null,"*/
             + CN_PUERTO + " text not null,"
             + CN_DB + " text not null,"
             + CN_DB_CG + " text not null,"
@@ -60,10 +70,11 @@ public class DataBaseManager {
         db_sql = helper.getWritableDatabase();
 
     }
-    private ContentValues generaContentValues(String direccion,String  puerto, String db, String db_cg, String userdb,String passdb){
+    private ContentValues generaContentValues(String direccion, String integra, String  puerto, String db, String db_cg, String userdb,String passdb){
         ContentValues valores= new ContentValues();
 
         valores.put(CN_DIRECCION,direccion);
+        valores.put(CN_INTEGRA, integra);
         valores.put(CN_PUERTO,puerto);
         valores.put(CN_DB,db);
         valores.put(CN_DB_CG,db_cg);
@@ -82,9 +93,9 @@ public class DataBaseManager {
         valores.put(CN_MARCA,marca);
         return valores;
     }
-    public void insertar(String direccion,String  puerto, String db, String db_cg, String userdb,String passdb){
+    public void insertar(String direccion, String integra, String  puerto, String db, String db_cg, String userdb,String passdb){
 
-        db_sql.insert(TABLE_NAME,null,generaContentValues(direccion,puerto,db,db_cg,userdb,passdb));
+        db_sql.insert(TABLE_NAME,null,generaContentValues(direccion,integra,puerto,db,db_cg,userdb,passdb));
     }
     public void insertar_printer(String target){
         db_sql.insert(TABLE_NAME_PRINTER,null,generaContentValuesPrinter(target));
@@ -102,17 +113,18 @@ public class DataBaseManager {
     }
     public JSONObject cargarcursorodbc2(){
         JSONObject jsonObject=new JSONObject();
-        String[] columnas = new String []{CN_ID,CN_DIRECCION,CN_PUERTO,CN_DB,CN_DB_CG,CN_USERDB,CN_PASSDB};
+        String[] columnas = new String []{CN_ID,CN_DIRECCION,CN_INTEGRA,CN_PUERTO,CN_DB,CN_DB_CG,CN_USERDB,CN_PASSDB};
         try {
             Cursor cur =db_sql.query(TABLE_NAME,columnas,null,null,null,null,null);
             if (cur.moveToFirst()) {
                 cur.moveToFirst();
                 jsonObject.put("ip", cur.getString(1));
-                jsonObject.put("puerto", cur.getString(2));
-                jsonObject.put("db", cur.getString(3));
-                jsonObject.put("db_cg", cur.getString(4));
-                jsonObject.put("userdb", cur.getString(5));
-                jsonObject.put("passdb", cur.getString(6));
+                jsonObject.put("integra",cur.getString(2));
+                jsonObject.put("puerto", cur.getString(3));
+                jsonObject.put("db", cur.getString(4));
+                jsonObject.put("db_cg", cur.getString(5));
+                jsonObject.put("userdb", cur.getString(6));
+                jsonObject.put("passdb", cur.getString(7));
                 cur.close();
                 db_sql.close();
             }else{
@@ -150,9 +162,10 @@ public class DataBaseManager {
         db_sql.close();
         return contador;
     }
-    public void actualizar (String direccion,String  puerto, String db, String db_cg, String userdb,String passdb){
+    public void actualizar (String direccion, String integra, String  puerto, String db, String db_cg, String userdb,String passdb){
         ContentValues valores= new ContentValues();
         valores.put(CN_DIRECCION,direccion);
+        valores.put(CN_INTEGRA,integra);
         valores.put(CN_PUERTO,puerto);
         valores.put(CN_DB,db);
         valores.put(CN_DB_CG,db_cg);
@@ -167,4 +180,5 @@ public class DataBaseManager {
         db_sql.update(TABLE_NAME_PRINTER,valores,CN_ID+"=?",new String [] {String.valueOf(1)});
         db_sql.close();
     }
+
 }

@@ -1450,7 +1450,7 @@ public class ActivityCreditoDual extends AppCompatActivity implements View.OnCli
                 etiqueta=readTextFromMessage((NdefMessage)parcelables[0]);
                 etiqueta=etiqueta+"|"+bin2hex(myTag.getId());
                 toJson json = new toJson();
-                JSONObject data = json.strtojson(etiqueta);
+                JSONObject data = json.strtojson(etiqueta,"|");
                 Log.w("tag",data.toString());
                 try {
                     if(!tgl_area.isChecked()){

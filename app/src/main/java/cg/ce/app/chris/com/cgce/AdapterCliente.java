@@ -86,8 +86,8 @@ public class AdapterCliente extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(View v ) {
             JSONObject cfdi_data=new JSONObject();
             try {
-                cfdi_data.put("rfc",data.get(getAdapterPosition()).rfc);
-                cfdi_data.put("nombre",data.get(getAdapterPosition()).nombre);
+                cfdi_data.put("RFC",data.get(getAdapterPosition()).rfc);
+                cfdi_data.put("razon_social",data.get(getAdapterPosition()).nombre);
                 cfdi_data.put("correo",data.get(getAdapterPosition()).correo);
                 cfdi_data.put("id_cliente",data.get(getAdapterPosition()).id_cliente);
                 cfdi_data.put("bomba",data.get(getAdapterPosition()).bomba);

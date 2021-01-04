@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,8 +39,13 @@ import java.net.SocketException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.ControlGas.GetTicket;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
+import cg.ce.app.chris.com.cgce.Facturacion.Utils.MetodoPagoEntity;
+import cg.ce.app.chris.com.cgce.Facturacion.Utils.UsoCFDiEntity;
 import cg.ce.app.chris.com.cgce.common.Variables;
 
 public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClickListener {
@@ -52,6 +58,25 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
     ArrayAdapter<String> adapter_id=null;
     ArrayAdapter<String> adapter_usocfdi_id=null;
 
+    List<MetodoPagoEntity> ListMetodoPago1;
+    List<String> ListMetodoPago=new ArrayList<>();
+    List<UsoCFDiEntity> ListUsoCFDi;
+
+    List<String> MetodoPagoId;
+    List<String> MetodoPagoClave;
+    List<String> MetodoPagoDescripcion;
+    List<String> MetodoPagoActivo;
+    List<String> UsoCFDiId;
+    List<String> UsoCFDiClave;
+    List<String> UsoCFDiDescripcion;
+    List<String> UsoCFDiActivo;
+
+    JSONObject Productos = new JSONObject();
+    JSONObject Data = new JSONObject();
+    JSONArray ProductosArray = new JSONArray();
+
+    MacActivity mac = new MacActivity();
+
     String bomba;
     public static final int CONNECTION_TIMEOUT = 20000;
     public static final int READ_TIMEOUT = 25000;
@@ -59,6 +84,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
     ValidateTablet tablet = new ValidateTablet();
     String Bandera;
     LogCE logCE = new LogCE();
+    Drawable icon;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -75,14 +101,14 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
         spn_metodo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (spn_metodo.getSelectedItem().equals("01-Efectivo") || spn_metodo.getSelectedItem().equals("99-Otros")
-                        || spn_metodo.getSelectedItem().equals("08-Vales de despensa") || spn_metodo.getSelectedItem().equals("98-NA")  ){
+                if (spn_metodo.getSelectedItem().equals("Efectivo") || spn_metodo.getSelectedItem().equals("Otros")
+                        || spn_metodo.getSelectedItem().equals("Vales de despensa") || spn_metodo.getSelectedItem().equals("Por definir")  ){
                     numcuenta.setVisibility(View.GONE);
                 }else {
                     numcuenta.setVisibility(View.GONE);
                 }
-                Integer position_id = spn_metodo.getSelectedItemPosition();
-                id_metodo2=String.valueOf(adapter_id.getItem(position_id));
+                /*Integer position_id = spn_metodo.getSelectedItemPosition();
+                id_metodo2=String.valueOf(adapter_id.getItem(position_id));*/
             }
 
             @Override
@@ -95,8 +121,8 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 //usocfdi=String.valueOf(spn_uso.getSelectedItem());
-                Integer position_id = spn_uso.getSelectedItemPosition();
-                usocfdi=String.valueOf(adapter_usocfdi_id.getItem(position_id));
+                /*Integer position_id = spn_uso.getSelectedItemPosition();
+                usocfdi=String.valueOf(adapter_usocfdi_id.getItem(position_id));*/
                 //Toast.makeText(MetodoPagoBusqueda.this,usocfdi,Toast.LENGTH_LONG).show();
             }
             @Override
@@ -107,8 +133,7 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
         btn_cfdi =(Button)findViewById(R.id.btn_cfdi) ;
         btn_cfdi.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
-        if(bundle!=null)
-        {
+        if(bundle!=null){
             try {
                 cfdi_data = new JSONObject(getIntent().getStringExtra("cliente"));
                 tv_cliente_cfdi = (TextView)findViewById(R.id.tv_cliente_cfdi);
@@ -119,8 +144,8 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 tv_estado_cfdi = (TextView)findViewById(R.id.tv_estado_cfdi);
                 tv_cp_cfdi = (TextView)findViewById(R.id.tv_cp_cfdi);
                 tv_municipio_cfdi = (TextView)findViewById(R.id.tv_municipio_cfdi);
-                tv_cliente_cfdi.setText(cfdi_data.getString("nombre"));
-                tv_rfc_cfdi.setText("R.F.C. :"+cfdi_data.getString("rfc"));
+                tv_cliente_cfdi.setText(cfdi_data.getString("razon_social"));
+                tv_rfc_cfdi.setText("R.F.C. :"+cfdi_data.getString("RFC"));
                 tv_correo_cfdi.setText("Correo :"+cfdi_data.getString("correo"));
                 tv_calle_cfdi.setText("Domicilio :"+cfdi_data.getString("calle")+" "+cfdi_data.getString("exterior")+" "+cfdi_data.getString("interior")+" ");
                 tv_colonia_cfdi.setText("Colonia :"+cfdi_data.getString("colonia"));
@@ -128,8 +153,10 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 tv_municipio_cfdi.setText("Municipio :"+cfdi_data.getString("municipio"));
                 tv_cp_cfdi.setText("CP :"+cfdi_data.getString("cp"));
                 bomba=cfdi_data.getString("bomba");
-                new AsyncUsoCFDi().execute();
-                new AsyncFetch(cfdi_data).execute();
+                FillMetodoPago();
+                FillUsoCFDi();
+                /*new AsyncUsoCFDi().execute();*/
+                /*new AsyncFetch(cfdi_data).execute();*/
 
 
             } catch (JSONException e) {
@@ -145,431 +172,133 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View view) {
-
-        Intent intent=null;
         switch (view.getId()) {
             case R.id.btn_cfdi:
-                JSONObject cfdi_envio= null;
-                try {
-                    cfdi_envio = getJson(cfdi_data);
-                } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | JSONException e) {
-                    new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                            .setTitle(R.string.error)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
-                    logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_onClick - " + e);
-                    e.printStackTrace();
-                }
-                intent=new Intent(getApplicationContext(),EmisionCfdi.class);
-                intent.putExtra("json",cfdi_envio.toString());
+                getJson(cfdi_data);
                 break;
         }
-        if (intent!=null){
-            startActivity(intent);
-        }
-
     }
-    public JSONObject getJson (JSONObject jsonObject) throws IllegalAccessException,
-            ClassNotFoundException, InstantiationException, JSONException {
+    public void getJson (final JSONObject jsonObject) {
         cgticket cgticket_obj = new cgticket();
+        final JSONObject[] ticket = {null};
+        final String nip = null;
+        final JSONObject jsoncfdi = new JSONObject();
 
-        JSONObject ticket=null;
-        String nip = null;
-
-        try {
-
-            ticket = cgticket_obj.consulta_servicio(getApplicationContext(),bomba);
-            nip = cgticket_obj.nip_desp(getApplicationContext());
-        } catch (SQLException | SocketException e) {
-            new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                    .setTitle(R.string.error)
-                    .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
-            logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_getJson - " + e);
-            e.printStackTrace();
-        }
-        JSONObject jsoncfdi = new JSONObject();
-        try {
-            String calle = cfdi_data.getString("calle")+" "+cfdi_data.getString("exterior")+" "+cfdi_data.getString("interior");
-            jsoncfdi.put("nip",nip);
-            jsoncfdi.put("categoria","cfdi");
-            jsoncfdi.put("id_cliente",jsonObject.getInt("id_cliente"));
-            jsoncfdi.put("cliente",jsonObject.getString("nombre"));
-            jsoncfdi.put("rfc",jsonObject.getString("rfc"));
-            jsoncfdi.put("id_domicilio",jsonObject.getInt("id_domicilio"));
-            jsoncfdi.put("domicilio",calle);
-            jsoncfdi.put("colonia",jsonObject.getString("colonia"));
-            jsoncfdi.put("estado",jsonObject.getString("estado"));
-            jsoncfdi.put("municipio",jsonObject.getString("municipio"));
-            jsoncfdi.put("cp",jsonObject.getString("cp"));
-            jsoncfdi.put("id_estacion","12");
-            jsoncfdi.put("id_formpago",id_metodo2);
-            jsoncfdi.put("usocfdi",usocfdi);
-            jsoncfdi.put("formapago",String.valueOf(spn_metodo.getSelectedItem()));
-            jsoncfdi.put("numcuenta",numcuenta.getText());
-            jsoncfdi.put("cveest",ticket.getString(Variables.KEY_TICKET_CVEEST));
-            jsoncfdi.put("ticket",ticket.getInt(Variables.KEY_TICKET_NROTRN));
-            jsoncfdi.put("cg_cliente",ticket.getInt(Variables.KEY_TICKET_CODCLI));
-            jsoncfdi.put("fecha_ticket",ticket.getString(Variables.KEY_TICKET_FECHA));
-            jsoncfdi.put("id_producto",ticket.getInt(Variables.KEY_TICKET_ID_PRODUCTO));
-            jsoncfdi.put("producto",ticket.getString(Variables.KEY_TICKET_PRODUCTO).replace(" ",""));
-            jsoncfdi.put("bomba",ticket.getInt(Variables.KEY_TICKET_BOMBA));
-            jsoncfdi.put("preunitario",ticket.getDouble(Variables.KEY_TICKET_PRECIO));
-            jsoncfdi.put("importe",ticket.getDouble(Variables.KEY_TICKET_TOTAL));
-            /*jsoncfdi.put("mtogto",ticket.getDouble("mtogto"));*/
-            jsoncfdi.put("cantidad",ticket.getDouble(Variables.KEY_TICKET_CANTIDAD));
-            jsoncfdi.put("despachador",ticket.getString(Variables.KEY_TICKET_DESPACHADOR));
-            jsoncfdi.put("copia",et_correo2.getText());
-            jsoncfdi.put("comentario",comentario.getText());
-        } catch (JSONException e) {
-            new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                    .setTitle(R.string.error)
-                    .setMessage(String.valueOf(e))
-                    .setPositiveButton(R.string.btn_ok,null).show();
-            logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_getJson - " + e);
-            e.printStackTrace();
-        }
-        return jsoncfdi;
-    }
-
-    // Clase asyncrona para obtener el metodo de pago
-    private class AsyncFetch extends AsyncTask<JSONObject, String, String> {
-
-        ProgressDialog pdLoading = new ProgressDialog(MetodoPagoBusqueda.this);
-        HttpURLConnection conn;
-        URL url = null;
-        String searchQuery;
-
-        public AsyncFetch(JSONObject searchQuery){
-            try {
-                this.searchQuery=searchQuery.getString("id_cliente");
-            } catch (JSONException e) {
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
-                e.printStackTrace();
-            }
-        }
-
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            pdLoading.setMessage("\tLoading...");
-            pdLoading.setCancelable(false);
-            pdLoading.show();
-
-        }
-
-        @Override
-        protected String doInBackground(JSONObject... jsonObjects) {
-            try {
-
-                // Enter URL address where your php file resides
-                url = new URL("http://factura.combuexpress.mx/kioscoce/metodopago-search_fa2.php");
-
-            } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
-                e.printStackTrace();
-                return e.toString();
-            }
-            try {
-
-                // Setup HttpURLConnection class to send and receive data from php and mysql
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(READ_TIMEOUT);
-                conn.setConnectTimeout(CONNECTION_TIMEOUT);
-                conn.setRequestMethod("POST");
-
-                // setDoInput and setDoOutput to true as we send and recieve data
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                // add parameter to our above url
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("searchQuery", searchQuery);
-                String query = builder.build().getEncodedQuery();
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-                conn.connect();
-
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e1))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e1);
-                e1.printStackTrace();
-                return e1.toString();
-            }
-
-            try {
-
-                int response_code = conn.getResponseCode();
-
-                // Check if successful connection made
-                if (response_code == HttpURLConnection.HTTP_OK) {
-
-                    // Read data sent from server
-                    InputStream input = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-
-                    while ((line = reader.readLine()) != null) {
-                        result.append(line);
-                    }
-
-                    // Pass data to onPostExecute method
-                    return (result.toString());
-
-                } else {
-                    return("Connection error");
-                }
-
-            } catch (IOException e) {
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                conn.disconnect();
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            //this method will be running on UI thread
-            pdLoading.dismiss();
-            List<String> metodos = new ArrayList<String>();
-            List<String> id_metodos = new ArrayList<String>();
-
-            pdLoading.dismiss();
-            if(result.equals("no rows")) {
-                Toast.makeText(MetodoPagoBusqueda.this, "No Results found for entered query", Toast.LENGTH_LONG).show();
-            }else{
-
+        new GetTicket(this, new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                Log.w("output",String.valueOf(output));
                 try {
-
-                    JSONArray jArray = new JSONArray(result);
-                    String metodo = null;
-                    String id_metodo = null;
-
-
-                    // Extract data from json and store into ArrayList as class objects
-                    for (int i = 0; i < jArray.length(); i++) {
-                        JSONObject json_data = jArray.getJSONObject(i);
-                        metodo = json_data.getString("clave") +"-"+ json_data.getString("descripcion");
-                        id_metodo = json_data.getString("id");
-                        metodos.add(i,metodo);
-                        id_metodos.add(i,id_metodo);
+                    if (output.getInt(Variables.CODE_ERROR)==0){
+                        ticket[0] = output;
+                        try {
+                            jsoncfdi.put("nip",nip);
+                            jsoncfdi.put("categoria","cfdi");
+                            jsoncfdi.put("id_cliente",jsonObject.getInt("id_cliente"));
+                            jsoncfdi.put("razon_social",jsonObject.getString("razon_social"));
+                            jsoncfdi.put("RFC",jsonObject.getString("RFC"));
+                            jsoncfdi.put("id_domicilio",jsonObject.getInt("id_domicilio"));
+                            jsoncfdi.put("calle",jsonObject.getString("calle"));
+                            jsoncfdi.put("exterior",jsonObject.getString("exterior"));
+                            jsoncfdi.put("interior",jsonObject.getString("interior"));
+                            jsoncfdi.put("colonia",jsonObject.getString("colonia"));
+                            jsoncfdi.put("estado",jsonObject.getString("estado"));
+                            jsoncfdi.put("id_estado",jsonObject.getString("id_estado"));
+                            jsoncfdi.put("municipio",jsonObject.getString("municipio"));
+                            jsoncfdi.put("pais","Mexico");
+                            jsoncfdi.put("cp",jsonObject.getString("cp"));
+                            jsoncfdi.put("numcuenta",numcuenta.getText());
+                            jsoncfdi.put("nrocte", ticket[0].getInt(Variables.KEY_TICKET_NROTRN) * 10);
+                            jsoncfdi.put("nrotrn", ticket[0].getInt(Variables.KEY_TICKET_NROTRN) );
+                            jsoncfdi.put("copia",et_correo2.getText());
+                            jsoncfdi.put("correo",jsonObject.getString("correo"));
+                            Data.put("cveest", ticket[0].getString(Variables.KEY_TICKET_CVEEST));
+                            Data.put("despachador", ticket[0].getString(Variables.KEY_TICKET_DESPACHADOR));
+                            Data.put("comentarios",comentario.getText());
+                            Data.put("MetodoPagoId", MetodoPagoId.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("forma_pago", MetodoPagoClave.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("MetodoPagoDescripcion", MetodoPagoDescripcion.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("UsoCFDiId",UsoCFDiId.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("UsoCFDiDescripcion",UsoCFDiDescripcion.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("uso_cfdi",UsoCFDiClave.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("nip_despachador", ticket[0].getInt(Variables.NIP_DESPACHADOR));
+                            Productos.put("tipo","1");
+                            Productos.put("nrotrn", ticket[0].getInt(Variables.KEY_TICKET_NROTRN));
+                            Productos.put("ticket", ticket[0].getInt(Variables.KEY_TICKET_NROTRN) * 10);
+                            Productos.put("cg_cliente", ticket[0].getInt(Variables.KEY_TICKET_CODCLI));
+                            Productos.put("fecha_ticket", ticket[0].getString(Variables.KEY_TICKET_FECHA));
+                            Productos.put("id_producto", ticket[0].getInt(Variables.KEY_TICKET_ID_PRODUCTO));
+                            Productos.put("descripcion", ticket[0].getString(Variables.KEY_TICKET_PRODUCTO).replace(" ",""));
+                            Productos.put("bomba", ticket[0].getInt(Variables.KEY_TICKET_BOMBA));
+                            Productos.put("precio_unitario", ticket[0].getDouble(Variables.KEY_TICKET_PRECIO));
+                            Productos.put("importe", ticket[0].getDouble(Variables.KEY_TICKET_TOTAL));
+                            Productos.put("cantidad", ticket[0].getDouble(Variables.KEY_TICKET_CANTIDAD));
+                            ProductosArray.put(Productos);
+                            Data.put("productos",ProductosArray);
+                            jsoncfdi.put("data", Data);
+                            Log.w("cfdi_envio", String.valueOf(jsoncfdi));
+                            Intent intent=null;
+                            intent=new Intent(getApplicationContext(),EmisionCfdi.class);
+                            intent.putExtra("json",jsoncfdi.toString());
+                            if (intent!=null){
+                                startActivity(intent);
+                                finish();
+                            }
+                        } catch (JSONException e) {
+                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                    stacktraceObj[2].getMethodName() + "|" + e);
+                            new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(icon)
+                                    .setMessage(String.valueOf(e))
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                            e.printStackTrace();
+                        }
+                    }else{
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(MetodoPagoBusqueda.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok, null).show();
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(MetodoPagoBusqueda.this,android.R.layout.simple_dropdown_item_1line, (List<String>) metodos);
-                    adapter_id = new ArrayAdapter<String>(MetodoPagoBusqueda.this,android.R.layout.simple_dropdown_item_1line, (List<String>) id_metodos);
-                    spn_metodo.setAdapter(adapter);
-
-
                 } catch (JSONException e) {
-                    // You to understand what actually error is and handle it appropriately
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
                     new AlertDialog.Builder(MetodoPagoBusqueda.this)
                             .setTitle(R.string.error)
+                            .setIcon(icon)
                             .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
-                    logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncFetch - " + e);
-
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
                 }
-
             }
-
-        }
+        }).execute(bomba,mac.getMacAddress(),"0");
 
     }
-    // Clase asyncrona para obtener el uso de cfdi
-    private class AsyncUsoCFDi extends AsyncTask<JSONObject, String, String> {
-
-        //ProgressDialog pdLoading1 = new ProgressDialog(MetodoPagoBusqueda.this);
-        HttpURLConnection conn;
-        URL url = null;
-        String searchQuery;
-
-        public AsyncUsoCFDi(){
-
-        }
-
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            //pdLoading1.setMessage("\tLoading...");
-            //pdLoading1.setCancelable(false);
-            //pdLoading1.show();
-
-        }
-
-        @Override
-        protected String doInBackground(JSONObject... jsonObjects) {
-            try {
-
-                // Enter URL address where your php file resides
-                url = new URL("http://factura.combuexpress.mx/kioscoce/usocfdi-search_fa2.php");
-
-            } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e);
-                e.printStackTrace();
-                return e.toString();
-            }
-            try {
-
-                // Setup HttpURLConnection class to send and receive data from php and mysql
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(READ_TIMEOUT);
-                conn.setConnectTimeout(CONNECTION_TIMEOUT);
-                conn.setRequestMethod("POST");
-
-                // setDoInput and setDoOutput to true as we send and recieve data
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                // add parameter to our above url
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("searchQuery", "1")
-                        .appendQueryParameter("searchBandera",Bandera);
-                String query = builder.build().getEncodedQuery();
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-                conn.connect();
-
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e1))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e1);
-                e1.printStackTrace();
-                return e1.toString();
-            }
-
-            try {
-
-                int response_code = conn.getResponseCode();
-
-                // Check if successful connection made
-                if (response_code == HttpURLConnection.HTTP_OK) {
-
-                    // Read data sent from server
-                    InputStream input = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-
-                    while ((line = reader.readLine()) != null) {
-                        result.append(line);
-                    }
-
-                    // Pass data to onPostExecute method
-                    return (result.toString());
-
-                } else {
-                    return("Connection error");
-                }
-
-            } catch (IOException e) {
-                new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok,null).show();
-                logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e);
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                conn.disconnect();
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            //this method will be running on UI thread
-            //pdLoading1.dismiss();
-            List<String> UsoCFDi = new ArrayList<String>();
-            List<String> id_usocfdis = new ArrayList<String>();
-
-            //pdLoading1.dismiss();
-            if(result.equals("no rows")) {
-                Toast.makeText(MetodoPagoBusqueda.this, "No Results found for entered query", Toast.LENGTH_LONG).show();
-            }else{
-
-                try {
-
-                    JSONArray jArray = new JSONArray(result);
-                    String usocfdi = null;
-                    String id_usocfdi = null;
-
-
-                    // Extract data from json and store into ArrayList as class objects
-                    for (int i = 0; i < jArray.length(); i++) {
-                        JSONObject json_data = jArray.getJSONObject(i);
-                        usocfdi = json_data.getString("clave") +"-"+ json_data.getString("descripcion");
-                        id_usocfdi = json_data.getString("clave");
-                        UsoCFDi.add(i,usocfdi);
-                        id_usocfdis.add(i,id_usocfdi);
-                    }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(MetodoPagoBusqueda.this,android.R.layout.simple_dropdown_item_1line, (List<String>) UsoCFDi);
-                    adapter_usocfdi_id = new ArrayAdapter<String>(MetodoPagoBusqueda.this,android.R.layout.simple_dropdown_item_1line, (List<String>) id_usocfdis);
-                    spn_uso.setAdapter(adapter);
-
-
-                } catch (JSONException e) {
-                    // You to understand what actually error is and handle it appropriately
-                    new AlertDialog.Builder(MetodoPagoBusqueda.this)
-                            .setTitle(R.string.error)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok,null).show();
-                    logCE.EscirbirLog2(getApplicationContext(),"MetodoPagoBusqueda_AsyncUsoCFDi - " + e);
-                }
-
-            }
-
-        }
-
+    public void FillMetodoPago(){
+        MetodoPagoId = Arrays.asList(getResources().getStringArray(R.array.MetodoPagoId));
+        MetodoPagoClave = Arrays.asList(getResources().getStringArray(R.array.MetodoPagoClave));
+        MetodoPagoDescripcion = Arrays.asList(getResources().getStringArray(R.array.MetodoPagoDescripcion));
+        MetodoPagoActivo = Arrays.asList(getResources().getStringArray(R.array.MetodoPagoActivo));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                MetodoPagoBusqueda.this,android.R.layout.simple_spinner_dropdown_item, MetodoPagoDescripcion);
+        spn_metodo.setAdapter(adapter);
     }
+    public void FillUsoCFDi(){
+        UsoCFDiId = Arrays.asList(getResources().getStringArray(R.array.UsoCFDiId));
+        UsoCFDiClave = Arrays.asList(getResources().getStringArray(R.array.UsoCFDiClave));
+        UsoCFDiDescripcion = Arrays.asList(getResources().getStringArray(R.array.UsoCFDiDescripcion));
+        UsoCFDiActivo = Arrays.asList(getResources().getStringArray(R.array.UsoCFDiActivo));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                MetodoPagoBusqueda.this,android.R.layout.simple_spinner_dropdown_item, UsoCFDiDescripcion);
+        spn_uso.setAdapter(adapter);
+    }
+
     @SuppressLint("SourceLockedOrientationActivity")
     public void BrandSharedPreferences(){
         SharedPreferences sharedPreferences = getSharedPreferences("Brand", Context.MODE_PRIVATE);
@@ -578,21 +307,25 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                 setTheme(R.style.ContentMainSearch);
                 setContentView(R.layout.activity_metodo_pago_busqueda);
                 Bandera="Combu-Express";
+                icon = getDrawable(R.drawable.combuito);
                 break;
             case "Repsol":
                 setTheme(R.style.ContentMainSearchRepsol);
                 setContentView(R.layout.activity_metodo_pago_busqueda);
                 Bandera = "Repsol";
+                icon = getDrawable(R.drawable.repsol);
                 break;
             case "Ener":
                 setTheme(R.style.ContentMainSearchEner);
                 setContentView(R.layout.activity_metodo_pago_busqueda);
                 Bandera = "Ener";
+                icon = getDrawable(R.drawable.logo_impresion_ener);
                 break;
             case "Total":
                 setTheme(R.style.ContentMainSearchTotal);
                 setContentView(R.layout.activity_metodo_pago_busqueda);
                 Bandera = "Total";
+                icon = getDrawable(R.drawable.total);
                 break;
         }
         if (tablet.esTablet(getApplicationContext())){

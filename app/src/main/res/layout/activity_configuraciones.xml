@@ -23,6 +23,11 @@
             android:hint="@string/et_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/et_integra"
+            android:hint="@string/et_ip_integra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <EditText
             android:id="@+id/et_puerto"

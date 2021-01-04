@@ -2,12 +2,12 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <!-- we define background color -->
-    <solid android:color="@color/RepsolNaranja" />
+    <solid android:color="@color/TotalPrimaryDark" />
 
     <!-- we define border color and thick -->
     <stroke
         android:width="8dp"
-        android:color="@color/RepsolRojo" />
+        android:color="@color/TotalPrimay" />
 
     <!-- add some padding for text inside -->
     <padding

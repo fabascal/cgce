@@ -376,7 +376,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 try {
                     Validar = Posiciones.getJSONArray(variables.POSICIONES);
                     int index = spn_posicion.getSelectedItemPosition();
-
                     UpdateNrotrn updateNrotrn = new UpdateNrotrn(this, getApplicationContext(),mac.getMacAddress(),"2");
                     updateNrotrn.delegate=this;
                     System.out.println(Validar.getJSONObject(index).getJSONObject(Variables.KEY_TICKET));
@@ -824,25 +823,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             }
         }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
     }
-    /*private void PutTicketData() throws JSONException, ExecutionException, InterruptedException {
-        final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
-        int index = spn_posicion.getSelectedItemPosition();
-        Validar.getJSONObject(index).put(Variables.KEY_TICKET,
-                new GetTicket(this, new ControlGasListener() {
-                    @Override
-                    public void processFinish(JSONObject output) throws JSONException {
-                        if (output.getInt(Variables.CODE_ERROR)==1){
-                            logCE.EscirbirLog2(getApplicationContext(),"Credito_PutTicketData - "
-                                    + output.getString(Variables.MESSAGE_ERROR));
-                            new AlertDialog.Builder(Credito.this)
-                                    .setTitle(R.string.error)
-                                    .setIcon(icon)
-                                    .setMessage(output.getString(Variables.MESSAGE_ERROR))
-                                    .setPositiveButton(R.string.btn_ok,null).show();
-                        }
-                    }
-                }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1"));
-    }*/
     private void UpdateTicketData(String key, String data) throws JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
@@ -1104,6 +1084,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         textData.append(datos_domicilio.getString("calle") + " " + datos_domicilio.getString("exterior") + " " + datos_domicilio.getString("interior") + "\n");
         textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " + datos_domicilio.getString("cp") + "\n");
         textData.append(datos_domicilio.getString("localidad") + ", " + datos_domicilio.getString("municipio") + "\n");
+        textData.append("TEL. "+datos_domicilio.getString("telefono") + "\n");
         textData.append(datos_domicilio.getString("rfc") + "\n");
         //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
         textData.append("\n");
@@ -1234,6 +1215,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             textData.append(datos_domicilio.getString("calle") + " " + datos_domicilio.getString("exterior") + " " + datos_domicilio.getString("interior") + "\n");
             textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " + datos_domicilio.getString("cp") + "\n");
             textData.append(datos_domicilio.getString("localidad") + ", " + datos_domicilio.getString("municipio") + "\n");
+            textData.append("TEL. "+datos_domicilio.getString("telefono") + "\n");
             textData.append(datos_domicilio.getString("rfc") + "\n");
             //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
             textData.append("\n");
@@ -1577,14 +1559,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
         mPrinter.clearCommandBuffer();
     }
-    /*public void ImpresionContado(View view){
-        new GetTicket(this, new ControlGasListener() {
-            @Override
-            public void processFinish(JSONObject output) {
-                System.out.println(output);
-            }
-        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
-    }*/
     public void ImpresionContado(View view) {
         String Bombas="";
         ArrayList<String> data = new ArrayList<String>();

@@ -24,6 +24,12 @@
             android:hint="@string/et_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <EditText
+            android:textSize="20sp"
+            android:id="@+id/et_integra"
+            android:hint="@string/et_ip_integra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <EditText
             android:textSize="@dimen/text_tablet"

@@ -136,7 +136,7 @@ public class Cinepolis extends AsyncTask<Void, Void, String> {
         delegate.processFinish(result);
 
         toJson tojson = new toJson();
-        jsonrespuesta=tojson.strtojson(result);
+        jsonrespuesta=tojson.strtojson(result,"|");
         try {
             res=new JSONObject(String.valueOf(jsonrespuesta.getString("0")));
         } catch (JSONException e) {

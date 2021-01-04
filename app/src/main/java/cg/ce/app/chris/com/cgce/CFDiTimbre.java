@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.JsonReader;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,51 +23,32 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 
 /**
  * Created by chris on 29/06/17.
  */
 
-public class CFDiTimbre extends AsyncTask<String, Void, String> {
+public class CFDiTimbre extends AsyncTask<String, Void, JSONObject> {
     ProgressDialog pdLoading;
     HttpURLConnection conn;
     URL url = null;
     public static final int CONNECTION_TIMEOUT = 30000;
     public static final int READ_TIMEOUT = 30000;
     cgticket cg = new cgticket();
-    String bandera,usocfdi,categoria,id_cliente,id_domicilio,id_formpago,numcuenta,id_producto,cveest,ticket,fecha_ticket,producto,bomba,preunitario,mtogto,importe,copia,comentarios,nip;
     public CfdiResultListener delegate = null;
     Context  context;
+    JSONObject data;
+    JSONArray dataArray = new JSONArray();
+
 
     public CFDiTimbre (Context context, JSONObject jsonObject){
         this.context=context;
         pdLoading = new ProgressDialog(context);
         Log.w("json_envio",jsonObject.toString());
-        try {
-            this.id_producto=jsonObject.getString("id_producto");
-            this.usocfdi=jsonObject.getString("usocfdi");
-            this.categoria=jsonObject.getString("categoria");
-            this.id_cliente=String.valueOf(jsonObject.getInt("id_cliente"));
-            this.id_domicilio=String.valueOf(jsonObject.getInt("id_domicilio"));
-            this.id_formpago=jsonObject.getString("id_formpago");
-            this.numcuenta=jsonObject.getString("numcuenta");
-            this.cveest=jsonObject.getString("cveest");
-            this.ticket=String .valueOf(jsonObject.getInt("ticket"))+"0";
-            this.fecha_ticket=jsonObject.getString("fecha_ticket");
-            this.producto=String.valueOf(jsonObject.getInt("id_producto"));
-            this.bomba=String.valueOf(jsonObject.getInt("bomba"));
-            this.preunitario=String.valueOf(jsonObject.getDouble("preunitario"));
-            /*this.mtogto=String.valueOf(jsonObject.getDouble("mtogto"));*/
-            this.importe=String.valueOf(jsonObject.getDouble("importe"));
-            this.copia=String.valueOf(jsonObject.getString("copia"));
-            this.comentarios=String.valueOf(jsonObject.getString("comentario"));
-            this.nip=cg.nip_desp(context);
-            this.bandera=String.valueOf(jsonObject.getString("bandera"));
-        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException |
-                IllegalAccessException | SocketException e) {
-            e.printStackTrace();
-        }
+        this.dataArray.put(jsonObject);
     }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -78,32 +61,10 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
 
     }
     @Override
-    protected String doInBackground(String... strings) {
+    protected JSONObject doInBackground(String... params) {
         try {
-
-            // Web Service al equipo
-            //url = new URL (cg.urltimbre(context));
-            /*Log.w("Url Timbre", String.valueOf(cg.urltimbre(context)));*/
-
-            switch (bandera){
-                case "Combu-Express":
-                    url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
-                    break;
-                case "Repsol" :
-                    url = new URL("http://factura.combuexpress.mx/cerepsol/timbrarws1.3.php");
-                    break;
-                case "Ener":
-                    url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
-                    break;
-                case "Total":
-                    url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
-                    break;
-                case "3":
-                    url = new URL("http://factura.combuexpress.mx/cerepsol/timbrarws1.3-fast.php");
-                    break;
-            }
-            //url = new URL("http://factura.combuexpress.mx/cefactura3.3/timbrarws1.3.php");
-
+            url = new URL("http://"+params[0]+"/integral/ws/timbrarws1.1.php");
+            Log.w("url", String.valueOf(url));
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -123,25 +84,9 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
 
             // add parameter to our above url
             //Log.w("ean13",ean13);
+            Log.w("dataarray",String.valueOf(dataArray));
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("categoria", categoria)
-                    .appendQueryParameter("id_cliente",id_cliente)
-                    .appendQueryParameter("id_domicilio",id_domicilio)
-                    .appendQueryParameter("id_formpago",id_formpago)
-                    .appendQueryParameter("id_producto",id_producto)
-                    .appendQueryParameter("numcuenta",numcuenta)
-                    .appendQueryParameter("cveest",cveest)
-                    .appendQueryParameter("ticket",ticket)
-                    .appendQueryParameter("fecha_ticket",fecha_ticket)
-                    .appendQueryParameter("producto",producto)
-                    .appendQueryParameter("bomba",bomba)
-                    .appendQueryParameter("preunitario",preunitario)
-                    .appendQueryParameter("mtogto",mtogto)
-                    .appendQueryParameter("importe",importe)
-                    .appendQueryParameter("copia",copia)
-                    .appendQueryParameter("comentarios",comentarios)
-                    .appendQueryParameter("nip",nip)
-                    .appendQueryParameter("usocfdi",usocfdi);
+                    .appendQueryParameter("trama",String.valueOf(dataArray));
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = conn.getOutputStream();
@@ -177,24 +122,41 @@ public class CFDiTimbre extends AsyncTask<String, Void, String> {
                 }
 
                 // Pass data to onPostExecute method
-                return (result.toString());
+                Log.w("js", String.valueOf(result));
+                JSONObject js= new JSONObject(String.valueOf(result));
+                return (js);
 
             } else {
                 return null;
             }
 
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
             return null;
         } finally {
             conn.disconnect();
         }
     }
+
+    /*@Override
+    protected String doInBackground(String... strings) {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String res = "{\"error\":1,\"numfactura\":\"COCEBR9\",\"erfc\":\"ICE8105062K6\",\"enombre\":\"INDUSTRIAS CEBRA SA DE CV\",\"rrfc\":\"GOSP730801AT4\",\"rnombre\":\"ADRIAN SANCHEZ DIAZ2\",\"rdomicilio\":\"AV. 8 DE JULIO 2355 \",\"rcolonia\":\"ZONA INDUSTRIAL ,,GUADALAJARA\",\"rpais\":\"Mexico\",\"rcp\":\"44940\",\"subtotal\":519.22,\"iva\":80.78,\"total\":600,\"productos\":\"15101514|PL\\/873\\/EXP\\/ES\\/2015-503529800|32.80481|LTR|LITRO|Gasolina advanced 87 octanos|15.82750|519.22|504.89|002|Tasa|0.160000|80.78\",\"selloCFD\":\"R5uHvdakGtSwYEN7YngU6S7rVzNncwFoEnrtB\\/vUPO\\/cXFupN4NW\\/Bwb1YJv0nFN9lxqXNjjeoTVEsFKlMilK5QIgnSxopzW1\\/JLoBSfnEBqukWOhkrzGAYijFdnl8zeehU0\\/PI39NCKQO0j\\/Nlz7Wfgbhg2HYKj0HpQm\\/m7qcjK44mQNNynAhOBLf17TEVS6Dgw4TZ+7i6MdxLijfE3AjOe1XP84ni0K6tqNi+fuBwQz0ywiQOX9Ao4Q+BxHwI1W\\/EytZn8krlU\\/zDVcBZ1u0LM9VD1iXSWfaHO2IW3AUHpVgQlSm5ZcOAhKu8ppfcDBlY6JCjJgOPBP7belcDEMg==\",\"FechaTimbrado\":\"2020-12-15T11:06:30\",\"UUID\":\"0cd19537-ad20-4f92-a158-8f7202f50ff5\",\"noCertificadoSAT\":\"00001000000408254801\",\"version\":\"1.1\",\"selloSAT\":\"RpWz+jyjQ9w71aQS1ia5RyYMMi68ExsWB9qTuMgB6qX3QwUeEztkAjJwslLOYNqJA1tlZWOq98CGrvGFrodbPQAVzgHSEj9IHGUfRLzpMEPhfleewdQZMFdShym6eyxZY8lJtA3ujnAwmkJqOYrH57fw\\/UZel\\/nHAS8uLcfH8xX4MN4Xs3KAUTOX3clqPyphVhq9Loasgd9\\/L3SGua1i0hmLQCF2DstcxjnUaUMqurKx+rUgbGVDAEEy4m9buVg23pNtVtoklBOnJdkd04RQx8F4dtATCvstI+GWnnWmdf1gZVVksd81G5\\/QsQAlAViY8NWYnyKnKQGxv\\/cuPc08ow==\"}";
+        return res;
+    }*/
+
+
+
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(JSONObject result) {
         if(pdLoading.isShowing())
             pdLoading.dismiss();
-        Log.w("Producto",result);
+        Log.w("Producto",String.valueOf(result));
         super.onPostExecute(result);
         delegate.processFinish(result);
     }
