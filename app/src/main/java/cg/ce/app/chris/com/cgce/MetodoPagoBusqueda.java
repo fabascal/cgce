@@ -219,8 +219,8 @@ public class MetodoPagoBusqueda extends AppCompatActivity implements View.OnClic
                             Data.put("forma_pago", MetodoPagoClave.get((int) spn_metodo.getSelectedItemId()));
                             Data.put("MetodoPagoDescripcion", MetodoPagoDescripcion.get((int) spn_metodo.getSelectedItemId()));
                             Data.put("UsoCFDiId",UsoCFDiId.get((int) spn_metodo.getSelectedItemId()));
-                            Data.put("UsoCFDiDescripcion",UsoCFDiDescripcion.get((int) spn_metodo.getSelectedItemId()));
-                            Data.put("uso_cfdi",UsoCFDiClave.get((int) spn_metodo.getSelectedItemId()));
+                            Data.put("UsoCFDiDescripcion",UsoCFDiDescripcion.get((int) spn_uso.getSelectedItemId()));
+                            Data.put("uso_cfdi",UsoCFDiClave.get((int) spn_uso.getSelectedItemId()));
                             Data.put("nip_despachador", ticket[0].getInt(Variables.NIP_DESPACHADOR));
                             Productos.put("tipo","1");
                             Productos.put("nrotrn", ticket[0].getInt(Variables.KEY_TICKET_NROTRN));

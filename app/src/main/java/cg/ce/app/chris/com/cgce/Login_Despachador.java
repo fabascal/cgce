@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
@@ -40,10 +41,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import cg.ce.app.chris.com.cgce.Facturacion.GetDespachador;
+import cg.ce.app.chris.com.cgce.Facturacion.Listeners.GetDespachadorListener;
+import cg.ce.app.chris.com.cgce.common.Variables;
+
 import static cg.ce.app.chris.com.cgce.LoginDespachador_busqueda.CONNECTION_TIMEOUT;
 import static cg.ce.app.chris.com.cgce.LoginDespachador_busqueda.READ_TIMEOUT;
 
-public class Login_Despachador extends AppCompatActivity implements View.OnClickListener{
+public class Login_Despachador extends AppCompatActivity implements View.OnClickListener, GetDespachadorListener {
     Button btn_despachador_registrar;
     JSONObject cursor=null;
     Connection connect;
@@ -52,6 +57,7 @@ public class Login_Despachador extends AppCompatActivity implements View.OnClick
     Spinner spn_dispensario;
     private EditText et_facturaweb,et_despachador;
     JSONObject json_data = new JSONObject();
+    LogCE logCE = new LogCE();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,188 +116,63 @@ public class Login_Despachador extends AppCompatActivity implements View.OnClick
         }
         return conn;
     }
-    private class AsyncLogin extends AsyncTask<String, String, String> {
-        ProgressDialog pdLoading = new ProgressDialog(Login_Despachador.this);
-        HttpURLConnection conn;
-        URL url = null;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            pdLoading.setMessage("\tLoading...");
-            pdLoading.setCancelable(false);
-            pdLoading.show();
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-
-                // Enter URL address where your php file resides
-                url = new URL("http://factura.combuexpress.mx/kioscoce/despachadores-search_fa.php");
-
-            } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return "exception";
-            }
-            try {
-                // Setup HttpURLConnection class to send and receive data from php and mysql
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(READ_TIMEOUT);
-                conn.setConnectTimeout(CONNECTION_TIMEOUT);
-                conn.setRequestMethod("POST");
-
-                // setDoInput and setDoOutput method depict handling of both send and receive
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                // Append parameters to URL
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("cveest", params[0])
-                        .appendQueryParameter("password", params[1]);
-                String query = builder.build().getEncodedQuery();
-
-                // Open connection for sending data
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-                conn.connect();
-
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-                return "exception";
-            }
-
-            try {
-
-                int response_code = conn.getResponseCode();
-
-                // Check if successful connection made
-                if (response_code == HttpURLConnection.HTTP_OK) {
-
-                    // Read data sent from server
-                    InputStream input = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-
-                    while ((line = reader.readLine()) != null) {
-                        result.append(line);
-                    }
-                    Log.w("result",result.toString());
-                    // Pass data to onPostExecute method
-                    return (result.toString());
-
-                } else {
-
-                    return ("unsuccessful");
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "exception";
-            } finally {
-                conn.disconnect();
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            //this method will be running on UI thread
-
-            pdLoading.dismiss();
-
-            if(result.equals("no rows")) {
-                Toast.makeText(Login_Despachador.this, "No se encontro usuario de Facturacion Web", Toast.LENGTH_LONG).show();
-            }else {
-
-                try {
-
-                    JSONArray jArray = new JSONArray(result);
-                    for (int i = 0; i < jArray.length(); i++) {
-                        json_data = jArray.getJSONObject(i);
-                        Log.w("json", json_data.getString("id"));
-                    }
-
-                } catch (JSONException e) {
-                    // You to understand what actually error is and handle it appropriately
-                    Log.w("ERR", e.toString());
-                    Log.w("ERR", result.toString());
-
-                }
-            }
-        }
-    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_despachador_registrar:
-                Log.w("web","btn_ok");
-                if (et_facturaweb.getText().length()==0){
-                    Toast.makeText(Login_Despachador.this, "Favor de escribir un NIP Facturacion", Toast.LENGTH_SHORT).show();
-                }else if (et_despachador.getText().length()==0) {
-                    Toast.makeText(Login_Despachador.this, "Favor de escribir un clave de despachador", Toast.LENGTH_SHORT).show();
-                }
-                else if(et_facturaweb.getText().length()!=0 || et_despachador.getText().length()!=0) {
-                    Log.w("web", "inicia");
+                Log.w("web", "btn_ok");
+                if (et_facturaweb.getText().length() == 0) {
+                    new AlertDialog.Builder(Login_Despachador.this)
+                            .setTitle(R.string.error)
+                            .setIcon(R.drawable.combuito)
+                            .setMessage("Favor de escribir un NIP Facturacion")
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                } else if(!String.valueOf(et_facturaweb.getText()).equals(String.valueOf(et_despachador.getText()))){
+                    new AlertDialog.Builder(Login_Despachador.this)
+                            .setTitle(R.string.error)
+                            .setIcon(R.drawable.combuito)
+                            .setMessage("La clave de despachador es diferente al NIP de facturacion.")
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                } else if (et_despachador.getText().length() == 0) {
+                    new AlertDialog.Builder(Login_Despachador.this)
+                            .setTitle(R.string.error)
+                            .setIcon(R.drawable.combuito)
+                            .setMessage("Favor de escribir un clave de despachador")
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                } else if (et_facturaweb.getText().length() != 0 || et_despachador.getText().length() != 0) {
                     //obtener datos
                     final String facturaweb = et_facturaweb.getText().toString();
                     final String cveest = cveest();
                     // inciar  AsyncLogin() a factura web con datos otenidos
-                    new AsyncLogin().execute(cveest, facturaweb);
-                    Integer clave = id_despachador(et_despachador.getText());
-                    if (clave == 0) {
-                        Toast.makeText(Login_Despachador.this, "Favor de escribir un clave de despachador valida", Toast.LENGTH_SHORT).show();
-                    } else {
-                        try {
-                            Log.w("dispositivo", id_dispositivo().toString());
-                            json_data.put("clave_despachador", clave);
-                            json_data.put("dispositivo", id_dispositivo().toString());
-                            json_data.put("dispensario", id_dispensario(spn_dispensario.getSelectedItem().toString()));
-                            //validacion despachador y dispensario
-                            Log.w("desp", String.valueOf(validar_despachador(clave)));
-                            Log.w("disp", String.valueOf(validar_dispensario(json_data.getInt("dispensario"))));
-                            if (validar_despachador(clave) == 0 && validar_dispensario(json_data.getInt("dispensario")) == 0) {
-                                et_despachador.setText("");
-                                et_facturaweb.setText("");
-                                String msj="";
-                                JSONObject bomba_llena=new JSONObject();
-                                bomba_llena=datos_bomba_llena(json_data.getInt("dispensario"));
-                                msj="Dispensario "+json_data.getInt("dispensario")+
-                                        " se encuentra con el corte ID:(" +
-                                        bomba_llena.getString("corte")+
-                                        ") con operador "+bomba_llena.getString("despachador")+
-                                        " con fecha de alta "+bomba_llena.getString("inicio");
-                                for (int j=0;j<2;j++){
-                                    Toast.makeText(Login_Despachador.this, msj, Toast.LENGTH_LONG).show();
-                                }
-                            } else if (validar_despachador(clave) == 1 && validar_dispensario(json_data.getInt("dispensario")) == 1) {
-                                //alta de corte
-                                alta_corte(json_data);
-                                Intent ventas = new Intent(Login_Despachador.this, VentaActivity.class);
-                                startActivity(ventas);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    //new AsyncLogin().execute(cveest, facturaweb);
+                    GetDespachador getDespachador = new GetDespachador(this, getApplicationContext());
+                    getDespachador.delegate = this;
+                    getDespachador.execute(cveest, facturaweb, getIntegra());
                 }
-
                 break;
         }
     }
+    public String getIntegra(){
+        DataBaseManager manager = new DataBaseManager(getApplicationContext());
+        cursor = manager.cargarcursorodbc2();
+        String integra=null;
+        try {
+            integra = cursor.getString("integra");
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Login_Despachador.this)
+                    .setTitle(R.string.error)
+                    .setIcon(R.drawable.combuito)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            e.printStackTrace();
+        }
+        return integra;
+    }
+
     public Boolean alta_corte (JSONObject jsonObject){
         String query = null;
         String data_log="";
@@ -512,5 +393,79 @@ public class Login_Despachador extends AppCompatActivity implements View.OnClick
             e.printStackTrace();
         }
         return res;
+    }
+
+    @Override
+    public void GetDespachadorFinish(JSONObject result) {
+        try {
+            if (result.getInt(Variables.CODE_ERROR)==0) {
+                Log.w("despachador", result.getString(Variables.KEY_TICKET_DESPACHADOR));
+                if (result.getString(Variables.KEY_TICKET_DESPACHADOR).equals("no rows")){
+                    new AlertDialog.Builder(Login_Despachador.this)
+                            .setTitle(R.string.error)
+                            .setIcon(R.drawable.combuito)
+                            .setMessage(Variables.MESSAGE_DESPACHADOR)
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                }else{
+                    Integer clave = id_despachador(et_despachador.getText());
+                    if (clave == 0) {
+                        Toast.makeText(Login_Despachador.this, "Favor de escribir un clave de despachador valida", Toast.LENGTH_SHORT).show();
+                    } else {
+                        try {
+                            Log.w("dispositivo", id_dispositivo().toString());
+                            json_data.put("clave_despachador", clave);
+                            json_data.put("dispositivo", id_dispositivo().toString());
+                            json_data.put("dispensario", id_dispensario(spn_dispensario.getSelectedItem().toString()));
+                            //validacion despachador y dispensario
+                            Log.w("desp", String.valueOf(validar_despachador(clave)));
+                            Log.w("disp", String.valueOf(validar_dispensario(json_data.getInt("dispensario"))));
+                            if (validar_despachador(clave) == 0 && validar_dispensario(json_data.getInt("dispensario")) == 0) {
+                                et_despachador.setText("");
+                                et_facturaweb.setText("");
+                                String msj = "";
+                                JSONObject bomba_llena = new JSONObject();
+                                bomba_llena = datos_bomba_llena(json_data.getInt("dispensario"));
+                                msj = "Dispensario " + json_data.getInt("dispensario") +
+                                        " se encuentra con el corte ID:(" +
+                                        bomba_llena.getString("corte") +
+                                        ") con operador " + bomba_llena.getString("despachador") +
+                                        " con fecha de alta " + bomba_llena.getString("inicio");
+                                for (int j = 0; j < 2; j++) {
+                                    Toast.makeText(Login_Despachador.this, msj, Toast.LENGTH_LONG).show();
+                                }
+                            } else if (validar_despachador(clave) == 1 && validar_dispensario(json_data.getInt("dispensario")) == 1) {
+                                //alta de corte
+                                alta_corte(json_data);
+                                Intent ventas = new Intent(Login_Despachador.this, VentaActivity.class);
+                                startActivity(ventas);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            }else{
+                /*Convertimos el error y lo mostramos en pantalla*/
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + result.getString(Variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Login_Despachador.this)
+                        .setTitle(R.string.error)
+                        .setIcon(R.drawable.combuito)
+                        .setMessage(result.getString(Variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Login_Despachador.this)
+                    .setTitle(R.string.error)
+                    .setIcon(R.drawable.combuito)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            e.printStackTrace();
+        }
     }
 }

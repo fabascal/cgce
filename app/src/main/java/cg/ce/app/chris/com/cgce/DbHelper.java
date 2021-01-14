@@ -29,10 +29,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w("oldVersion", String.valueOf(oldVersion));
-        Log.w("newVersion", String.valueOf(newVersion));
-        switch (newVersion){
-            case 2:
+
+        switch (oldVersion){
+            case 1:
                 db.execSQL(DATABASE_ALTER_INTEGRA);
                 break;
         }

@@ -21,14 +21,14 @@ repositories {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "cg.ce.app.chris.com.cgce"
         minSdkVersion 22
-        targetSdkVersion 28
-        versionCode 4003
-        versionName "4.0.0.3"
+        targetSdkVersion 29
+        versionCode 4005
+        versionName "4.0.0.5"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi", "x86"
@@ -79,17 +79,17 @@ dependencies {
     implementation files('libs/mail.jar')
     implementation files('libs/activation.jar')
     implementation files('libs/additionnal.jar')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:appcompat-v7:29.0.0'
 
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:cardview-v7:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:design:29.0.0'
+    implementation 'com.android.support:design:29.0.0'
+    implementation 'com.android.support:support-v4:29.0.0'
+    implementation 'com.android.support:cardview-v7:29.0.0'
+    implementation 'com.android.support:recyclerview-v7:29.0.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.google.zxing:core:3.4.0'
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.1'
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 
 

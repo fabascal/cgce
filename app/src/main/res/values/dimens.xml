@@ -25,4 +25,9 @@
     <dimen name="TextView_venta">35sp</dimen>
     <dimen name="TextFragment_Ticket">20sp</dimen>
     <dimen name="common_default_padding">16dp</dimen>
+
+    <dimen name="ticket_fragment">30sp</dimen>
+    <dimen name="text_tablet">20sp</dimen>
+    <dimen name="text_tablet_config">40sp</dimen>
+    <dimen name="text_cfdi">20sp</dimen>
 </resources>

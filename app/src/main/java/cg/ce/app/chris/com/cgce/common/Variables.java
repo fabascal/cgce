@@ -63,4 +63,5 @@ public class Variables {
     public static final String DEVICE = "Device";
     public static final String CORTE = "Corte";
     public static final String ADRESS = "Domicilio";
+    public final static String MESSAGE_DESPACHADOR = "Despachador no existe en el sistema de facturación.";
 }

@@ -556,6 +556,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         textData.append(cliente + "\n");
         textData.append(metodoPago + "\n");
         //textData.append("\n");
+        Log.w("ticket", String.valueOf(ticket));
         if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
             if(ticket.getInt(Variables.KEY_TICKET_CODCLI)>0) {
                 if (vehiculo.has("rsp")) {
@@ -688,20 +689,23 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
             //textData.append("\n");
+            Log.w("ticket", String.valueOf(ticket));
             if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
-                if (vehiculo.has("rsp")) {
-                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                if(ticket.getInt(Variables.KEY_TICKET_CODCLI)>0) {
+                    if (vehiculo.has("rsp")) {
+                        textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                    }
+                    if (vehiculo.has("nroeco")) {
+                        textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+                    }
+                    if (vehiculo.has("placa")) {
+                        textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+                    }
+                    if (vehiculo.has("ultodm")) {
+                        textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
+                    }
+                    textData.append("------------------------------\n");
                 }
-                if (vehiculo.has("nroeco")) {
-                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
-                }
-                if (vehiculo.has("placa")) {
-                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
-                }
-                if (vehiculo.has("ultodm")) {
-                    textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
-                }
-                textData.append("------------------------------\n");
             }
             method = "addText";
             mPrinter.addText(textData.toString());

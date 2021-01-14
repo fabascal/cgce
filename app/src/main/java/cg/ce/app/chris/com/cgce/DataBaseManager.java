@@ -18,7 +18,7 @@ public class DataBaseManager {
 
     public static final String CN_ID="_id";
     public static final String CN_DIRECCION="direccion";
-    public static final String CN_INTEGRA="integra";
+
     public static final String CN_PUERTO="puerto";
     public static final String CN_DB="db";
     public static final String CN_DB_CG="db_cg";
@@ -26,15 +26,7 @@ public class DataBaseManager {
     public static final String CN_PASSDB="pass";
     public static final String CN_PRINTER="target";
     public static final String CN_MARCA="marca";
-
-    /*
-    1.-Version 1 - Base inicio
-    2.-Version 2 - Se agrega columna para integra
-    */
-
-    private static final String DATABASE_ALTER_INTEGRA = "ALTER TABLE "
-            + TABLE_NAME + " ADD COLUMN " + CN_INTEGRA + " TEXT;";
-
+    public static final String CN_INTEGRA="integra";
 
 
     // create table odbc(
@@ -48,7 +40,7 @@ public class DataBaseManager {
     public static final String CREATE_TABLE = "create table " + TABLE_NAME+" ("
             + CN_ID + " integer primary key autoincrement,"
             + CN_DIRECCION + " text not null,"
-            /*+ CN_INTEGRA + " text not null,"*/
+            + CN_INTEGRA + " text not null,"
             + CN_PUERTO + " text not null,"
             + CN_DB + " text not null,"
             + CN_DB_CG + " text not null,"
@@ -73,8 +65,8 @@ public class DataBaseManager {
     private ContentValues generaContentValues(String direccion, String integra, String  puerto, String db, String db_cg, String userdb,String passdb){
         ContentValues valores= new ContentValues();
 
+        valores.put(CN_INTEGRA,integra);
         valores.put(CN_DIRECCION,direccion);
-        valores.put(CN_INTEGRA, integra);
         valores.put(CN_PUERTO,puerto);
         valores.put(CN_DB,db);
         valores.put(CN_DB_CG,db_cg);
