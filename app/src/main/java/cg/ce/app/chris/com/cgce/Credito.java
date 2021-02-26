@@ -567,50 +567,58 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
     }
     public void SearchCustomerNip(final View v){
-        new GetLastNROTRN(this, getApplicationContext(), new ControlGasListener() {
-            @Override
-            public void processFinish(JSONObject output) {
-                try {
-                    if (output.getInt(variables.CODE_ERROR)==0){
-                        PutData(variables.KEY_ULT_NROTRN,output.getString(variables.KEY_ULT_NROTRN));
-                    }else{
-                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
-                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
-                                stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
-                        new AlertDialog.Builder(Credito.this)
-                                .setTitle(R.string.error)
-                                .setMessage(output.getString(variables.MESSAGE_ERROR))
-                                .setPositiveButton(R.string.btn_ok, null).show();
-                    }
-                } catch (JSONException e) {
-                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
-                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
-                            stacktraceObj[2].getMethodName() + "|" + e);
-                    new AlertDialog.Builder(Credito.this)
-                            .setTitle(R.string.error)
-                            .setMessage(String.valueOf(e))
-                            .setPositiveButton(R.string.btn_ok, null).show();
-                    e.printStackTrace();
-                }
-
-            }
-        }).execute(spn_posicion.getSelectedItem().toString());
-
-        try {
-            PutData(variables.KEY_TAG,et_clientecg.getText().toString());
-            GetCustomerNip getCustomerNip = new GetCustomerNip(this);
-            getCustomerNip.delegate=this;
-            getCustomerNip.execute(GetData(variables.KEY_TAG));
-        } catch (JSONException e) {
-            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
-            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
-                    stacktraceObj[2].getMethodName() + "|" + e);
-            new AlertDialog.Builder(this)
+        if (et_clientecg.getText().length() == 0){
+            new AlertDialog.Builder(Credito.this)
                     .setTitle(R.string.error)
                     .setIcon(icon)
-                    .setMessage(String.valueOf(e))
+                    .setMessage("El dato de busqueda no puede ser nulo.")
                     .setPositiveButton(R.string.btn_ok,null).show();
-            e.printStackTrace();
+        }else {
+            new GetLastNROTRN(this, getApplicationContext(), new ControlGasListener() {
+                @Override
+                public void processFinish(JSONObject output) {
+                    try {
+                        if (output.getInt(variables.CODE_ERROR) == 0) {
+                            PutData(variables.KEY_ULT_NROTRN, output.getString(variables.KEY_ULT_NROTRN));
+                        } else {
+                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                            logCE.EscirbirLog2(getApplicationContext(), getLocalClassName() + "|" +
+                                    stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                        }
+                    } catch (JSONException e) {
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(), getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + e);
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }).execute(spn_posicion.getSelectedItem().toString());
+
+            try {
+                PutData(variables.KEY_TAG, et_clientecg.getText().toString());
+                GetCustomerNip getCustomerNip = new GetCustomerNip(this);
+                getCustomerNip.delegate = this;
+                getCustomerNip.execute(GetData(variables.KEY_TAG));
+            } catch (JSONException e) {
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(), getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + e);
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(String.valueOf(e))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+                e.printStackTrace();
+            }
         }
     }
     public void SearchCustomerName(View v){

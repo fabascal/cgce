@@ -13,6 +13,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -276,7 +278,19 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 pdLoading.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
                 pdLoading.show(); // Display Progress Dialog
                 pdLoading.setCancelable(false);*/
-                PrintReceip();
+
+                //Validacion de wifi prendido
+                ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                if (mWifi.isConnected()) {
+                    PrintReceip();
+                }else {
+
+                    new AlertDialog.Builder(ActivityTicket.this)
+                            .setTitle(R.string.error)
+                            .setMessage(Variables.WIFI_DISABLE)
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                }
                 /*new Thread(new Runnable() {
                     public void run() {
 
@@ -383,7 +397,6 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             GetImpreso getImpreso = new GetImpreso(this, getApplicationContext());
             getImpreso.delegate=this;
             getImpreso.execute(ticket.getString(Variables.KEY_TICKET_NROTRN));
-
         } catch ( final JSONException e) {
             if (pdLoading != null) {
                 pdLoading.dismiss();

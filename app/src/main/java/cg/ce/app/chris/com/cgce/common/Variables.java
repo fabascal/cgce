@@ -64,4 +64,5 @@ public class Variables {
     public static final String CORTE = "Corte";
     public static final String ADRESS = "Domicilio";
     public final static String MESSAGE_DESPACHADOR = "Despachador no existe en el sistema de facturación.";
+    public static final String WIFI_DISABLE = "No se puede iniciar el proceso de impresion con el WI-FI apagado.";
 }

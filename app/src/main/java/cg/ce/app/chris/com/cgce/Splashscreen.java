@@ -344,18 +344,20 @@ public class Splashscreen extends Activity {
         GetDevicePermissions getDevicePermissions  = new GetDevicePermissions(this);
         try {
             JSONObject js = getDevicePermissions.execute(mac_add.getMacAddress()).get();
-            Log.w(Variables.CODE_ERROR, String.valueOf(js.getInt(Variables.CODE_ERROR)));
-            Log.w(Variables.DEVICE, String.valueOf(js.getInt(Variables.DEVICE)));
-            if (js.getInt(Variables.CODE_ERROR)==0){
-                if (js.getInt(Variables.DEVICE)==1){
-                    return true;
-                }else if(js.getInt(Variables.DEVICE)==0){
-                    msg = "Dispositivo sin permiso";
+            if (js.has(Variables.CODE_ERROR)){
+                Log.w(Variables.CODE_ERROR, String.valueOf(js.getInt(Variables.CODE_ERROR)));
+                Log.w(Variables.DEVICE, String.valueOf(js.getInt(Variables.DEVICE)));
+                if (js.getInt(Variables.CODE_ERROR)==0){
+                    if (js.getInt(Variables.DEVICE)==1){
+                        return true;
+                    }else if(js.getInt(Variables.DEVICE)==0){
+                        msg = "Dispositivo sin permiso";
+                        return false;
+                    }
+                }else if(js.getInt(Variables.CODE_ERROR)==1){
+                    msg = "Error en la configuracion";
                     return false;
                 }
-            }else if(js.getInt(Variables.CODE_ERROR)==1){
-                msg = "Error en la configuracion";
-                return false;
             }
         } catch (ExecutionException | InterruptedException | JSONException e) {
             StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();

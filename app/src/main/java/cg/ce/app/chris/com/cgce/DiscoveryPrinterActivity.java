@@ -196,4 +196,5 @@ public class DiscoveryPrinterActivity extends Activity implements View.OnClickLi
             ActivityCompat.requestPermissions(this, requestPermissions.toArray(new String[requestPermissions.size()]), REQUEST_PERMISSION);
         }
     }
+
 }

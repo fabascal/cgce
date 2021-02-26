@@ -61,7 +61,8 @@ public class UpdateCFDi extends AsyncTask<String, Void, JSONObject> {
             DataBaseCG dbcg = new DataBaseCG();
             conn = dbcg.odbc_cg(mContext);
             stmt = conn.createStatement();
-            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrofac ="+params[0]+", " +
+            String nrocte = params[3]+"0";
+            stmt.executeUpdate("update ["+base+"].[dbo].[Despachos] set nrocte = "+ nrocte +",nrofac ="+params[0]+", " +
                     "satuid='"+params[1]+"', satrfc='"+params[2]+"' where nrotrn = "+params[3]+"");
             res.put(Variables.CODE_ERROR,0);
             stmt.close();

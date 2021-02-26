@@ -35,91 +35,92 @@
 20-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:13:9-43
 21        android:label="@string/app_name"
 21-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:14:9-41
-22        android:theme="@style/AppTheme" >
-22-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:15:9-40
-23        <activity
-23-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:16:9-18:62
-24            android:name="com.epson.epos2_printer.SettingActivity"
-24-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:17:13-44
-25            android:screenOrientation="portrait" />
-25-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:18:13-49
-26        <activity
-26-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:19:9-21:62
-27            android:name="com.epson.epos2_printer.PrinterSettingActivity"
-27-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:20:13-51
-28            android:screenOrientation="portrait" />
-28-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:21:13-49
-29        <activity
-29-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:22:9-24:62
-30            android:name="com.epson.epos2_printer.FirmwareUpdateActivity"
-30-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:23:13-51
-31            android:screenOrientation="portrait" />
-31-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:24:13-49
-32        <activity
-32-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:25:9-27:62
-33            android:name="com.epson.epos2_printer.MonitorActivity"
-33-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:26:13-44
-34            android:screenOrientation="portrait" />
-34-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:27:13-49
-35        <activity
-35-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:28:9-30:62
-36            android:name="com.epson.epos2_printer.SingleMonitorActivity"
-36-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:29:13-50
-37            android:screenOrientation="portrait" />
-37-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:30:13-49
-38        <activity
-38-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:31:9-33:62
-39            android:name="com.epson.epos2_printer.MultipleMonitorActivity"
-39-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:32:13-52
-40            android:screenOrientation="portrait" />
-40-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:33:13-49
-41        <activity
-41-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:34:9-50:20
-42            android:name="com.epson.epos2_printer.MainActivity"
-42-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:35:13-41
-43            android:label="@string/app_title"
-43-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:36:13-46
-44            android:screenOrientation="portrait" >
-44-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:37:13-49
-45            <intent-filter>
-45-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:38:13-44:29
-46                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-46-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:17-90
-46-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:25-87
-47                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
-47-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:40:17-93
-47-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:40:25-90
-48                <action android:name="android.intent.action.MAIN" />
-48-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:41:17-69
-48-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:41:25-66
-49
-50                <category android:name="android.intent.category.LAUNCHER" />
-50-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:43:17-77
-50-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:43:27-74
-51            </intent-filter>
-52
-53            <meta-data
-53-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:45:13-46:57
-54                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-54-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:45:24-86
-55                android:resource="@xml/device_filter" />
-55-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:46:17-54
-56            <meta-data
-56-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:47:13-48:60
-57                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-57-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:47:24-89
-58                android:resource="@xml/accessory_filter" />
-58-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:48:17-57
-59        </activity>
-60        <activity
-60-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:51:9-55:20
-61            android:name="com.epson.epos2_printer.DiscoveryActivity"
-61-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:52:13-46
-62            android:label="@string/app_title"
-62-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:53:13-46
-63            android:screenOrientation="portrait" >
-63-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:54:13-49
-64        </activity>
-65    </application>
-66
-67</manifest>
+22        android:testOnly="true"
+23        android:theme="@style/AppTheme" >
+23-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:15:9-40
+24        <activity
+24-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:16:9-18:62
+25            android:name="com.epson.epos2_printer.SettingActivity"
+25-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:17:13-44
+26            android:screenOrientation="portrait" />
+26-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:18:13-49
+27        <activity
+27-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:19:9-21:62
+28            android:name="com.epson.epos2_printer.PrinterSettingActivity"
+28-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:20:13-51
+29            android:screenOrientation="portrait" />
+29-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:21:13-49
+30        <activity
+30-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:22:9-24:62
+31            android:name="com.epson.epos2_printer.FirmwareUpdateActivity"
+31-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:23:13-51
+32            android:screenOrientation="portrait" />
+32-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:24:13-49
+33        <activity
+33-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:25:9-27:62
+34            android:name="com.epson.epos2_printer.MonitorActivity"
+34-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:26:13-44
+35            android:screenOrientation="portrait" />
+35-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:27:13-49
+36        <activity
+36-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:28:9-30:62
+37            android:name="com.epson.epos2_printer.SingleMonitorActivity"
+37-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:29:13-50
+38            android:screenOrientation="portrait" />
+38-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:30:13-49
+39        <activity
+39-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:31:9-33:62
+40            android:name="com.epson.epos2_printer.MultipleMonitorActivity"
+40-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:32:13-52
+41            android:screenOrientation="portrait" />
+41-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:33:13-49
+42        <activity
+42-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:34:9-50:20
+43            android:name="com.epson.epos2_printer.MainActivity"
+43-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:35:13-41
+44            android:label="@string/app_title"
+44-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:36:13-46
+45            android:screenOrientation="portrait" >
+45-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:37:13-49
+46            <intent-filter>
+46-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:38:13-44:29
+47                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+47-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:17-90
+47-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:39:25-87
+48                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+48-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:40:17-93
+48-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:40:25-90
+49                <action android:name="android.intent.action.MAIN" />
+49-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:41:17-69
+49-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:41:25-66
+50
+51                <category android:name="android.intent.category.LAUNCHER" />
+51-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:43:17-77
+51-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:43:27-74
+52            </intent-filter>
+53
+54            <meta-data
+54-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:45:13-46:57
+55                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+55-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:45:24-86
+56                android:resource="@xml/device_filter" />
+56-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:46:17-54
+57            <meta-data
+57-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:47:13-48:60
+58                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+58-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:47:24-89
+59                android:resource="@xml/accessory_filter" />
+59-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:48:17-57
+60        </activity>
+61        <activity
+61-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:51:9-55:20
+62            android:name="com.epson.epos2_printer.DiscoveryActivity"
+62-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:52:13-46
+63            android:label="@string/app_title"
+63-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:53:13-46
+64            android:screenOrientation="portrait" >
+64-->D:\AndroidStudio\AndroidStudioProjects\cgce\ePOS_SDK_Android_v2.14.0\ePOS_SDK_Sample_Android\ePOS2_Printer\app\src\main\AndroidManifest.xml:54:13-49
+65        </activity>
+66    </application>
+67
+68</manifest>

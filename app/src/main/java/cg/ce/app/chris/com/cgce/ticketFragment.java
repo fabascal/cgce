@@ -56,7 +56,8 @@ public class ticketFragment extends Fragment implements SorteoListener {
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
     DecimalFormat formateador21 = new DecimalFormat("###,###.##");
     ImageButton btn_imprimir_ticket;
-    TextView tv_nrotrn,tv_cantidad,tv_monto,tv_precio,tv_nrotrn_label,tv_cantidad_label,tv_monto_label,tv_precio_label,tv_producto,tv_producto_label;
+    TextView tv_nrotrn,tv_cantidad,tv_monto,tv_precio,tv_nrotrn_label,tv_cantidad_label,
+            tv_monto_label,tv_precio_label,tv_producto,tv_producto_label;
     Activity activity;
     PreparedStatement stmt;
     ResultSet rs;

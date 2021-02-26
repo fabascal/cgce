@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -222,8 +224,18 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
                     ticket.put(variables.KEY_IMPRESO,impreso);
                     new Thread(new Runnable() {
                         public void run() {
-                            PrintReceip();
-                            pdLoading.dismiss();
+                            ConnectivityManager connManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+                            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                            if (mWifi.isConnected()) {
+                                PrintReceip();
+                                pdLoading.dismiss();
+                            }else{
+                                pdLoading.dismiss();
+                                new android.support.v7.app.AlertDialog.Builder((Activity) mContext)
+                                        .setTitle(R.string.error)
+                                        .setMessage(Variables.WIFI_DISABLE)
+                                        .setPositiveButton(R.string.btn_ok, null).show();
+                            }
                         }
                     }).start();
                 } catch (SQLException | IllegalAccessException | java.lang.InstantiationException |
@@ -340,19 +352,24 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
         Log.w("FlagReimpreso",String.valueOf(FlagReimpreso));
         Log.w("Ticket",String.valueOf(ticket));
         String method = "";
-        Bitmap logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(), R.drawable.logo_impresion);
+        Bitmap logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(),
+                R.drawable.logo_impresion);
         switch (marca) {
             case "Combu-Express":
-                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(), R.drawable.logo_impresion);
+                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(),
+                        R.drawable.logo_impresion);
                 break;
             case "Repsol":
-                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(), R.drawable.logo_impresion_repsol);
+                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(),
+                        R.drawable.logo_impresion_repsol);
                 break;
             case "Ener":
-                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(), R.drawable.logo_impresion_ener);
+                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(),
+                        R.drawable.logo_impresion_ener);
                 break;
             case "Total":
-                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(), R.drawable.logo_impresion_total);
+                logoData = BitmapFactory.decodeResource(((Activity)mContext).getResources(),
+                        R.drawable.logo_impresion_total);
                 break;
         }
         StringBuilder textData = new StringBuilder();
@@ -443,20 +460,23 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
             }
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
-            if (ticket.has(variables.KEY_CODCLI)) {
-                if (vehiculo.has("rsp")) {
-                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+            Log.w("ticket", String.valueOf(ticket));
+            if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
+                if(ticket.getInt(Variables.KEY_TICKET_CODCLI)>0) {
+                    if (vehiculo.has("rsp")) {
+                        textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                    }
+                    if (vehiculo.has("nroeco")) {
+                        textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+                    }
+                    if (vehiculo.has("placa")) {
+                        textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+                    }
+                    if (vehiculo.has("ultodm")) {
+                        textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
+                    }
+                    textData.append("------------------------------\n");
                 }
-                if (vehiculo.has("nroeco")) {
-                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
-                }
-                if (vehiculo.has("placa")) {
-                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
-                }
-                if (ticket.has(variables.KEY_ODM)) {
-                    textData.append("Kilometraje   : " + ticket.getString(variables.KEY_ODM) + "\n");
-                }
-                textData.append("------------------------------\n");
             }
             method = "addText";
             mPrinter.addText(textData.toString());
@@ -569,20 +589,23 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
             textData.append(cliente + "\n");
             textData.append(metodoPago + "\n");
             //textData.append("\n");
-            if (ticket.has(variables.KEY_CODCLI)) {
-                if (vehiculo.has("rsp")) {
-                    textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+            Log.w("ticket", String.valueOf(ticket));
+            if (ticket.has(Variables.KEY_TICKET_CODCLI)) {
+                if(ticket.getInt(Variables.KEY_TICKET_CODCLI)>0) {
+                    if (vehiculo.has("rsp")) {
+                        textData.append("Conductor     : " + vehiculo.getString("rsp") + "\n");
+                    }
+                    if (vehiculo.has("nroeco")) {
+                        textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
+                    }
+                    if (vehiculo.has("placa")) {
+                        textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
+                    }
+                    if (vehiculo.has("ultodm")) {
+                        textData.append("Kilometraje   : " + vehiculo.getString("ultodm") + "\n");
+                    }
+                    textData.append("------------------------------\n");
                 }
-                if (vehiculo.has("nroeco")) {
-                    textData.append("No. Econ.     : " + vehiculo.getString("nroeco") + "\n");
-                }
-                if (vehiculo.has("placa")) {
-                    textData.append("Placas        : " + vehiculo.getString("placa") + "\n");
-                }
-                if (ticket.has(variables.KEY_ODM)) {
-                    textData.append("Kilometraje   : " + ticket.getString(variables.KEY_ODM) + "\n");
-                }
-                textData.append("------------------------------\n");
             }
             method = "addText";
             mPrinter.addText(textData.toString());
