@@ -98,6 +98,7 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
     JSONObject datos_domicilio;
     JSONObject vehiculo;
     Activity mActivity;
+    String FacturacionURL =null;
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -609,7 +610,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
         textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
         textData.append("________________________________\n");
         textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-        textData.append("|      combuexpress.com.mx      |\n");
+        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+        textData.append(FacturacionURL + "\n");
+        mPrinter.addTextAlign(Printer.ALIGN_LEFT);
         textData.append("________________________________\n");
         method = "addText";
         mPrinter.addText(textData.toString());
@@ -742,7 +745,9 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
             textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
             textData.append("________________________________\n");
             textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-            textData.append("|      combuexpress.com.mx      |\n");
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            textData.append(FacturacionURL + "\n");
+            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             textData.append("________________________________\n");
             method = "addText";
             mPrinter.addText(textData.toString());
@@ -1088,24 +1093,28 @@ public class ActivityTicket extends AppCompatActivity implements View.OnClickLis
                 setContentView(R.layout.activity_ticket);
                 flag_brand = "Combu-Express";
                 image = getDrawable(R.drawable.logo_impresion);
+                FacturacionURL = "facturacion.combuexpress.mx";
                 break;
             case "Repsol":
                 setTheme(R.style.ContentMainRepsol);
                 setContentView(R.layout.activity_ticket_repsol);
                 flag_brand = "Repsol";
                 image = getDrawable(R.drawable.isologo_repsol);
+                FacturacionURL = "facturacionrepsol.combuexpress.mx";
                 break;
             case "Ener":
                 setTheme(R.style.ContentMainEner);
                 setContentView(R.layout.activity_ticket_ener);
                 flag_brand = "Ener";
                 image = getDrawable(R.drawable.logo_impresion_ener);
+                FacturacionURL = "facturacionener.combuexpress.mx";
                 break;
             case "Total":
                 setTheme(R.style.ContentMainTotal);
                 setContentView(R.layout.activity_ticket_total);
                 flag_brand = "Total";
                 image = getDrawable(R.drawable.total);
+                FacturacionURL = "facturaciontotal.combuexpress.mx";
                 break;
         }
         if (tablet.esTablet(getApplicationContext())) {

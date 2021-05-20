@@ -20,7 +20,7 @@ public class ClassImpresionCinepolis extends AsyncTask<JSONObject,String,Boolean
     Activity activity;
     Context context;
     private Printer mPrinter = null;
-    JSONObject json ;
+    JSONObject json, json_promo ;
 
     public ClassImpresionCinepolis (Activity activity, Context context, JSONObject json){
         this.activity=activity;
@@ -127,6 +127,51 @@ public class ClassImpresionCinepolis extends AsyncTask<JSONObject,String,Boolean
 
             method = "addCut";
             mPrinter.addCut(Printer.CUT_FEED);
+            if (json.has("promo")){
+                if(json.getString("promo").equals("1")){
+                    textData.delete(0, textData.length());
+                    json_promo = json.getJSONObject("promo_data");
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                    method = "addImage";
+                    mPrinter.addImage(logoData, 0, 0,
+                            logoData.getWidth(),
+                            logoData.getHeight(),
+                            Printer.COLOR_1,
+                            Printer.MODE_MONO,
+                            Printer.HALFTONE_DITHER,
+                            Printer.PARAM_DEFAULT,
+                            Printer.COMPRESS_AUTO);
+                    mPrinter.addTextAlign(Printer.ALIGN_LEFT);
+
+                    //method = "addFeedLine";
+                    //mPrinter.addFeedLine(1);
+                    textData.append("\n");
+                    textData.append("http://combuexpress.com.mx"+"\n");
+                    textData.append("--------------------------------------------"+"\n");
+                    textData.append("" + json_promo.getString("descripcion_promo")  + "\n");
+                    textData.append("--------------------------------------------"+"\n");
+                    textData.append("Folio Cinepolis     : " + json_promo.getString("folio_promo") + "\n");
+                    textData.append("Vigencia hasta      : " + json_promo.getString("fecha_promo") + "\n");
+                    textData.append("Precio sencillo     : " + json_promo.getString("precio_promo")+"\n");
+                    textData.append("Numero de entradas  : " + json_promo.getString("numEntradas_promo")+"\n");
+                    textData.append("--------------------------------------------"+"\n");
+                    mPrinter.addText(textData.toString());
+
+                    method = "addBarcode";
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+                    mPrinter.addBarcode(String.valueOf(json_promo.getString("folio_promo")),
+                            Printer.BARCODE_CODE39,
+                            Printer.HRI_BELOW,
+                            Printer.FONT_A,
+                            barcodeWidth,
+                            barcodeHeight);
+                    mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+
+
+                    method = "addCut";
+                    mPrinter.addCut(Printer.CUT_FEED);
+                }
+            }
         }
         catch (Exception e) {
 

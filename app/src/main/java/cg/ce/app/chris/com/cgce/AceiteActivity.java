@@ -322,6 +322,7 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
                 scanIntegrator.setPrompt("Escanear producto");
+                Log.w("Tableta", String.valueOf(IsTable));
                 if (IsTable) {
                     scanIntegrator.addExtra("SCAN_CAMERA_ID", 1);
                     scanIntegrator.setOrientationLocked(true);
@@ -1067,8 +1068,10 @@ public class AceiteActivity extends AppCompatActivity implements View.OnClickLis
         }
         if (tablet.esTablet(getApplicationContext())){
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            IsTable = true;
         } else {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            IsTable = false;
         }
     }
 }

@@ -69,7 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/divider"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:gravity="center">
         <ImageView
             android:layout_marginLeft="20dp"
             android:layout_width="110dp"
@@ -97,7 +98,8 @@
         android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="150dp"

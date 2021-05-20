@@ -102,6 +102,7 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
     DecimalFormat formateador4 = new DecimalFormat("###,###.####");
     DecimalFormat formateador21 = new DecimalFormat("###,###.##");
     Activity mActivity;
+    String FacturacionURL=null;
 
 
     public static fab_contado newInstance(String title, ArrayList<String> data){
@@ -500,7 +501,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
             textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
             textData.append("________________________________\n");
             textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-            textData.append("|      combuexpress.com.mx      |\n");
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            textData.append(FacturacionURL + "\n");
+            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             textData.append("________________________________\n");
             method = "addText";
             mPrinter.addText(textData.toString());
@@ -629,7 +632,9 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
             textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
             textData.append("________________________________\n");
             textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-            textData.append("|      combuexpress.com.mx      |\n");
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            textData.append(FacturacionURL + "\n");
+            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             textData.append("________________________________\n");
             method = "addText";
             mPrinter.addText(textData.toString());
@@ -991,24 +996,28 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
                 ivicon.setImageDrawable(getActivity().getDrawable(R.drawable.combuito));
                 imgbtn_imprimir.setImageResource(R.drawable.printbtn_pressed);
                 icon = getActivity().getDrawable(R.drawable.combuito);
+                FacturacionURL = "facturacion.combuexpress.mx";
                 break;
             case "Repsol":
                 dispensario.setImageDrawable(getActivity().getDrawable(R.drawable.dispensariorespol));
                 ivicon.setImageDrawable(getActivity().getDrawable(R.drawable.isologo_repsol));
                 imgbtn_imprimir.setImageResource(R.drawable.printbtn_pressed_repsol);
                 icon = getActivity().getDrawable(R.drawable.isologo_repsol);
+                FacturacionURL = "facturacionrepsol.combuexpress.mx";
                 break;
             case "Ener":
                 dispensario.setImageDrawable(getActivity().getDrawable(R.drawable.dispensarioener));
                 ivicon.setImageDrawable(getActivity().getDrawable(R.drawable.logo_impresion_ener));
                 imgbtn_imprimir.setImageResource(R.drawable.printbtn_pressed_ener);
                 icon = getActivity().getDrawable(R.drawable.logo_impresion_ener);
+                FacturacionURL = "facturacionener.combuexpress.mx";
                 break;
             case "Total":
                 dispensario.setImageDrawable(getActivity().getDrawable(R.drawable.dispensariototal));
                 ivicon.setImageDrawable(getActivity().getDrawable(R.drawable.total));
                 imgbtn_imprimir.setImageResource(R.drawable.printbtn_pressed_total);
                 icon = getActivity().getDrawable(R.drawable.total);
+                FacturacionURL = "facturaciontotal.combuexpress.mx";
                 break;
         }
     }

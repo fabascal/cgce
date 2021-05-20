@@ -9,12 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
+            android:id="@+id/icon"
+            android:paddingLeft="5dp"
             android:src="@drawable/combuito"
-            android:layout_width="80dp"
-            android:layout_height="80dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
         <TextView
             style="@style/repsoldatacliente"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="10dp"
             android:text="@string/dialog_close"
             android:textSize="25sp"
             android:textAllCaps="true"
@@ -46,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="110dp"
             android:id="@+id/imageView_1"
-           style="@style/repsoldatacliente"/>
+            style="@style/repsoldatacliente"/>
 
     </LinearLayout>
     <View
@@ -57,14 +59,13 @@
         android:layout_marginTop="@dimen/padding_between"
         android:background="@color/RespsolAzul" />
     <LinearLayout
-        android:weightSum="2"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_weight="1"
             android:orientation="vertical"
             android:layout_width="150dp"
             android:layout_height="wrap_content">
@@ -73,8 +74,7 @@
                 android:id="@+id/btn_cancelar"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="0dp"
+                android:layout_marginLeft="40dp"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
                 android:src="@android:drawable/ic_menu_close_clear_cancel" />
@@ -90,7 +90,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="1"
             android:orientation="vertical"
             android:layout_width="150dp"
             android:layout_height="wrap_content">
@@ -98,8 +97,7 @@
                 android:id="@+id/btn_regresar"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="0dp"
+                android:layout_marginLeft="50dp"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
                 android:src="@drawable/back_menu_repsol" />

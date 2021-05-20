@@ -94,6 +94,8 @@ import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.close_credito;
 import cg.ce.app.chris.com.cgce.dialogos.fab_contado;
 
+import static android.view.View.GONE;
+
 public class Credito extends AppCompatActivity implements View.OnClickListener,
         com.epson.epos2.printer.ReceiveListener, GetPumpPositionListener, GetEstacionDataListener,
         GetImpresoListener, UpdateNrotrnListener, GetCustomerNipListener, GetCustomerNameListener,
@@ -153,6 +155,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     boolean writeMode;
     MacActivity mac = new MacActivity();
     JSONObject datos_domicilio = new JSONObject();
+    String FacturacionURL = null;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -172,6 +175,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         FillPosicion();
         sensores.bluetooth();
         sensores.wifi(this,true);
+        CardViewRFID = findViewById(R.id.CardViewRFID);
         if (!IsTablet){
             try {
                 onCreateNFC();
@@ -187,9 +191,12 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 e.printStackTrace();
             }
         }
+        else if(IsTablet) {
+            CardViewRFID.setVisibility(View.GONE);
+        }
         mContext = this;
         viewFlipper = findViewById(R.id.viewFlipper);
-        CardViewRFID = findViewById(R.id.CardViewRFID);
+
         CardViewNIP = findViewById(R.id.CardViewNIP);
         CardViewNOMBRE = findViewById(R.id.CardViewNOMBRE);
         tvvehiculo_cliente = findViewById(R.id.tvvehiculo_cliente);
@@ -416,21 +423,25 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 setTheme(R.style.AppThemeCredito);
                 setContentView(R.layout.activity_credito);
                 icon = getDrawable(R.drawable.combuito);
+                FacturacionURL = "facturacion.combuexpress.mx";
                 break;
             case "Repsol":
                 setTheme(R.style.AppThemeCreditoRepsol);
                 setContentView(R.layout.activity_credito_repsol);
                 icon = getDrawable(R.drawable.isologo_repsol);
+                FacturacionURL = "facturacionrepsol.combuexpress.mx";
                 break;
             case "Ener":
                 setTheme(R.style.AppThemeCreditoEner);
                 setContentView(R.layout.activity_credito_ener);
                 icon = getDrawable(R.drawable.logo_impresion_ener);
+                FacturacionURL = "facturacionener.combuexpress.mx";
                 break;
             case "Total":
                 setTheme(R.style.AppThemeCreditoTotal);
                 setContentView(R.layout.activity_credito_total);
                 icon = getDrawable(R.drawable.total);
+                FacturacionURL = "facturaciontotal.combuexpress.mx";
                 break;
         }
         if (tablet.esTablet(getApplicationContext())){
@@ -477,21 +488,21 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             if (ValidacionCarga()) {
                 btn_print.setVisibility(View.VISIBLE);
             }else {
-                btn_print.setVisibility(View.GONE);
+                btn_print.setVisibility(GONE);
             }
         }
         else if(hasMetodo && !hasCliente){
             switch (Validar.getJSONObject(spn_posicion.getSelectedItemPosition()).getString(variables.METODO)){
                 case "Rfid":
-                    btn_print.setVisibility(View.GONE);
+                    btn_print.setVisibility(GONE);
                     viewFlipper.setDisplayedChild(1);
                     break;
                 case "Nip":
-                    btn_print.setVisibility(View.GONE);
+                    btn_print.setVisibility(GONE);
                     viewFlipper.setDisplayedChild(2);
                     break;
                 case "Nombre":
-                    btn_print.setVisibility(View.GONE);
+                    btn_print.setVisibility(GONE);
                     if (Validar.getJSONObject(spn_posicion.getSelectedItemPosition()).has(variables.KEY_CLIENTE)){
                         if (!Validar.getJSONObject(spn_posicion.getSelectedItemPosition()).has(variables.KEY_CLIENTE_VEHICULO_TAR)) {
                             JSONObject jsonObject = new JSONObject();
@@ -507,7 +518,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     break;
             }
         }else if(!hasMetodo) {
-            btn_print.setVisibility(View.GONE);
+            btn_print.setVisibility(GONE);
             viewFlipper.setDisplayedChild(0);
         }
     }
@@ -1155,7 +1166,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
         textData.append("________________________________\n");
         textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-        textData.append("|      combuexpress.com.mx      |\n");
+        mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+        textData.append(FacturacionURL + "\n");
+        mPrinter.addTextAlign(Printer.ALIGN_LEFT);
         textData.append("________________________________\n");
         method = "addText";
         mPrinter.addText(textData.toString());
@@ -1286,7 +1299,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             textData.append("NOMBRE Y FIRMA CONDUCTOR\n");
             textData.append("________________________________\n");
             textData.append("|TRAMITE SU FACTURA POR INTERNET|\n");
-            textData.append("|      combuexpress.com.mx      |\n");
+            mPrinter.addTextAlign(Printer.ALIGN_CENTER);
+            textData.append(FacturacionURL + "\n");
+            mPrinter.addTextAlign(Printer.ALIGN_LEFT);
             textData.append("________________________________\n");
             method = "addText";
             mPrinter.addText(textData.toString());
@@ -1627,7 +1642,9 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void onPause(){
         super.onPause();
-        WriteModeOff();
+        if (!IsTablet) {
+            WriteModeOff();
+        }
     }
 
     @Override

@@ -110,7 +110,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/ic_gaspump"
         app:fabSize="normal"
-        android:backgroundTint="@color/RepsolNaranja"
+
         app:backgroundTint="@color/RepsolNaranjaDark"
         android:tint="@color/Blanco"
         app:borderWidth="2dp"
