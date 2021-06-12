@@ -40,6 +40,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -112,7 +113,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     final static String MESSAGE_CLEAN_DATA = "Si continuas con esta accion eliminaras los datos " +
             "almacenados para esta posicion.";
     final static String MESSAGE_METODO_NFC = "Primero selecciona un metodo para la posicion deseada.";
-    CardView CardViewRFID, CardViewNIP, CardViewNOMBRE;
+    CardView CardViewRFID, CardViewNIP, CardViewNOMBRE, CardViewVALE;
     Boolean hasMetodo = false, hasCliente = false, state_btn, flag_TicketImpreso = false;
     ViewFlipper viewFlipper;
     final static int MIN_SEARCH=3;
@@ -156,6 +157,16 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     MacActivity mac = new MacActivity();
     JSONObject datos_domicilio = new JSONObject();
     String FacturacionURL = null;
+    /*Elementos para vales*/
+    Button ws_vale;
+    /*
+    la variable flag_vale no indica el estatus del proceso para la posicion,
+    con esta podemos modificar o bloquar los botones
+    0 - inicio (boton de escanear libre y boton de consumir libre)
+    1 - se consumieron los vales (boton de escanear bloqueado y cambiamos el boton de consumir por imprimir ticket)
+    2 - se termina el proceso
+    */
+    int flag_vale=0;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -198,6 +209,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         viewFlipper = findViewById(R.id.viewFlipper);
 
         CardViewNIP = findViewById(R.id.CardViewNIP);
+        CardViewVALE = findViewById(R.id.CardViewVALE);
         CardViewNOMBRE = findViewById(R.id.CardViewNOMBRE);
         tvvehiculo_cliente = findViewById(R.id.tvvehiculo_cliente);
         tvvehiculo_rfc = findViewById(R.id.tvvehiculo_rfc);
@@ -216,6 +228,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         CardViewRFID.setOnClickListener((View.OnClickListener) this);
         CardViewNIP.setOnClickListener((View.OnClickListener) this);
         CardViewNOMBRE.setOnClickListener((View.OnClickListener) this);
+        CardViewVALE.setOnClickListener((View.OnClickListener)this);
         etSearchCustomer = findViewById(R.id.etSearchCustomer);
         btn_print = findViewById(R.id.btncredito);
         fab = findViewById(R.id.fab);
@@ -475,7 +488,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         * 3.- Metodo para seleccionar NOMBRE
         * 4.- Mostrar vehiculos del metodo nombre
         * 5.- Metodo final, ya con todos los parametros y en espera de impresion
-        * 6.-
+        * 6.- Metodo vales
         * */
         Log.w(variables.POSICIONES,String.valueOf(Posiciones));
         et_clientecg.setText("");
@@ -515,6 +528,10 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     }else {
                         viewFlipper.setDisplayedChild(3);
                     }
+                    break;
+                case "Vale":
+                    btn_print.setVisibility(GONE);
+                    viewFlipper.setDisplayedChild(6);
                     break;
             }
         }else if(!hasMetodo) {
@@ -564,6 +581,22 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     PutData(variables.METODO, variables.KEY_NOMBRE);
                     CoreScreen();
                 } catch (JSONException | ClassNotFoundException | SQLException |
+                        InstantiationException | IllegalAccessException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.CardViewVALE:
+                try {
+                    PutData(variables.METODO,variables.KEY_VALE);
+                    CoreScreen();
+                }catch (JSONException | ClassNotFoundException | SQLException |
                         InstantiationException | IllegalAccessException e) {
                     StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
                     logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +

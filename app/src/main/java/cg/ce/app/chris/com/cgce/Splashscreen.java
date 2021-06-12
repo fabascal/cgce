@@ -343,6 +343,8 @@ public class Splashscreen extends Activity {
         SetCurrentProces("Validando el dispositivo ...");
         GetDevicePermissions getDevicePermissions  = new GetDevicePermissions(this);
         try {
+            Log.w("MAC",mac_add.getMacAddress());
+            Log.w("MAC", String.valueOf(mac_add.getMacAddress().length()));
             JSONObject js = getDevicePermissions.execute(mac_add.getMacAddress()).get();
             if (js.has(Variables.CODE_ERROR)){
                 Log.w(Variables.CODE_ERROR, String.valueOf(js.getInt(Variables.CODE_ERROR)));

@@ -54,9 +54,10 @@
         android:icon="@drawable/inicio"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".Credito"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Credito"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
@@ -213,14 +214,18 @@
             android:name=".MarcaActivity"
             android:theme="@style/ContentMain" />
         <activity
+            android:name=".ConfiguracionValeActivity"
+            android:theme="@style/ContentMain" />
+        <activity
             android:name=".MarcaUpdateActivity"
             android:theme="@style/ContentMain" />
         <activity android:name=".ServiciosActivity" />
-        <activity android:name=".ScanActivityPortrait"
+        <activity
+            android:name=".ScanActivityPortrait"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>

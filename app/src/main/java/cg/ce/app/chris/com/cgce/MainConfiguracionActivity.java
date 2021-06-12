@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainConfiguracionActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btn_odbc, btn_mac, btn_razonsocial,btn_marca;
+    Button btn_odbc, btn_mac, btn_razonsocial,btn_marca, btn_vale;
     ValidateTablet tablet = new ValidateTablet();
 
     @Override
@@ -24,10 +24,12 @@ public class MainConfiguracionActivity extends AppCompatActivity implements View
         btn_mac = (Button) findViewById(R.id.btn_mac);
         btn_razonsocial = (Button) findViewById(R.id.btn_razonsocial);
         btn_marca = (Button) findViewById(R.id.btn_marca);
+        btn_vale = (Button) findViewById(R.id.btn_vale);
         btn_odbc.setOnClickListener(this);
         btn_mac.setOnClickListener(this);
         btn_razonsocial.setOnClickListener(this);
         btn_marca.setOnClickListener(this);
+        btn_vale.setOnClickListener(this);
     }
 
     @Override
@@ -45,6 +47,9 @@ public class MainConfiguracionActivity extends AppCompatActivity implements View
                 break;
             case R.id.btn_marca:
                 intent = new Intent(MainConfiguracionActivity.this, MarcaActivity.class);
+                break;
+            case R.id.btn_vale:
+                intent = new Intent(MainConfiguracionActivity.this, ConfiguracionValeActivity.class);
                 break;
         }
         if (intent!=null){

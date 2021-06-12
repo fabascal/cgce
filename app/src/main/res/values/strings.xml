@@ -102,7 +102,7 @@
     <string name="prepago">PRE-PAGOS</string>
     <string name="contado">CONTADO</string>
     <string name="bomba">Bomba:</string>
-    <string name="vale">Combu-Vale</string>
+    <string name="vale">Vale</string>
     <string name="anticipo">Anticipos</string>
     <string name="label_rfc">RFC : </string>
     <string name="label_denominacion">Denominación : </string>
@@ -174,4 +174,11 @@
     <string name="HoraCero">00:00-00:00</string>
     <string name="Producto">Producto</string>
     <string name="et_ip_integra">IP Integra</string>
+    <string name="scan">Escanear</string>
+    <string name="save">Guardar</string>
+    <string name="ValeFileID">ValeFileID</string>
+    <string name="ValeFile">ValeFile</string>
+    <string name="cliente_debito">Clientes debito</string>
+    <string name="ValeCodcli">ValeCodcli</string>
+    <string name="ValeDencli">ValeDencli</string>
 </resources>

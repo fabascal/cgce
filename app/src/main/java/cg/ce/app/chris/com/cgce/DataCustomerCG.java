@@ -17,5 +17,5 @@ public class DataCustomerCG implements Serializable {
     public String tipval;
     public String codtip;
 
-public String getPlc(){return plc.toLowerCase(); }
+    public String getPlc(){return plc.toLowerCase(); }
 }

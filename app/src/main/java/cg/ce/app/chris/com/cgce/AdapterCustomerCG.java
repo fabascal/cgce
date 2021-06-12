@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ public class AdapterCustomerCG extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context context;
     private LayoutInflater inflater;
-    List<DataCustomerCG> data= Collections.emptyList();
+    List<DataCustomerCG> data;
     final String MSG_CLIENTE_NAME = "El cliente no acepta este medio de identificacion actualmente, " +
             "favor de realizar la identificacion con algun otro medio.";
 

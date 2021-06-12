@@ -111,7 +111,6 @@ public class fab_contado extends DialogFragment implements View.OnClickListener,
         args.putString("title", title);
         fragment.setArguments(args);
         bombas=data;
-
         return fragment;
     }
 
