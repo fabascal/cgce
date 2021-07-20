@@ -1,4 +1,4 @@
-package cg.ce.app.chris.com.cgce;
+ package cg.ce.app.chris.com.cgce;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,9 +22,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -43,6 +45,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +56,8 @@ import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +71,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -73,7 +79,9 @@ import java.util.Objects;
 import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerName;
 import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerNip;
 import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerTag;
+import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerVale;
 import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerVehicle;
+import cg.ce.app.chris.com.cgce.ControlGas.GetDespachador;
 import cg.ce.app.chris.com.cgce.ControlGas.GetEstacionData;
 import cg.ce.app.chris.com.cgce.ControlGas.GetImpreso;
 import cg.ce.app.chris.com.cgce.ControlGas.GetLastNROTRN;
@@ -84,6 +92,7 @@ import cg.ce.app.chris.com.cgce.ControlGas.Listeners.ControlGasListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNameListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerNipListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerVehicleListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetDespachadorListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetEstacionDataListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetImpresoListener;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetPumpPositionListener;
@@ -91,6 +100,14 @@ import cg.ce.app.chris.com.cgce.ControlGas.Listeners.UpdateNrotrnListener;
 import cg.ce.app.chris.com.cgce.ControlGas.PutImpreso;
 import cg.ce.app.chris.com.cgce.ControlGas.UpdateCodcli;
 import cg.ce.app.chris.com.cgce.ControlGas.UpdateNrotrn;
+import cg.ce.app.chris.com.cgce.ValesWS.Listeners.NominativaListener;
+import cg.ce.app.chris.com.cgce.ValesWS.Listeners.NotaCreditoListener;
+import cg.ce.app.chris.com.cgce.ValesWS.Listeners.ValesWSListeners;
+import cg.ce.app.chris.com.cgce.ValesWS.Nominativa;
+import cg.ce.app.chris.com.cgce.ValesWS.NotaCredito;
+import cg.ce.app.chris.com.cgce.ValesWS.ValeAdapterRV;
+import cg.ce.app.chris.com.cgce.ValesWS.ValesList;
+import cg.ce.app.chris.com.cgce.ValesWS.ValesWS;
 import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.close_credito;
 import cg.ce.app.chris.com.cgce.dialogos.fab_contado;
@@ -100,7 +117,7 @@ import static android.view.View.GONE;
 public class Credito extends AppCompatActivity implements View.OnClickListener,
         com.epson.epos2.printer.ReceiveListener, GetPumpPositionListener, GetEstacionDataListener,
         GetImpresoListener, UpdateNrotrnListener, GetCustomerNipListener, GetCustomerNameListener,
-        GetCustomerVehicleListener {
+        GetCustomerVehicleListener, GetDespachadorListener, ValesWSListeners, NominativaListener {
     ValidateTablet tablet = new ValidateTablet();
     Spinner spn_posicion;
     Drawable icon;
@@ -116,13 +133,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     CardView CardViewRFID, CardViewNIP, CardViewNOMBRE, CardViewVALE;
     Boolean hasMetodo = false, hasCliente = false, state_btn, flag_TicketImpreso = false;
     ViewFlipper viewFlipper;
-    final static int MIN_SEARCH=3;
+    final static int MIN_SEARCH = 3;
     EditText etSearchCustomer, et_clientecg;
-    TextView tvvehiculo_cliente, tvvehiculo_rfc, tvvehiculo_codcli,lunes,martes,miercoles,jueves,viernes,sabado,domingo;
+    TextView tvvehiculo_cliente, tvvehiculo_rfc, tvvehiculo_codcli, lunes, martes, miercoles, jueves, viernes, sabado, domingo;
     /*elementos de activity_credito_impresion*/
-    TextView tv_cliente,tv_rfc,tv_codcli,tv_placa,tv_vehiculo,tv_chofer,semana,tvhora,tvhora1,tvhora2,tvhora3;
+    TextView tv_cliente, tv_rfc, tv_codcli, tv_placa, tv_vehiculo, tv_chofer, semana, tvhora, tvhora1, tvhora2, tvhora3;
     TextView tvestado1, tvestado2, tvproducto1, tvproducto2;
-    EditText et_odm,filterPLC;
+    EditText et_odm, filterPLC;
     cgticket cgticket_obj = new cgticket();
     ValidacionFlotillero validacionFlotillero = new ValidacionFlotillero();
     private RecyclerView mRVCustomerCG, mRVCustomerVehicleCG;
@@ -157,16 +174,21 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
     MacActivity mac = new MacActivity();
     JSONObject datos_domicilio = new JSONObject();
     String FacturacionURL = null;
+
     /*Elementos para vales*/
-    Button ws_vale;
-    /*
-    la variable flag_vale no indica el estatus del proceso para la posicion,
-    con esta podemos modificar o bloquar los botones
-    0 - inicio (boton de escanear libre y boton de consumir libre)
-    1 - se consumieron los vales (boton de escanear bloqueado y cambiamos el boton de consumir por imprimir ticket)
-    2 - se termina el proceso
-    */
-    int flag_vale=0;
+    Button ws_vale, scan;
+    final static String SCAN_PROMPT = "Escanear vales.";
+    final static String ERROR_NO_VALE = "Sin vales para procesar.";
+    final static String ERROR_NO_WSVALE = "Primero se requiere consumir los vales";
+    final static String ERROR_VALE_CONSUMIDO = "No se debe escanear un vale posterior a realizar el consumo de los mismos.";
+    final static String ERROR_VALE_NOMINATIVA = "No se puede continuar con el proceso, no existe vale consumido.";
+    JSONObject jsVales = new JSONObject();
+    final static String VALE_MSJ_VALIDATE = "En espera de validacion";
+    ValeAdapterRV valeAdapterRV;
+    RecyclerView rv_vales;
+    ImageView vale_image;
+    toJson json = new toJson();
+    TextView cliente_vale, total_vale;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -207,7 +229,12 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
         mContext = this;
         viewFlipper = findViewById(R.id.viewFlipper);
-
+        rv_vales = findViewById(R.id.rv_vales);
+        rv_vales.setHasFixedSize(true);
+        rv_vales.setLayoutManager(new LinearLayoutManager(this));
+        vale_image = (ImageView) findViewById(R.id.vale_image);
+        cliente_vale = (TextView) findViewById(R.id.cliente_vale);
+        total_vale = (TextView) findViewById(R.id.total_vale);
         CardViewNIP = findViewById(R.id.CardViewNIP);
         CardViewVALE = findViewById(R.id.CardViewVALE);
         CardViewNOMBRE = findViewById(R.id.CardViewNOMBRE);
@@ -252,6 +279,10 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         tvproducto1 = (TextView) findViewById(R.id.tvproducto1);
         tvproducto2 = (TextView) findViewById(R.id.tvproducto2);
         filterPLC = (EditText) findViewById(R.id.filterPLC);
+        scan = (Button) findViewById(R.id.scan);
+        scan.setOnClickListener(this);
+        ws_vale = (Button) findViewById(R.id.ws_vale);
+        ws_vale.setOnClickListener(this);
         spn_posicion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -491,6 +522,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         * 6.- Metodo vales
         * */
         Log.w(variables.POSICIONES,String.valueOf(Posiciones));
+
         et_clientecg.setText("");
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         hasMetodo = Validar.getJSONObject(spn_posicion.getSelectedItemPosition()).has(variables.METODO);
@@ -530,6 +562,32 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     }
                     break;
                 case "Vale":
+                    if ( HasData(variables.VALESLISTS)){
+                        List<ValesList> ValesLists = (List<ValesList>) Validar.getJSONObject(
+                                spn_posicion.getSelectedItemPosition()).get(variables.VALESLISTS);
+                        Log.w("data",ValesLists.get(0).getFolio());
+                        valeAdapterRV = new ValeAdapterRV(ValesLists, getApplicationContext(), Credito.this);
+                        rv_vales.setAdapter(valeAdapterRV);
+                        valeAdapterRV.notifyDataSetChanged();
+                        if (!HasData(variables.VALE_WS_CONSUMO)) {
+                            total_vale.setText("0.0");
+                            cliente_vale.setText(getResources().getString(R.string.label_cliente));
+                        }
+                        if (HasData(variables.VALE_NOMINATIVA)){
+                            if (GetData(variables.VALE_NOMINATIVA).equals("1")){
+                                ws_vale.setText(getResources().getString(R.string.title_ticket));
+                            }else{
+                                ws_vale.setText(getResources().getString(R.string.ws_vale));
+                            }
+                        }else{
+                            ws_vale.setText(getResources().getString(R.string.ws_vale));
+                        }
+                    }else{
+                        total_vale.setText("0.0");
+                        cliente_vale.setText(getResources().getString(R.string.label_cliente));
+                        rv_vales.removeAllViewsInLayout();
+                        ws_vale.setText(getResources().getString(R.string.ws_vale));
+                    }
                     btn_print.setVisibility(GONE);
                     viewFlipper.setDisplayedChild(6);
                     break;
@@ -591,6 +649,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                             .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
+                Toast.makeText(this,"NOMBRE",Toast.LENGTH_LONG).show();
                 break;
             case R.id.CardViewVALE:
                 try {
@@ -607,9 +666,507 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                             .setPositiveButton(R.string.btn_ok, null).show();
                     e.printStackTrace();
                 }
+                Toast.makeText(this,"VALE",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.scan:
+                try {
+                    if (!HasData(variables.KEY_ULT_NROTRN) ){
+                        PutLastNROTRN();
+                    }
+                    if (HasData(variables.VALE_WS_CONSUMO)) {
+                        if (GetData(variables.VALE_WS_CONSUMO).equals("0") ) {
+                            scan_vale();
+                        }else{
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(ERROR_VALE_CONSUMIDO)
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                        }
+                    }else{
+                        scan_vale();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.ws_vale:
+                try {
+                    if (!HasData(variables.VALE_WS_CONSUMO)){
+                        /*no se ha escaneado ningun vale, mostrar error para esto*/
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setMessage(ERROR_NO_VALE)
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                    }else{
+                         /*flag_vale si tiene valor 0 indica que aun no se consumen los vales
+                        si el valor es 1 tenemos que validar que el servicio haya terminado para poder
+                        marcar el servicio con el codcli default de vales, ejecutar el cfdi nominativo,
+                        llamar el cfdi credito y ejecutar la impresion.*/
+                        if (GetData(variables.VALE_WS_CONSUMO).equals("0")) {
+                            WsVale();
+                        }else if(GetData(variables.VALE_NOMINATIVA).equals("1")){
+                            PutTicketDataVale();
+                            /*if (Integer.valueOf(GetData(variables.KEY_ULT_NROTRN)) < Integer.valueOf(GetTicketData(variables.KEY_TICKET_NROTRN))) {
+                                WsValeNominativa();
+                            }else{
+                                new AlertDialog.Builder(Credito.this)
+                                        .setTitle(R.string.error)
+                                        .setIcon(icon)
+                                        .setMessage(R.string.EsperaServicio)
+                                        .setPositiveButton(R.string.btn_ok,null).show();
+                            }*/
+                        }else{
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setMessage(ERROR_VALE_NOMINATIVA)
+                                    .setPositiveButton(R.string.btn_ok, null).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
                 break;
         }
     }
+    public void PutLastNROTRN(){
+        new GetLastNROTRN(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if (output.getInt(variables.CODE_ERROR) == 0) {
+                        PutData(variables.KEY_ULT_NROTRN, output.getString(variables.KEY_ULT_NROTRN));
+                    } else {
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(), getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                    }
+                } catch (JSONException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(), getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
+
+            }
+        }).execute(spn_posicion.getSelectedItem().toString());
+    }
+    public void WsValeNominativa(){
+        try {
+            JSONObject WsData = new JSONObject(GetData(variables.VALE_WS_RESPONSE));
+            WsData.put("despachador",GetData("despachador"));
+            WsData.put("nip_despachador",GetData("nip_despachador"));
+            //PutTicketDataVale(WsData);
+            PutTicketDataValeFinish(WsData);
+
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok, null).show();
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void NominativaFinish(JSONObject jsonObject) {
+
+        Log.w("NominativaFinish", String.valueOf(jsonObject));
+        try {
+            if(jsonObject.getInt(variables.CODE_ERROR)==0){
+                final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+                int index = spn_posicion.getSelectedItemPosition();
+                JSONObject dato_cliente = new JSONObject((String) Validar.getJSONObject(index).get("ValeWSResponse"));
+                JSONObject js = new JSONObject((String) jsonObject.get("Result"));
+                Log.w("NominativaFinish2", String.valueOf(dato_cliente.get("cliente")));
+                new NotaCredito(this, getApplicationContext(),new NotaCreditoListener(){
+                    @Override
+                    public void NotaCreditoFinish(JSONObject jsonObject) {
+                        Log.w("NotaCredito", String.valueOf(jsonObject));
+                    }
+                }).execute(js.getString("id_cliente"),js.getString("id_estacion"),
+                        js.getString("satuid"), js.getString("satrfc"),
+                        String.valueOf(dato_cliente.get("cliente")),GetTicketData(Variables.KEY_TICKET_TOTAL));
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + jsonObject.getString(variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setIcon(icon)
+                        .setMessage(jsonObject.getString(variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+       /* try {
+            JSONObject js = new JSONObject(String.valueOf(js1));
+            Log.w("Json_valida_cfdi" , String.valueOf(js.get("id_estacion")));
+            new NotaCredito(this, getApplicationContext(),new NotaCreditoListener(){
+                @Override
+                public void NotaCreditoFinish(JSONObject jsonObject) {
+                    Log.w("NotaCredito", String.valueOf(jsonObject));
+                }
+            }).execute(js.getString("id_cliente"),js.getString("id_estacion"),
+                    js.getString("uuid_origen"), js.getString("satrfc"),
+                    js.getString("cliente"),js.getString("importe"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
+       //impresion
+    }
+    private void PutTicketDataValeFinish(JSONObject WsData){
+        try {
+            WsData.put("nrotrn", GetTicketData(variables.KEY_TICKET_NROTRN));
+            WsData.put("id_producto",GetTicketData(variables.KEY_TICKET_ID_PRODUCTO));
+            WsData.put("nrocte",GetTicketData(variables.KEY_TICKET_NROCTE));
+            GetCustomerDataVale(WsData);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void GetCustomerDataVale(JSONObject WsData1){
+        final JSONObject WsData = WsData1;
+        SharedPreferences sharedPreferences = getSharedPreferences("Vale", Context.MODE_PRIVATE);
+        new GetCustomerVale(this, getApplicationContext(), new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output) {
+                try {
+                    if(output.getInt(variables.CODE_ERROR)==0){
+                        JSONObject jsonObject= new JSONObject();
+                        dataCustomerCG = (List<DataCustomerCG>) output.get(variables.GET_CUSTOMER_RESULT);
+                        if ( dataCustomerCG.size()>0) {
+                            try {
+                                jsonObject.put("codcli", dataCustomerCG.get(0).codcli);
+                                jsonObject.put("chofer", dataCustomerCG.get(0).rsp);
+                                jsonObject.put("placa", dataCustomerCG.get(0).plc);
+                                jsonObject.put("vehiculo", dataCustomerCG.get(0).den_vehicle);
+                                jsonObject.put("tar", dataCustomerCG.get(0).tar);
+                                jsonObject.put("nroveh", dataCustomerCG.get(0).nroveh);
+                                jsonObject.put("cliente", dataCustomerCG.get(0).den);
+                                jsonObject.put("rfc", dataCustomerCG.get(0).rfc);
+                                jsonObject.put("nroeco", dataCustomerCG.get(0).nroeco);
+                                jsonObject.put("tagadi", "");
+                                jsonObject.put("tipval",dataCustomerCG.get(0).tipval);
+                                FillCustomerData(jsonObject);
+                                FillCustomerVehicleData(jsonObject);
+                                CoreScreen();
+                                CloseKeyboard();
+                            } catch (JSONException | ClassNotFoundException | SQLException |
+                                    InstantiationException | IllegalAccessException e) {
+                                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                        stacktraceObj[2].getMethodName() + "|" + e);
+                                new AlertDialog.Builder(Credito.this)
+                                        .setTitle(R.string.error)
+                                        .setIcon(icon)
+                                        .setMessage(String.valueOf(e))
+                                        .setPositiveButton(R.string.btn_ok, null).show();
+                                e.printStackTrace();
+                            }
+                            JSONArray array = new JSONArray();
+                            array.put(WsData.toString());
+                            new UpdateCodcli(Credito.this, getApplicationContext(), new ControlGasListener() {
+                                @Override
+                                public void processFinish(JSONObject output){
+                                    try {
+                                        if (output.getInt(Variables.CODE_ERROR)==1){
+                                            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                                    stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
+                                            new AlertDialog.Builder(Credito.this)
+                                                    .setTitle(R.string.error)
+                                                    .setIcon(icon)
+                                                    .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                                    .setPositiveButton(R.string.btn_ok, null).show();
+                                        }
+                                    } catch (JSONException e) {
+                                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                                stacktraceObj[2].getMethodName() + "|" + e);
+                                        new AlertDialog.Builder(Credito.this)
+                                                .setTitle(R.string.error)
+                                                .setIcon(icon)
+                                                .setMessage(String.valueOf(e))
+                                                .setPositiveButton(R.string.btn_ok, null).show();
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).execute(
+                                    GetData(variables.KEY_CODCLI),
+                                    GetData(variables.KEY_CLIENTE_VEHICULO_NROVEH),
+                                    GetDataODM(),
+                                    GetData(variables.KEY_CLIENTE_VEHICULO_TAR),
+                                    GetTicketData(variables.KEY_TICKET_NROTRN));
+                            Nominativa nominativa = new Nominativa(Credito.this, getApplicationContext(), WsData);
+                            nominativa.delegate=Credito.this;
+                            nominativa.execute();
+                        }
+                    }else{
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage(output.getString(variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                    }
+                } catch (JSONException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setIcon(icon)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
+            }}).execute(sharedPreferences.getString(getResources().getString(R.string.ValeCodcli),""));
+    }
+    private void PutTicketDataVale(){
+        new GetTicket(this, new ControlGasListener() {
+            @Override
+            public void processFinish(JSONObject output)  {
+                try {
+                    if (output.getInt(Variables.CODE_ERROR)==0){
+                        final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+                        int index = spn_posicion.getSelectedItemPosition();
+                        Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
+                        // mover PutTicketDataValeFinish(WsData);
+                        WsValeNominativa();
+                        /*if (Integer.valueOf(GetData(variables.KEY_ULT_NROTRN)) < Integer.valueOf(GetTicketData(variables.KEY_TICKET_NROTRN))) {
+                            WsValeNominativa();
+                        }else{
+                            new AlertDialog.Builder(Credito.this)
+                                    .setTitle(R.string.error)
+                                    .setIcon(icon)
+                                    .setMessage(R.string.EsperaServicio)
+                                    .setPositiveButton(R.string.btn_ok,null).show();
+                        }*/
+                    }else{
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" + output.getString(Variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                    }
+                } catch (JSONException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" + e);
+                    new AlertDialog.Builder(Credito.this)
+                            .setTitle(R.string.error)
+                            .setMessage(String.valueOf(e))
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
+            }
+        }).execute(spn_posicion.getSelectedItem().toString(),mac.getMacAddress(),"1");
+    }
+    public void WsVale(){
+        GetDespachador getDespachador = new GetDespachador(this, getApplicationContext());
+        getDespachador.delegate=this;
+        getDespachador.execute();
+    }
+    @Override
+    public void processFinish(JSONObject output) {
+        final JSONObject JsVales = new JSONObject();
+        ArrayList<String> cadena_vales = new ArrayList<String>();
+        JSONArray array_vales = new JSONArray();
+        try {
+            JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+            for (ValesList vale : (List<ValesList>) Validar.getJSONObject(
+                    spn_posicion.getSelectedItemPosition()).get(variables.VALESLISTS)){
+                cadena_vales.add(String.valueOf(vale.getFolio()));
+                array_vales.put(vale.getFolio());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            JsVales.put("cveest",datos_domicilio.getString("cveest"));
+            JsVales.put("id_despachador", output.getString(variables.NIP_DESPACHADOR));
+            JsVales.put("despachador", output.getString(variables.KEY_TICKET_DESPACHADOR));
+            JsVales.put("codvales", array_vales);
+            PutData("despachador",output.getString(variables.KEY_TICKET_DESPACHADOR));
+            PutData("nip_despachador",output.getString(variables.NIP_DESPACHADOR));
+        } catch (JSONException e) {
+            StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+            logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                    stacktraceObj[2].getMethodName() + "|" + e);
+            new AlertDialog.Builder(Credito.this)
+                    .setTitle(R.string.error)
+                    .setIcon(icon)
+                    .setMessage(String.valueOf(e))
+                    .setPositiveButton(R.string.btn_ok,null).show();
+            e.printStackTrace();
+        }
+        ValesWS valesWS = new ValesWS(this, getApplicationContext(),JsVales);
+        valesWS.delegate=this;
+        valesWS.execute();
+
+    }
+    @Override
+    public void ValesWSFinish(JSONObject result) {
+        try {
+            if ( result.getInt(variables.CODE_ERROR) == 0){
+                List<ValesList> ValesLists = new ArrayList<ValesList>();
+                JSONObject jsonObject = new JSONObject(String.valueOf(result.get(variables.RESULT)));
+                JSONArray array_vales = new JSONArray();
+                String[] res_vales = new ArrayList<String>().toArray(new String[0]);
+                Log.w("res", String.valueOf(jsonObject));
+                Log.w("vales" , String.valueOf(jsonObject.get("cveest")));
+                res_vales=jsonObject.get("vales").toString().split(",");
+                for (String res_vale : res_vales){
+                    array_vales.put( json.strtojson(res_vale,"|"));
+                }
+                jsonObject.put("vales",array_vales);
+                ValesList valesList = null;
+
+                Double total_vale_data=0.0;
+                for ( int i = 0; i < jsonObject.getJSONArray("vales").length(); i++){
+                    JSONObject valetemp  = (JSONObject) jsonObject.getJSONArray("vales").get(i);
+                    if (valetemp.getString("0").equals("1") && valetemp.getString("6").equals("0")){
+                        total_vale_data += Double.parseDouble(valetemp.getString("3"));
+                        PutData(variables.VALE_NOMINATIVA,"1");
+                        valesList = new ValesList(
+                                R.drawable.ic_update_content,
+                                R.drawable.donevector,
+                                valetemp.getString("2"),
+                                valetemp.getString("7"),
+                                Double.parseDouble(valetemp.getString("3")),
+                                Integer.parseInt(valetemp.getString("0")),
+                                Integer.parseInt(valetemp.getString("6"))
+                        );
+                    }else{
+                        valesList = new ValesList(
+                                R.drawable.ic_update_content,
+                                android.R.drawable.ic_menu_close_clear_cancel,
+                                valetemp.getString("2"),
+                                valetemp.getString("7"),
+                                0.00,
+                                0,1
+                        );
+                    }
+
+                    ValesLists.add(valesList);
+                }
+                //DATO A BORRAR, SOLO PARA CONTINUAR FLUJO
+                //PutData(variables.FLAG_VALE,"1");
+                PutData(variables.VALE_WS_CONSUMO,"1");
+                total_vale.setText(String.valueOf(total_vale_data));
+                cliente_vale.setText(jsonObject.getString("cliente"));
+                valeAdapterRV = new ValeAdapterRV(ValesLists, getApplicationContext(), Credito.this);
+                rv_vales.setAdapter(valeAdapterRV);
+                valeAdapterRV.notifyDataSetChanged();
+                PutList(variables.VALESLISTS, ValesLists);
+                PutData(variables.VALE_WS_RESPONSE, String.valueOf(jsonObject));
+            }else{
+                StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                logCE.EscirbirLog2(getApplicationContext(), getLocalClassName() + "|" +
+                        stacktraceObj[2].getMethodName() + "|" + result.getString(variables.MESSAGE_ERROR));
+                new AlertDialog.Builder(Credito.this)
+                        .setTitle(R.string.error)
+                        .setMessage(result.getString(variables.MESSAGE_ERROR))
+                        .setPositiveButton(R.string.btn_ok, null).show();
+            }
+            CoreScreen();
+        } catch (JSONException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void scan_vale(){
+        IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+        scanIntegrator.setPrompt(SCAN_PROMPT);
+        if (IsTablet) {
+            scanIntegrator.addExtra("SCAN_CAMERA_ID", 1);
+            scanIntegrator.setOrientationLocked(true);
+        }else{
+            scanIntegrator.addExtra("SCAN_CAMERA_ID", 0);
+            scanIntegrator.setCaptureActivity(ScanActivityPortrait.class);
+            scanIntegrator.setOrientationLocked(false);
+        }
+        scanIntegrator.setBeepEnabled(true);
+        scanIntegrator.initiateScan();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null && resultCode==RESULT_OK) {
+
+            String scanContent = scanningResult.getContents();
+            //add data to reciclerview
+            boolean flag_add_vale = true;
+            JSONArray Validar = null;
+            List<ValesList> ValesLists =new ArrayList<ValesList>();
+            try {
+                Validar = Posiciones.getJSONArray(variables.POSICIONES);
+                if (HasData(variables.VALESLISTS)) {
+                    ValesLists = (List<ValesList>) Validar.getJSONObject(
+                            spn_posicion.getSelectedItemPosition()).get(variables.VALESLISTS);
+                }
+                for (ValesList vale : ValesLists){
+                    if (vale.getFolio().equals(scanContent)){
+                        flag_add_vale = false;
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setIcon(icon)
+                                .setMessage("Vale duplicado.")
+                                .setPositiveButton(R.string.btn_ok,null).show();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (flag_add_vale) {
+                ValesList valesList = new ValesList(
+                        R.drawable.ic_update_content,
+                        android.R.drawable.ic_menu_close_clear_cancel,
+                        scanContent,
+                        VALE_MSJ_VALIDATE,
+                        0.00,
+                        0,1
+                );
+
+                ValesLists.add(valesList);
+                try {
+                    PutList(variables.VALESLISTS, ValesLists);
+                    PutData(variables.VALE_WS_CONSUMO, String.valueOf(0));
+                    PutData(variables.VALE_NOMINATIVA, String.valueOf(0));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                valeAdapterRV = new ValeAdapterRV(ValesLists, getApplicationContext(), Credito.this);
+                rv_vales.setAdapter(valeAdapterRV);
+                valeAdapterRV.notifyDataSetChanged();
+            }
+        }
+    }
+
     public void SearchCustomerNip(final View v){
         if (et_clientecg.getText().length() == 0){
             new AlertDialog.Builder(Credito.this)
@@ -844,6 +1401,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             return res;
         }
     }
+
     private void PutTicketData(){
         new GetTicket(this, new ControlGasListener() {
             @Override
@@ -934,6 +1492,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                                     flag_clean_data=false;
                                     CloseKeyboard();
                                     CleanData();
+
                                     flag_clean_data=true;
                                 } catch (JSONException | ClassNotFoundException | SQLException |
                                         InstantiationException | IllegalAccessException e) {
@@ -994,6 +1553,10 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         Elementos.add(variables.KEY_TICKET_IEPS);
         Elementos.add(variables.KEY_TICKET_CLIENTE_TIPVAL);
         Elementos.add(variables.KEY_IMPRESO);
+        Elementos.add(variables.VALESLISTS);
+        Elementos.add(variables.VALE_WS_CONSUMO);
+        Elementos.add(variables.VALE_NOMINATIVA);
+        Elementos.add(variables.VALE_WS_RESPONSE);
         Log.w(variables.POSICIONES, String.valueOf(Posiciones.getJSONArray(variables.POSICIONES)));
         for (int i = 0; i<Elementos.size() ; i++){
             if (HasData(Elementos.get(i))) {
@@ -1011,6 +1574,14 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
         Validar.getJSONObject(index).put(key,data);
+    }
+    private void PutList(String key, List<ValesList> data) throws JSONException {
+        JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
+        int index = spn_posicion.getSelectedItemPosition();
+        Validar.getJSONObject(index).put(key,data);
+        Log.w("putlist", String.valueOf(index));
+        Log.w("putlist", String.valueOf(data));
+        Log.w("putlist", String.valueOf(Validar));
     }
     private String GetData(String key) throws JSONException {
         JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
@@ -1266,9 +1837,13 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
             textData.delete(0, textData.length());
             mPrinter.addTextStyle(mPrinter.PARAM_DEFAULT, mPrinter.PARAM_DEFAULT, mPrinter.FALSE, mPrinter.PARAM_DEFAULT);
             textData.append(datos_domicilio.getString("estacion") + "\n");
-            textData.append(datos_domicilio.getString("calle") + " " + datos_domicilio.getString("exterior") + " " + datos_domicilio.getString("interior") + "\n");
-            textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " + datos_domicilio.getString("cp") + "\n");
-            textData.append(datos_domicilio.getString("localidad") + ", " + datos_domicilio.getString("municipio") + "\n");
+            textData.append(datos_domicilio.getString("calle") + " " +
+                    datos_domicilio.getString("exterior") + " " +
+                    datos_domicilio.getString("interior") + "\n");
+            textData.append("COL." + datos_domicilio.getString("colonia") + " C.P. " +
+                    datos_domicilio.getString("cp") + "\n");
+            textData.append(datos_domicilio.getString("localidad") + ", " +
+                    datos_domicilio.getString("municipio") + "\n");
             textData.append("TEL. "+datos_domicilio.getString("telefono") + "\n");
             textData.append(datos_domicilio.getString("rfc") + "\n");
             //textData.append("PERMISO C.C. C.R.E.: "+datos_domicilio.getString("permiso")+"\n");
@@ -1877,11 +2452,10 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         final JSONObject[] dia = {null};
         try {
             String tag;
-            if(GetData(variables.METODO).equals(variables.KEY_NOMBRE)){
+            if(GetData(variables.METODO).equals(variables.KEY_NOMBRE) || GetData(variables.METODO).equals(variables.KEY_VALE)){
                 tag = GetData(variables.KEY_CLIENTE_VEHICULO_TAR);
             }else {
                 tag = GetData(variables.KEY_TAG);
-
             }
             new GetVehicleRestrictions(this, getApplicationContext(), new ControlGasListener() {
                 @Override

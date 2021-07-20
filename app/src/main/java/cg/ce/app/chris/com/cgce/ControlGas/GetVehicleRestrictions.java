@@ -75,6 +75,16 @@ public class GetVehicleRestrictions extends AsyncTask<String, Void, JSONObject> 
                             "(select den from Productos where cod=codprd) as combustible\n" +
                             "from ClientesVehiculos as cv where cv.tar= '"+ tag +"'";
                     break;
+                case Variables.KEY_VALE:
+                    query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
+                            "datepart(WEEKDAY,getdate()) as dia, cv.est as est,\n" +
+                            "(select cod from Gasolineras where codest=0 and cod !=0) as cveest,\n" +
+                            "cv.hraini as hraini,cv.hrafin as hrafin,cv.hraini2 as hraini2,\n" +
+                            "cv.hrafin2 as hrafin2,cv.hraini3 as hraini3,cv.hrafin3 as hrafin3,\n" +
+                            "cv.codprd as codprd,\n" +
+                            "(select den from Productos where cod=codprd) as combustible\n" +
+                            "from ClientesVehiculos as cv where cv.tar= '"+ tag +"'";
+                    break;
                 case Variables.KEY_RFID:
                     query = "select cv.diacar as diacar,cv.codgas as codgas, getdate() as fecha,\n" +
                             "datepart(WEEKDAY,getdate()) as dia, cv.est as est,\n" +

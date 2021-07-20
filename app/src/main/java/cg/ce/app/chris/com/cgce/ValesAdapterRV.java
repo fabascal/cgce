@@ -13,6 +13,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
+import cg.ce.app.chris.com.cgce.ValesWS.ValesList;
+
 public class ValesAdapterRV extends RecyclerView.Adapter<ValesAdapterRV.ViewHolder>{
     public static final int LOGO_IMAGE = R.drawable.aceite_logo;
     public static final int STATUS_IMAGE = R.drawable.aceite_logo;

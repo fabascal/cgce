@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import cg.ce.app.chris.com.cgce.ControlGas.GetCustomerVale;
+import cg.ce.app.chris.com.cgce.ControlGas.GetAllCustomerValeConfig;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerValeListener;
 import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.RefreshCustomerVale;
@@ -124,9 +124,9 @@ public class ConfiguracionValeActivity extends AppCompatActivity implements View
                 }
                 break;
             case (R.id.refresh):
-                GetCustomerVale  getCustomerVale = new GetCustomerVale(this);
-                getCustomerVale.delegate = this;
-                getCustomerVale.execute();
+                GetAllCustomerValeConfig getAllCustomerValeConfig = new GetAllCustomerValeConfig(this);
+                getAllCustomerValeConfig.delegate = this;
+                getAllCustomerValeConfig.execute();
                 break;
         }
         

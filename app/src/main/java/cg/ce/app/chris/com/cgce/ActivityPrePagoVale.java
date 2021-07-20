@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,9 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import cg.ce.app.chris.com.cgce.ValesWS.ValesList;
 import cg.ce.app.chris.com.cgce.listeners.ValesListener;
-import cg.ce.app.chris.com.cgce.webservice.AceiteInsertaWS;
-import cg.ce.app.chris.com.cgce.webservice.ValesWS;
 
 public class ActivityPrePagoVale extends AppCompatActivity implements ValesListener {
     ImageButton imgbtnscan,btn_imprimir;
@@ -122,8 +120,8 @@ public class ActivityPrePagoVale extends AppCompatActivity implements ValesListe
 
             JSONObject jo = array.getJSONObject(i);
 
-            ValesList valesList = new ValesList(R.drawable.aceite_logo,R.drawable.aceite_logo,jo.getString("descripcion"),jo.getDouble("precio"));
-            valesLists.add(valesList);
+            //ValesList valesList = new ValesList(R.drawable.aceite_logo,R.drawable.aceite_logo,jo.getString("descripcion"),jo.getDouble("precio"));
+            //valesLists.add(valesList);
 
         }
         adapter = new ValesAdapterRV(valesLists, getApplicationContext());
@@ -169,9 +167,9 @@ public class ActivityPrePagoVale extends AppCompatActivity implements ValesListe
     //Funcion que execute web service de envio de data
     public void SendDataWebService(JSONObject js) throws JSONException, ExecutionException, InterruptedException {
         Log.w("Json",js.toString());
-        ValesWS valesWS = new ValesWS(js,this);
-        valesWS.delegate=this;
-        valesWS.execute();
+        //ValesWS valesWS = new ValesWS(js,this);
+        //valesWS.delegate=this;
+        //valesWS.execute();
     }
 
     public void total() throws JSONException {

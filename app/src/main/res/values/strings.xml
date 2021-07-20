@@ -181,4 +181,5 @@
     <string name="cliente_debito">Clientes debito</string>
     <string name="ValeCodcli">ValeCodcli</string>
     <string name="ValeDencli">ValeDencli</string>
+    <string name="ws_vale">Consumir</string>
 </resources>

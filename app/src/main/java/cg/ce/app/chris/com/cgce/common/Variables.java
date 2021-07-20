@@ -66,4 +66,9 @@ public class Variables {
     public final static String MESSAGE_DESPACHADOR = "Despachador no existe en el sistema de facturación.";
     public static final String WIFI_DISABLE = "No se puede iniciar el proceso de impresion con el WI-FI apagado.";
     public static final String KEY_VALE = "Vale";
+    public static final String VALESLISTS = "Valeslists";
+    public static final String RESULT = "Result";
+    public static final String VALE_WS_RESPONSE = "ValeWSResponse";
+    public static final String VALE_WS_CONSUMO = "ValeWsConsumo";
+    public static final String VALE_NOMINATIVA = "ValeNominativa";
 }
