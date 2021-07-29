@@ -136,5 +136,48 @@
                 app:layout_constraintStart_toEndOf="@id/imageviewNombre"/>
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:visibility="visible"
+        android:id="@+id/CardViewVALE"
+        app:layout_constraintTop_toBottomOf="@+id/CardViewNOMBRE"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="260dp"
+        android:layout_height="90dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="12dp"
+        android:layout_marginTop="12dp"
+        app:cardBackgroundColor="#E6E6E6"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_below="@+id/CardViewNIP"
+        android:layout_alignLeft="@+id/CardViewNIP"
+        android:layout_alignStart="@+id/CardViewNIP">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/imageviewVALE"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:src="@drawable/prepagostotal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <TextView
+                android:layout_marginTop="0dp"
+                android:id="@+id/cv_textVALE"
+                android:text="@string/vale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:textStyle="normal|bold"
+                android:textSize="30sp"
+                android:layout_marginStart="25dp"
+                style="@style/repsoldatacliente"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageviewVALE"/>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>

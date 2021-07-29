@@ -71,4 +71,7 @@ public class Variables {
     public static final String VALE_WS_RESPONSE = "ValeWSResponse";
     public static final String VALE_WS_CONSUMO = "ValeWsConsumo";
     public static final String VALE_NOMINATIVA = "ValeNominativa";
+    public static final String TOTAL_VALE_CONSUMO = "TotalValeConsumo";
+    public static final String VALES_LIST = "ValesList";
+    public static final String KEY_URLFILE = "KeyUrlFile";
 }

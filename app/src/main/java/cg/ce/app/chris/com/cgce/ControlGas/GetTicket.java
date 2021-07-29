@@ -79,7 +79,7 @@ public class GetTicket extends AsyncTask<String, Void, JSONObject> {
                     "left outer join ["+base+"].[dbo].[Gasolineras] as gas on gas.cod=desp.codgas \n" +
                     "left outer join ["+base+"].[dbo].[Clientes] as cli on cli.cod=desp.codcli \n" +
                     "where desp.nrobom ="+params[0]+" order by desp.nrotrn desc");
-                    /*"where desp.nrotrn='41238350' order by desp.nrotrn desc");*/
+                    /*"where desp.nrotrn='41460500' order by desp.nrotrn desc");*/
             if (r.next()) {
                 float a = r.getFloat(11);
                 if (a<0){

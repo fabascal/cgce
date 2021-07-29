@@ -89,6 +89,9 @@
         <include
             android:id="@+id/metodoimpresion"
             layout="@layout/activity_credito_impresion" />
+        <include
+            android:id="@+id/metodovales"
+            layout="@layout/activity_credito_metodo_vale"/>
     </ViewFlipper>
     <ImageButton
         android:id="@+id/btncredito"

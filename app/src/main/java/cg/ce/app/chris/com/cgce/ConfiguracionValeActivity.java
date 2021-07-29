@@ -25,6 +25,8 @@ import java.util.List;
 
 import cg.ce.app.chris.com.cgce.ControlGas.GetAllCustomerValeConfig;
 import cg.ce.app.chris.com.cgce.ControlGas.Listeners.GetCustomerValeListener;
+import cg.ce.app.chris.com.cgce.ControlGas.Listeners.UpdateValesCodcliListener;
+import cg.ce.app.chris.com.cgce.ControlGas.UpdateValesCodcli;
 import cg.ce.app.chris.com.cgce.common.Variables;
 import cg.ce.app.chris.com.cgce.dialogos.RefreshCustomerVale;
 
@@ -98,6 +100,33 @@ public class ConfiguracionValeActivity extends AppCompatActivity implements View
         editor.putString(getResources().getString(R.string.ValeCodcli),codcli.getText().toString());
         editor.putString(getResources().getString(R.string.ValeDencli),dencli.getText().toString());
         editor.commit();
+        new UpdateValesCodcli(ConfiguracionValeActivity.this, new UpdateValesCodcliListener(){
+            @Override
+            public void UpdateValesCodcliFinish(JSONObject output) {
+                try {
+                    if ( output.getInt( Variables.CODE_ERROR )==1){
+                        StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                        logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                                stacktraceObj[2].getMethodName() + "|" +
+                                output.getString(Variables.MESSAGE_ERROR));
+                        new AlertDialog.Builder(ConfiguracionValeActivity.this)
+                                .setTitle(R.string.error)
+                                .setMessage(output.getString(Variables.MESSAGE_ERROR))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                    }
+                } catch (JSONException e) {
+                    StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
+                    logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
+                            stacktraceObj[2].getMethodName() + "|" +
+                            e);
+                    new AlertDialog.Builder(ConfiguracionValeActivity.this)
+                            .setTitle(R.string.error)
+                            .setMessage((CharSequence) e)
+                            .setPositiveButton(R.string.btn_ok, null).show();
+                    e.printStackTrace();
+                }
+            }
+        }).execute(codcli.getText().toString(),dencli.getText().toString(),data.getString(getResources().getString(R.string.ValeFile)));
         ShowDataPreference();
     }
 
