@@ -20,6 +20,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -384,7 +385,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                         final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
                         int index = spn_posicion.getSelectedItemPosition();
                         Validar.getJSONObject(index).put(Variables.KEY_TICKET,output);
-                        if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN))<Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))) {
+                        if (Integer.parseInt(GetData(variables.KEY_ULT_NROTRN)) <Integer.parseInt(GetTicketData(variables.KEY_TICKET_NROTRN))) {
                             UpdateCodcli();
                         }else{
                             new AlertDialog.Builder(Credito.this)
@@ -433,7 +434,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                     updateNrotrn.delegate=this;
                     System.out.println(Validar.getJSONObject(index).getJSONObject(Variables.KEY_TICKET));
                     updateNrotrn.execute(Validar.getJSONObject(index).getJSONObject(Variables.KEY_TICKET));
-
                 } catch (JSONException e) {
                     StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
                     logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
@@ -708,15 +708,6 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                             WsVale();
                         }else if(GetData(variables.VALE_NOMINATIVA).equals("1")){
                             PutTicketDataVale();
-                            /*if (Integer.valueOf(GetData(variables.KEY_ULT_NROTRN)) < Integer.valueOf(GetTicketData(variables.KEY_TICKET_NROTRN))) {
-                                WsValeNominativa();
-                            }else{
-                                new AlertDialog.Builder(Credito.this)
-                                        .setTitle(R.string.error)
-                                        .setIcon(icon)
-                                        .setMessage(R.string.EsperaServicio)
-                                        .setPositiveButton(R.string.btn_ok,null).show();
-                            }*/
                         }else{
                             new AlertDialog.Builder(Credito.this)
                                     .setTitle(R.string.error)
@@ -1707,7 +1698,10 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
         }
         final JSONArray Validar = Posiciones.getJSONArray(variables.POSICIONES);
         int index = spn_posicion.getSelectedItemPosition();
-        JSONObject dato_cliente = new JSONObject((String) Validar.getJSONObject(index).get("ValeWSResponse"));
+        JSONObject dato_cliente=null;
+        if (GetData(variables.METODO).equals(variables.KEY_VALE)) {
+            dato_cliente = new JSONObject((String) Validar.getJSONObject(index).get("ValeWSResponse"));
+        }
         StringBuilder textData = new StringBuilder();
         Numero_a_Letra letra = new Numero_a_Letra();
         final int barcodeWidth = 2;
@@ -2872,6 +2866,7 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 /*impresion*/
                 ExecutePrint executePrint = new ExecutePrint();
                 executePrint.execute();
+
             }else{
                 StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
                 logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
@@ -3096,10 +3091,16 @@ public class Credito extends AppCompatActivity implements View.OnClickListener,
                 StackTraceElement[] stacktraceObj = Thread.currentThread().getStackTrace();
                 logCE.EscirbirLog2(getApplicationContext(),getLocalClassName() + "|" +
                         stacktraceObj[2].getMethodName() + "|" + e);
-                new AlertDialog.Builder(Credito.this)
-                        .setTitle(R.string.error)
-                        .setMessage(String.valueOf(e))
-                        .setPositiveButton(R.string.btn_ok, null).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(Credito.this)
+                                .setTitle(R.string.error)
+                                .setMessage(String.valueOf(e))
+                                .setPositiveButton(R.string.btn_ok, null).show();
+                    }
+                }).start();
+
                 e.printStackTrace();
             }
             return null;
